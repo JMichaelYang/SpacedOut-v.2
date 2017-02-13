@@ -99,7 +99,7 @@ public class InputHandler : MonoBehaviour
                         if (this.joystickFingerId == id)
                         {
                             this.joystickComponent.UpdateJoystick(touch);
-                            //this.joystickFingerId = -1;
+                            this.joystickFingerId = -1;
                         }
 
                         #endregion Joystick Updating
@@ -109,7 +109,7 @@ public class InputHandler : MonoBehaviour
                         if (this.zoomSpotFingerId == id)
                         {
                             this.zoomSpotComponent.UpdateSpot(touch);
-                            //this.zoomSpotFingerId = -1;
+                            this.zoomSpotFingerId = -1;
                         }
 
                         #endregion ZoomSpot Updating

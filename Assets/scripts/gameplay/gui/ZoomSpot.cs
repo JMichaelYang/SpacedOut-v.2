@@ -18,7 +18,7 @@ public class ZoomSpot : MonoBehaviour
         else
             return 0;
     }
-    public float GetDelta() { return this.currentValue - this.oldValue; }
+    public float GetDelta() { return (this.currentValue - this.oldValue) * GameSettings.ZoomSpotMultiplier; }
 
     //max swiping zoom distance
     public float maxDistance;

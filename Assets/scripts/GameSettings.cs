@@ -61,6 +61,8 @@ public class GameSettings : MonoBehaviour
     public static float ZoomSpotMaxY = 11;
     public static float ZoomMaxSwipe = 2;
 
+    public static float ZoomSpotMultiplier = 0.01f;
+
     #endregion touch
 
     #endregion controls
