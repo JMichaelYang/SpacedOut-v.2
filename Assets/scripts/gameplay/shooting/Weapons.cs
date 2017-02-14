@@ -23,6 +23,7 @@ public class Gun
     public float BurstAmount { get; protected set; }
     public float BurstReload { get; protected set; }
     public float Reload { get; protected set; }
+    public GameObject BulletTemplate { get; protected set; }
 
     public void LoadFromGunType(GunType gunType)
     {
@@ -38,6 +39,13 @@ public class Gun
     {
         this.LoadFromGunType(gunType);
     }
+
+    public GameObject ShootGun(Vector3 pos, Quaternion rot)
+    {
+        GameObject bullet = ObjectPool.Spawn(BulletTemplate, pos, rot);
+        bullet.GetComponent<Bullet>().Activate(this.Damage, this.Range);
+        return bullet;
+    }
 }
 
 public struct GunType
@@ -48,4 +56,5 @@ public struct GunType
     public float BurstAmount;
     public float BurstReload;
     public float Reload;
+    public float BulletType;
 }

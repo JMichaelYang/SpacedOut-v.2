@@ -7,6 +7,9 @@ public class Bullet : MonoBehaviour
     private float duration = 0;
     private float durationTimer = 0;
 
+    //stats
+    private float damage;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -14,16 +17,22 @@ public class Bullet : MonoBehaviour
         this.durationTimer = 0;
 	}
 
-    public void Activate()
+    public void Activate(float damage, float duration)
     {
         this.reset();
-        this.gameObject.SetActive(true);
+
+        //set bullet stats
+        this.damage = damage;
+        this.duration = duration;
     }
 
+    //resets all of stats for re-pooling
     protected void reset()
     {
         this.duration = 0;
         this.durationTimer = 0;
+
+        this.damage = 0;
     }
 
 	// Update is called once per frame
@@ -35,7 +44,7 @@ public class Bullet : MonoBehaviour
         if (this.durationTimer > this.duration)
         {
             this.reset();
-            this.gameObject.SetActive(false);
+            ObjectPool.Despawn(this.gameObject);
         }   	
 	}
 }
