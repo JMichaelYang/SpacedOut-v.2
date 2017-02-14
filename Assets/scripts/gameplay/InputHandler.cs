@@ -136,7 +136,7 @@ public class InputHandler : MonoBehaviour
                         if (this.zoomSpotFingerId == id)
                         {
                             this.zoomSpotComponent.UpdateSpot(touch);
-                            this.zoom.ChangeZoom(this.zoomSpotComponent.GetValue());
+                            this.commandHandler.AddCommands(new ZoomCommand(this.zoom, this.zoomSpotComponent.GetValue() * GameSettings.ZoomSpotMultiplier));
                         }
 
                         #endregion ZoomSpot Updating

@@ -51,3 +51,9 @@ public class RotateCommand : Command
     public RotateCommand(object target, float magnitude)
         : base(target, "Rotate", magnitude) { }
 }
+
+public class ZoomCommand : Command
+{
+    public ZoomCommand(object target, float magnitude)
+        : base(target, "ChangeZoom", magnitude) { }
+}

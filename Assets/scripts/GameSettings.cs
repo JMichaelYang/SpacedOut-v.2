@@ -32,7 +32,7 @@ public class GameSettings : MonoBehaviour
 
     //inertial dampening settings
     public static bool DampenInteria = true;
-    public static float DampeningMultiplier = 0.015f;
+    public static float DampeningMultiplier = 0.005f;
 
     #region keyboard
 
@@ -61,7 +61,7 @@ public class GameSettings : MonoBehaviour
     public static float ZoomSpotMaxY = 11;
     public static float ZoomMaxSwipe = 2;
 
-    public static float ZoomSpotMultiplier = 0.01f;
+    public static float ZoomSpotMultiplier = 0.2f;
 
     #endregion touch
 
