@@ -52,13 +52,6 @@ public static class ObjectPool
             return obj;
 
         }
-
-        //return an object to the inactive state
-        public void Despawn(GameObject obj)
-        {
-            obj.SetActive(false);
-        }
-
     }
 
     //dictionary of ll of our pools
@@ -86,8 +79,11 @@ public static class ObjectPool
         GameObject[] obs = new GameObject[qty];
         for (int i = 0; i < qty; i++)
         {
-            Debug.Log("this is running at least");
             obs[i] = ObjectPool.Spawn(prefab, Vector3.zero, Quaternion.identity);
+        }
+
+        for (int i = 0; i < qty; i++)
+        {
             ObjectPool.Despawn(obs[i]);
         }
     }
@@ -103,16 +99,7 @@ public static class ObjectPool
     //despawn the passed object
     static public void Despawn(GameObject obj)
     {
-        Pool pool = ObjectPool.pools[obj];
-        if (pool == null)
-        {
-            Debug.Log("Object '" + obj.name + "' wasn't spawned from a pool. Destroying it instead.");
-            GameObject.Destroy(obj);
-        }
-        else
-        {
-            ObjectPool.pools[obj].Despawn(obj);
-        }
+        obj.SetActive(false);
     }
 
 }
