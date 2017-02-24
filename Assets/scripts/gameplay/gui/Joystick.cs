@@ -14,18 +14,54 @@ public class Joystick : MonoBehaviour
         get { return this.knob.transform.localPosition.y / this.radius; }
     }
 
+    //bounds of the joystick
+    private float minX = GameSettings.JoystickMinX;
+    private float minY = GameSettings.JoystickMinY;
+    private float maxX = GameSettings.JoystickMaxX;
+    private float maxY = GameSettings.JoystickMaxY;
     //max radius of the joystick
-    public float radius;
+    private float radius = GameSettings.JoystickRadius;
 
     //opacity
-    public float baseOpacity;
-    public float knobOpacity;
+    private float baseOpacity = GameSettings.JoystickBaseOpacity;
+    private float knobOpacity = GameSettings.JoystickKnobOpacity;
 
     //knob object
     public GameObject knob;
     
     //if this joystick is currently active
     public bool IsActive { get; protected set; }
+
+    /// <summary>
+    /// Method to set the bounds of the joystick
+    /// </summary>
+    /// <param name="minX">Minimum X value of the joystick</param>
+    /// <param name="minY">Minimum Y value of the joystick</param>
+    /// <param name="maxX">Maximum X value of the joystick</param>
+    /// <param name="maxY">Maximum Y value of the joystick</param>
+    /// <param name="radius">Maximum radius of the joystick</param>
+    public void SetBounds(float minX, float minY, float maxX, float maxY, float radius)
+    {
+        this.minX = minX;
+        this.minY = minY;
+        this.maxX = maxX;
+        this.maxY = maxY;
+
+        this.radius = radius;
+    }
+    /// <summary>
+    /// Method to set the opacity of the joystick
+    /// </summary>
+    /// <param name="baseOpacity">The opacity of the base</param>
+    /// <param name="knobOpacity">The opacity of the knob</param>
+    public void SetOpacity(float baseOpacity, float knobOpacity)
+    {
+        this.baseOpacity = baseOpacity;
+        this.knobOpacity = knobOpacity;
+        
+        this.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, this.baseOpacity);
+        this.knob.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, this.knobOpacity);
+    }
 
     // Use this for initialization
     void Start()
@@ -40,9 +76,6 @@ public class Joystick : MonoBehaviour
         }
 
         this.knob.transform.localPosition = Vector3.zero;
-        this.radius = GameSettings.JoystickRadius;
-        this.baseOpacity = GameSettings.JoystickBaseOpacity;
-        this.knobOpacity = GameSettings.JoystickKnobOpacity;
 
         this.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, this.baseOpacity);
         this.knob.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, this.knobOpacity);
@@ -51,6 +84,11 @@ public class Joystick : MonoBehaviour
     // Update is called once per frame
     void Update() { }
 
+    /// <summary>
+    /// Updates the joystick
+    /// </summary>
+    /// <param name="touch">The touch object that is interacting with the joystick</param>
+    /// <returns>Returns true if the initial touch lands within bounds, otherwise returns false</returns>
     public bool UpdateJoystick(Touch touch)
     {
         float localTouchX = Utils.ConvertScale(touch.position.x, 0, Screen.width, -6.5f, 6.5f);
@@ -59,8 +97,7 @@ public class Joystick : MonoBehaviour
         switch (touch.phase)
         {
             case TouchPhase.Began:
-                if (localTouchX > GameSettings.JoystickMinX && localTouchX < GameSettings.JoystickMaxX
-                    && localTouchY > GameSettings.JoystickMinY && localTouchY < GameSettings.JoystickMaxY)
+                if (localTouchX > this.minX && localTouchX < this.maxX && localTouchY > this.minY && localTouchY < this.maxY)
                 {
                     this.IsActive = true;
                     if (GameSettings.JoystickDisappear)
@@ -85,7 +122,6 @@ public class Joystick : MonoBehaviour
                 break;
 
             default:
-
                 this.knob.transform.localPosition = new Vector3(localTouchX, localTouchY, this.transform.localPosition.z) - this.transform.localPosition;
 
                 //limit magnitude of knob distance to joystick radius

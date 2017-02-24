@@ -23,6 +23,7 @@ public class DebugHandler : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        this.JoystickObject = GameObject.FindGameObjectWithTag("Joystick");
         this.joystick = this.JoystickObject.GetComponent<Joystick>();
     }
 
@@ -40,6 +41,6 @@ public class DebugHandler : MonoBehaviour
             this.Text = "No touches on screen";
         }*/
 
-        this.TouchText.text = this.Text;
+        //this.TouchText.text = this.Text;
     }
 }

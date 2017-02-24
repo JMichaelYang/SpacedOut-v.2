@@ -12,7 +12,7 @@ public class GameSettings : MonoBehaviour
     public static int ArenaWidth = 500;
     public static int ArenaHeight = 500;
 
-    public static float StarDensity = .2f;
+    public static float StarDensity = .05f;
     public static int StarMinDepth = 0;
     public static int StarMaxDepth = 100;
 
@@ -41,27 +41,36 @@ public class GameSettings : MonoBehaviour
     public static KeyCode MoveLeft = KeyCode.A;
     public static KeyCode MoveRight = KeyCode.D;
 
+    public static KeyCode Shoot = KeyCode.Space;
+
     #endregion keyboard
 
     #region touch
 
-    public static float JoystickRadius = 2;
-    public static float JoystickMinX = -6;
-    public static float JoystickMaxX = -1;
-    public static float JoystickMinY = -11;
-    public static float JoystickMaxY = -6;
-
-    public static bool JoystickDisappear = true;
+    //joystick
+    public static float JoystickRadius = 2f;
+    public static float JoystickMinX = -6.5f;
+    public static float JoystickMaxX = -1f;
+    public static float JoystickMinY = -11f;
+    public static float JoystickMaxY = -6.5f;
+    public static bool JoystickDisappear = false;
     public static float JoystickBaseOpacity = 0.6f;
     public static float JoystickKnobOpacity = 0.6f;
 
-    public static float ZoomSpotMinX = 2;
-    public static float ZoomSpotMaxX = 6;
-    public static float ZoomSpotMinY = 6;
-    public static float ZoomSpotMaxY = 11;
-    public static float ZoomMaxSwipe = 2;
+    //zoom spot
+    public static float ZoomSpotMinX = 2f;
+    public static float ZoomSpotMaxX = 6.5f;
+    public static float ZoomSpotMinY = 6f;
+    public static float ZoomSpotMaxY = 11.5f;
+    public static float ZoomMaxSwipe = 2f;
+    public static float ZoomSpotMultiplier = 0.05f;
 
-    public static float ZoomSpotMultiplier = 0.2f;
+    //shoot button
+    public static float ShootButtonX = 5f;
+    public static float ShootButtonY = -10f;
+    public static float ShootButtonWidth = 2f;
+    public static float ShootButtonHeight = 2f;
+    public static float ShootButtonOpacity = 0.6f;
 
     #endregion touch
 

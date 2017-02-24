@@ -35,6 +35,18 @@ public class Utils : MonoBehaviour
 
         return result;
     }
+    //rotates a 2D vector
+    public static Vector2 RotateVector2(Vector2 vector, float degrees)
+    {
+        float radians = degrees * Mathf.Deg2Rad;
+        float sin = Mathf.Sin(radians);
+        float cos = Mathf.Cos(radians);
+
+        float tx = vector.x;
+        float ty = vector.y;
+
+        return new Vector2(cos * tx - sin * ty, sin * tx + cos * ty);
+    }
 
     void Awake()
     {

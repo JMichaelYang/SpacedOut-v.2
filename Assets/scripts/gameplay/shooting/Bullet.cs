@@ -17,13 +17,16 @@ public class Bullet : MonoBehaviour
         this.durationTimer = 0;
 	}
 
-    public void Activate(float damage, float duration)
+    public void Activate(float damage, float duration, float velocity)
     {
         this.reset();
 
         //set bullet stats
         this.damage = damage;
         this.duration = duration;
+
+        //set bullet velocity
+        this.gameObject.GetComponent<Movement>().Accelerate(velocity);
     }
 
     //resets all of stats for re-pooling

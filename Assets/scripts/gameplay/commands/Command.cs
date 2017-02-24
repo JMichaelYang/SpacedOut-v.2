@@ -34,7 +34,7 @@ public class Command
         {
             Debug.Log(this.receiver);
             Debug.Log(this.name);
-            Debug.Log(this.args[0] + " " + this.args[1]);
+            Debug.Log(this.args[0]);
             Debug.Log("Unknown error when calling command");
         }
     }
@@ -56,4 +56,10 @@ public class ZoomCommand : Command
 {
     public ZoomCommand(object target, float magnitude)
         : base(target, "ChangeZoom", magnitude) { }
+}
+
+public class ShootCommand : Command
+{
+    public ShootCommand(object target, params int[] slots)
+        : base(target, "ShootWeapons", slots) { }
 }

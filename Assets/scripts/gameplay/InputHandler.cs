@@ -13,32 +13,41 @@ public class InputHandler : MonoBehaviour
     private GameObject playerCamera;
     private CameraZoom zoom;
 
-    //joystick object
-    public GameObject Joystick;
+    #region Touch Input Components
+
     private Joystick joystickComponent;
     private int joystickFingerId = -1;
 
-    public GameObject ZoomSpot;
     private ZoomSpot zoomSpotComponent;
     private int zoomSpotFingerId = -1;
 
-	// Use this for initialization
-	void Start ()
+    private Button shootButtonComponent;
+    private int shootButtonFingerId = -1;
+
+    #endregion Touch Input Components
+
+    // Use this for initialization
+    void Start()
     {
+        this.commandHandler = GameObject.FindObjectOfType<CommandHandler>();
+
         this.player = GameObject.FindGameObjectWithTag("Player");
         this.movement = this.player.GetComponent<Movement>();
-        this.commandHandler = GameObject.FindObjectOfType<CommandHandler>();
 
         this.playerCamera = GameObject.FindGameObjectWithTag("MainCamera");
         this.zoom = this.playerCamera.GetComponent<CameraZoom>();
 
-        this.joystickComponent = this.Joystick.GetComponent<Joystick>();
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WSA || UNITY_EDITOR
 
-        this.zoomSpotComponent = this.ZoomSpot.GetComponent<ZoomSpot>();
-	}
-	
-	// Update is called once per frame
-	void Update ()
+#else
+        this.joystickComponent = this.playerCamera.GetComponentInChildren<Joystick>();
+        this.zoomSpotComponent = this.playerCamera.GetComponentInChildren<ZoomSpot>();
+        this.shootButtonComponent = this.playerCamera.GetComponentInChildren<Button>();
+#endif
+    }
+
+    // Update is called once per frame
+    void Update()
     {
         // preprocessor code
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WSA || UNITY_EDITOR
@@ -64,7 +73,7 @@ public class InputHandler : MonoBehaviour
                 {
                     case TouchPhase.Began:
 
-                        //if the touch hits the joystick, update the id
+                        //if the touch hits the touch items, update the id
                         #region Joystick Updating
 
                         if (!this.joystickComponent.IsActive)
@@ -76,7 +85,6 @@ public class InputHandler : MonoBehaviour
                         }
 
                         #endregion Joystick Updating
-
                         #region ZoomSpot Updating
 
                         if (!this.zoomSpotComponent.IsActive)
@@ -88,12 +96,20 @@ public class InputHandler : MonoBehaviour
                         }
 
                         #endregion ZoomSpot Updating
+                        #region ShootButton Updating
+
+                        if (this.shootButtonComponent.UpdateButton(touch))
+                        {
+                            this.shootButtonFingerId = id;
+                        }
+
+                        #endregion ShootButton Updating
 
                         break;
 
                     case TouchPhase.Ended:
 
-                        //if IDs match, update joystick
+                        //if IDs match, update touch items
                         #region Joystick Updating
 
                         if (this.joystickFingerId == id)
@@ -103,7 +119,6 @@ public class InputHandler : MonoBehaviour
                         }
 
                         #endregion Joystick Updating
-
                         #region ZoomSpot Updating
 
                         if (this.zoomSpotFingerId == id)
@@ -113,12 +128,21 @@ public class InputHandler : MonoBehaviour
                         }
 
                         #endregion ZoomSpot Updating
+                        #region ShootButton Updating
+
+                        if (this.shootButtonFingerId == id)
+                        {
+                            this.shootButtonComponent.UpdateButton(touch);
+                            this.shootButtonFingerId = -1;
+                        }
+
+                        #endregion ShootButton Updating
 
                         break;
 
                     default:
 
-                        //if IDs match, update joystick
+                        //if IDs match, update touch items
                         #region Joystick Updating
 
                         if (this.joystickFingerId == id)
@@ -130,7 +154,6 @@ public class InputHandler : MonoBehaviour
                         }
 
                         #endregion Joystick Updating
-
                         #region ZoomSpot Updating
 
                         if (this.zoomSpotFingerId == id)
@@ -140,6 +163,15 @@ public class InputHandler : MonoBehaviour
                         }
 
                         #endregion ZoomSpot Updating
+                        #region ShootButton Updating
+
+                        if (this.shootButtonFingerId == id)
+                        {
+                            this.shootButtonComponent.UpdateButton(touch);
+                            this.commandHandler.AddCommands(new ShootCommand(this.player.GetComponent<Weapons>(), 1));
+                        }
+
+                        #endregion ShootButton Updating
 
                         break;
                 }
@@ -172,6 +204,14 @@ public class InputHandler : MonoBehaviour
         }
 
         #endregion Player Movement
+        #region Player Shooting
+
+        if (Input.GetKey(GameSettings.Shoot))
+        {
+            this.commandHandler.AddCommands(new ShootCommand(this.player.GetComponent<Weapons>(), 1));
+        }
+
+        #endregion Player Shooting
 
         #region Camera
 
