@@ -7,6 +7,7 @@ public class TeamsHandler : MonoBehaviour
     public List<Team> Teams { get; protected set; }
 
 	// Use this for initialization
+	void Awake ()
     {
         //TODO: Replace this test code
 
