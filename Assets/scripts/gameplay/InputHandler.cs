@@ -37,7 +37,7 @@ public class InputHandler : MonoBehaviour
         this.playerCamera = GameObject.FindGameObjectWithTag("MainCamera");
         this.zoom = this.playerCamera.GetComponent<CameraZoom>();
 
-#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WSA || UNITY_EDITOR
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WSA// || UNITY_EDITOR
 
 #else
         this.joystickComponent = this.playerCamera.GetComponentInChildren<Joystick>();
@@ -168,7 +168,7 @@ public class InputHandler : MonoBehaviour
                         if (this.shootButtonFingerId == id)
                         {
                             this.shootButtonComponent.UpdateButton(touch);
-                            this.commandHandler.AddCommands(new ShootCommand(this.player.GetComponent<Weapons>(), 1));
+                            this.commandHandler.AddCommands(new ShootCommand(this.player.GetComponent<Weapons>(), 0, 1));
                         }
 
                         #endregion ShootButton Updating
@@ -208,14 +208,22 @@ public class InputHandler : MonoBehaviour
 
         if (Input.GetKey(GameSettings.Shoot))
         {
-            this.commandHandler.AddCommands(new ShootCommand(this.player.GetComponent<Weapons>(), 1));
+            this.commandHandler.AddCommands(new ShootCommand(this.player.GetComponent<Weapons>(), 0, 1));
         }
 
         #endregion Player Shooting
 
         #region Camera
 
-        this.zoom.ChangeZoom(Input.GetAxisRaw("Mouse ScrollWheel"));
+        //this.zoom.ChangeZoom(Input.GetAxisRaw("Mouse ScrollWheel"));
+        if (Input.GetKey(KeyCode.I))
+        {
+            this.zoom.ChangeZoom(1f);
+        }
+        if (Input.GetKey(KeyCode.O))
+        {
+            this.zoom.ChangeZoom(-1f);
+        }
 
         #endregion Camera
     }

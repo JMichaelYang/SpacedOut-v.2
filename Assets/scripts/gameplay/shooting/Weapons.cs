@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Weapons : MonoBehaviour
 {
-    public Gun[] guns;
-    public Vector3[] offsets;
-    public float[] shotTimers;
-    public float[] burstTimers;
-    public int[] burstCounters;
-    public float[] reloadTimers;
-    public int[] shotCounters;
+    private Gun[] guns;
+    private Vector3[] offsets;
+    private float[] shotTimers;
+    private float[] burstTimers;
+    private int[] burstCounters;
+    private float[] reloadTimers;
+    private int[] shotCounters;
 
     public WeaponType type = WeaponTypes.DebugWeapon;
 
@@ -29,7 +29,7 @@ public class Weapons : MonoBehaviour
     }
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         this.ReadWeapons(this.type);
         this.shotTimers = new float[this.guns.Length];
@@ -70,9 +70,6 @@ public class Weapons : MonoBehaviour
                     //checking shot timers
                     if (this.shotTimers[i] > this.guns[i].BurstDelay)
                     {
-                        Debug.Log(this.guns[i].BurstDelay);
-                        Debug.Log(this.shotTimers[i]);
-
                         //shoot the gun and add to the shot counters
                         this.guns[slots[i]].ShootGun(this.transform.position + (Vector3)Utils.RotateVector2(this.offsets[slots[i]], this.transform.rotation.eulerAngles.z), 
                             this.transform.rotation);
@@ -140,7 +137,6 @@ public class Gun
         gun.Velocity = gunType.Velocity;
         gun.Range = gunType.Range;
         gun.BurstDelay = gunType.BurstDelay;
-        Debug.Log(gun.BurstDelay + ", " + gunType.BurstDelay);
         gun.BurstAmount = gunType.BurstAmount;
         gun.BurstReload = gunType.BurstReload;
         gun.Reload = gunType.Reload;

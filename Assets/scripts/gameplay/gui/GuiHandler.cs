@@ -12,7 +12,7 @@ public class GuiHandler : MonoBehaviour
     private GameObject button;
 
 	// Use this for initialization
-	void Start ()
+	void Awake ()
     {
         this.transform.localPosition = new Vector3(0, 0, 20);
 

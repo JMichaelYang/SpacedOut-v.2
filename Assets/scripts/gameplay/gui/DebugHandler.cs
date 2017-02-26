@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class DebugHandler : MonoBehaviour
 {
+    /*
     //touch text element
     public Text TouchText;
 
@@ -30,7 +31,7 @@ public class DebugHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*if (Input.touchCount > 0)
+        if (Input.touchCount > 0)
         {
             Touch firstTouch = Input.GetTouch(0);
 
@@ -39,8 +40,8 @@ public class DebugHandler : MonoBehaviour
         else
         {
             this.Text = "No touches on screen";
-        }*/
+        }
 
         //this.TouchText.text = this.Text;
-    }
+    }*/
 }

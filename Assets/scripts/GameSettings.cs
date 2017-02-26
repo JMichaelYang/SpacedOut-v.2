@@ -22,7 +22,7 @@ public class GameSettings : MonoBehaviour
 
     public static float CameraFOV = 60f;
     public static float CameraAspectRatio = 9f / 16f;
-    public static float MinZoom = -50;
+    public static float MinZoom = -100;
     public static float MaxZoom = -10;
     public static float ZoomSpeed = 20f;
 
