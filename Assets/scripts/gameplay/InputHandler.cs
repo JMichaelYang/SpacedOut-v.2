@@ -6,12 +6,14 @@ public class InputHandler : MonoBehaviour
 {
     //store an instance of the player object
     private GameObject player;
+    private Weapons weapons;
     private Movement movement;
     private CommandHandler commandHandler;
 
     //camera object
     private GameObject playerCamera;
     private CameraZoom zoom;
+    private CameraShake shake;
 
     #region Touch Input Components
 
@@ -32,12 +34,14 @@ public class InputHandler : MonoBehaviour
         this.commandHandler = GameObject.FindObjectOfType<CommandHandler>();
 
         this.player = GameObject.FindGameObjectWithTag("Player");
+        this.weapons = this.player.GetComponent<Weapons>();
         this.movement = this.player.GetComponent<Movement>();
 
-        this.playerCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        this.zoom = this.playerCamera.GetComponent<CameraZoom>();
+        this.playerCamera = GameObject.FindGameObjectWithTag("MainCamera"); ;
+        this.zoom = GameObject.FindObjectOfType<CameraZoom>();
+        this.shake = GameObject.FindObjectOfType<CameraShake>();
 
-#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WSA// || UNITY_EDITOR
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WSA || UNITY_EDITOR
 
 #else
         this.joystickComponent = this.playerCamera.GetComponentInChildren<Joystick>();
@@ -168,7 +172,8 @@ public class InputHandler : MonoBehaviour
                         if (this.shootButtonFingerId == id)
                         {
                             this.shootButtonComponent.UpdateButton(touch);
-                            this.commandHandler.AddCommands(new ShootCommand(this.player.GetComponent<Weapons>(), 0, 1));
+                            //TODO: Fix this 0, 1 hardcoding
+                            this.commandHandler.AddCommands(new ShootCommand(this.weapons, 0, 1));
                         }
 
                         #endregion ShootButton Updating
@@ -208,14 +213,14 @@ public class InputHandler : MonoBehaviour
 
         if (Input.GetKey(GameSettings.Shoot))
         {
-            this.commandHandler.AddCommands(new ShootCommand(this.player.GetComponent<Weapons>(), 0, 1));
+            this.commandHandler.AddCommands(new ShootCommand(this.weapons, 0, 1));
         }
 
         #endregion Player Shooting
 
         #region Camera
 
-        //this.zoom.ChangeZoom(Input.GetAxisRaw("Mouse ScrollWheel"));
+        this.zoom.ChangeZoom(Input.GetAxisRaw("Mouse ScrollWheel"));
         if (Input.GetKey(KeyCode.I))
         {
             this.zoom.ChangeZoom(1f);

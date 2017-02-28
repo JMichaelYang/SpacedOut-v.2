@@ -17,7 +17,7 @@ public class GuiHandler : MonoBehaviour
         this.transform.localPosition = new Vector3(0, 0, 20);
 
         //preprocessor code for loading UI
-#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WSA// || UNITY_EDITOR
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WSA || UNITY_EDITOR
 
 #else
         this.LoadTouchElements();

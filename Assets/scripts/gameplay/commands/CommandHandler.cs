@@ -6,6 +6,7 @@ public class CommandHandler : MonoBehaviour
 {
     //command stream
     private List<Command> commands;
+
     public void AddCommands(params Command[] commands)
     {
         foreach (Command command in commands)
@@ -15,7 +16,7 @@ public class CommandHandler : MonoBehaviour
     }
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         this.commands = new List<Command>();
     }

@@ -17,8 +17,7 @@ public class TeamsHandler : MonoBehaviour
         this.Teams[0].Name = "Team One";
         this.Teams[0].TeamColor = Color.blue;
         this.Teams[0].Ships = new List<GameObject>();
-        this.Teams[0].Ships.Add(Instantiate<GameObject>(Resources.Load<GameObject>("prefabs/Ship")));
-        this.Teams[0].Ships[0].tag = "Player";
+        this.Teams[0].Ships.Add(this.spawnPlayer(Instantiate<GameObject>(Resources.Load<GameObject>("prefabs/Ship"))));
 
         this.Teams.Add(new Team());
         this.Teams[1].Name = "Team Two";
@@ -27,9 +26,6 @@ public class TeamsHandler : MonoBehaviour
         this.Teams[1].Ships.Add(Instantiate<GameObject>(Resources.Load<GameObject>("prefabs/Ship")));
         this.Teams[1].Ships[0].tag = "AI";
         this.Teams[1].Ships[0].transform.position = new Vector3(0, 10, 0);
-        
-        GameObject camera = Instantiate<GameObject>(Resources.Load<GameObject>("prefabs/PlayerCamera"));
-        camera.transform.SetParent(this.Teams[0].Ships[0].transform);
     }
 	
 	// Update is called once per frame
@@ -37,4 +33,20 @@ public class TeamsHandler : MonoBehaviour
     {
 		
 	}
+
+    private GameObject spawnPlayer(GameObject playerObject)
+    {
+        playerObject.tag = "Player";
+
+        GameObject shakeMedium = Instantiate<GameObject>(new GameObject(), playerObject.transform);
+        shakeMedium.name = "Intermediate";
+        shakeMedium.tag = "Intermediate";
+        shakeMedium.transform.localPosition = new Vector3(0, 16, -40);
+        shakeMedium.AddComponent<CameraZoom>();
+        GameObject camera = Instantiate<GameObject>(Resources.Load<GameObject>("prefabs/PlayerCamera"), shakeMedium.transform);
+        camera.name = "Player Camera";
+        camera.tag = "MainCamera";
+
+        return playerObject;
+    }
 }

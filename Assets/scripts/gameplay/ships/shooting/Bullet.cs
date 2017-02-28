@@ -1,0 +1,62 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Bullet : MonoBehaviour
+{
+    private float duration = 0;
+    private float durationTimer = 0;
+
+    //bullet collider
+    private BoxCollider2D boxCollider;
+
+    //stats
+    private float damage;
+
+	// Use this for initialization
+	void Start ()
+    {
+        this.duration = 0;
+        this.durationTimer = 0;
+        this.boxCollider = this.gameObject.GetComponent<BoxCollider2D>();
+    }
+
+    public void Activate(float damage, float duration, float velocity)
+    {
+        this.reset();
+
+        //set bullet stats
+        this.damage = damage;
+        this.duration = duration;
+
+        //set bullet velocity
+        this.gameObject.GetComponent<Movement>().Accelerate(velocity);
+    }
+
+    //resets all of stats for re-pooling
+    protected void reset()
+    {
+        this.duration = 0;
+        this.durationTimer = 0;
+
+        this.damage = 0;
+    }
+
+	// Update is called once per frame
+	void Update ()
+    {
+        this.durationTimer += Time.deltaTime;
+
+        //check if bullet should be removed
+        if (this.durationTimer > this.duration)
+        {
+            this.reset();
+            ObjectPool.Despawn(this.gameObject);
+        }
+	}
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        this.durationTimer = this.duration + 1f;
+    }
+}

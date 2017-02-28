@@ -16,7 +16,7 @@ public class CameraZoom : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        this.thisCamera = this.GetComponent<Camera>();
+        this.thisCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         this.thisCamera.aspect = GameSettings.CameraAspectRatio;
         this.thisCamera.fieldOfView = GameSettings.CameraFOV;
 	}
@@ -26,7 +26,7 @@ public class CameraZoom : MonoBehaviour
     {
         this.zoomAmount *= GameSettings.ZoomSpeed;
 
-        Vector3 newPos = this.thisCamera.transform.localPosition;
+        Vector3 newPos = this.transform.localPosition;
         float newZ = newPos.z + zoomAmount;
         float newY = newPos.y + zoomAmount * Mathf.Sin(Mathf.Deg2Rad * -20f);
         newPos.z = Mathf.Lerp(newPos.z, newZ, Time.deltaTime * this.smoothing);
@@ -34,7 +34,7 @@ public class CameraZoom : MonoBehaviour
 
         if (newPos.z > GameSettings.MinZoom && newPos.z < GameSettings.MaxZoom)
         {
-            this.thisCamera.transform.localPosition = newPos;
+            this.transform.localPosition = newPos;
         }
 
         this.zoomAmount = 0;

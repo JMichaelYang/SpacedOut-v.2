@@ -63,3 +63,9 @@ public class ShootCommand : Command
     public ShootCommand(object target, params int[] slots)
         : base(target, "ShootWeapons", slots) { }
 }
+
+public class ShakeCommand : Command
+{
+    public ShakeCommand(object target, float strength, float decrease)
+        : base(target, "StartShake", strength, decrease) { }
+}

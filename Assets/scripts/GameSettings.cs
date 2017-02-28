@@ -26,6 +26,9 @@ public class GameSettings : MonoBehaviour
     public static float MaxZoom = -10;
     public static float ZoomSpeed = 20f;
 
+    public static float ShotShake = 0.4f;
+    public static float ShakeDecrease = 4f;
+
     #endregion camera
 
     #region controls
@@ -75,9 +78,4 @@ public class GameSettings : MonoBehaviour
     #endregion touch
 
     #endregion controls
-
-    void Awake()
-    {
-        DontDestroyOnLoad(this);
-    }
 }
