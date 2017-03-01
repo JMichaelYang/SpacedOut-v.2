@@ -81,7 +81,7 @@ public class Weapons : MonoBehaviour
                     {
                         //shoot the gun and add to the shot counters
                         GameObject shotBullet = this.guns[slots[i]].ShootGun(this.transform.position + (Vector3)Utils.RotateVector2(this.offsets[slots[i]], this.transform.rotation.eulerAngles.z), 
-                            this.transform.rotation);
+                            this.transform.rotation, this.gameObject);
                         this.shotCounters[i]++;
                         this.burstCounters[i]++;
 
@@ -172,11 +172,11 @@ public class Gun
         return gun;
     }
 
-    public GameObject ShootGun(Vector3 pos, Quaternion rot)
+    public GameObject ShootGun(Vector3 pos, Quaternion rot, GameObject shooter)
     {
         GameObject bullet = ObjectPool.Spawn(this.bulletPrefab, pos, rot);
         bullet.transform.Rotate(0, 0, Random.Range(-this.Accuracy, this.Accuracy));
-        bullet.GetComponent<Bullet>().Activate(this.Damage, this.Range, this.Velocity);
+        bullet.GetComponent<Bullet>().Activate(this.Damage, this.Range, this.Velocity, shooter);;
         return bullet;
     }
 }
@@ -204,8 +204,6 @@ public class GunType
         this.Damage = damage;
         this.Velocity = velocity;
         this.Range = range;
-        this.BurstDelay = burstDelay;
-        Debug.Log(BurstDelay + ", " + burstDelay);
         this.BurstAmount = burstAmount;
         this.BurstDelay = burstReload;
         this.Reload = reload;

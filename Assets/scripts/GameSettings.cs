@@ -78,4 +78,11 @@ public class GameSettings : MonoBehaviour
     #endregion touch
 
     #endregion controls
+
+    #region resources
+
+    public static readonly string ShipPrefab = "prefabs/ships/Ship";
+    public static readonly string ShipExplosion = "prefabs/ships/ExplosionSystem";
+
+    #endregion resources
 }

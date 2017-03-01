@@ -9,6 +9,8 @@ public class Bullet : MonoBehaviour
 
     //bullet collider
     private BoxCollider2D boxCollider;
+    //shooter
+    private GameObject shooter;
 
     //stats
     private float damage;
@@ -21,7 +23,7 @@ public class Bullet : MonoBehaviour
         this.boxCollider = this.gameObject.GetComponent<BoxCollider2D>();
     }
 
-    public void Activate(float damage, float duration, float velocity)
+    public void Activate(float damage, float duration, float velocity, GameObject shooter)
     {
         this.reset();
 
@@ -29,8 +31,15 @@ public class Bullet : MonoBehaviour
         this.damage = damage;
         this.duration = duration;
 
+        Debug.Log("Shooter set to: " + this.shooter.ToString());
+
         //set bullet velocity
         this.gameObject.GetComponent<Movement>().Accelerate(velocity);
+
+        //set shooter for this bullet
+        this.shooter = shooter;
+
+        //Debug.Log("Shooter set to: " + this.shooter.ToString());
     }
 
     //resets all of stats for re-pooling
@@ -40,6 +49,8 @@ public class Bullet : MonoBehaviour
         this.durationTimer = 0;
 
         this.damage = 0;
+
+        this.shooter = null;
     }
 
 	// Update is called once per frame
@@ -57,6 +68,22 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        this.durationTimer = this.duration + 1f;
+        Debug.Log(other.gameObject.ToString());
+        Debug.Log("was hit by");
+        Debug.Log(this.shooter.ToString());
+
+        if (other.gameObject != this.shooter)
+        {
+            Debug.Log("Hit registered");
+
+            this.durationTimer = this.duration + 1f;
+
+            //apply bullet damage
+            ShipHandler shipHandler = other.GetComponent<ShipHandler>();
+            if (shipHandler != null)
+            {
+                shipHandler.DamageShip(this.damage);
+            }
+        }
     }
 }
