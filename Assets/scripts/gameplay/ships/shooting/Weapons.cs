@@ -176,7 +176,7 @@ public class Gun
     {
         GameObject bullet = ObjectPool.Spawn(this.bulletPrefab, pos, rot);
         bullet.transform.Rotate(0, 0, Random.Range(-this.Accuracy, this.Accuracy));
-        bullet.GetComponent<Bullet>().Activate(this.Damage, this.Range, this.Velocity, shooter);;
+        bullet.GetComponent<Bullet>().Activate(this.Damage, this.Range, this.Velocity, shooter);
         return bullet;
     }
 }

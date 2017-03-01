@@ -4,23 +4,31 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    private float duration = 0;
+    //life timer
     private float durationTimer = 0;
-
-    //bullet collider
-    private BoxCollider2D boxCollider;
+    //bulletmovement component
+    private Movement movement;
     //shooter
     private GameObject shooter;
 
     //stats
     private float damage;
+    private float duration = 0;
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Awake ()
     {
         this.duration = 0;
         this.durationTimer = 0;
-        this.boxCollider = this.gameObject.GetComponent<BoxCollider2D>();
+
+        try
+        {
+            this.movement = this.gameObject.GetComponent<Movement>();
+        }
+        catch
+        {
+            Debug.Log("Could not find Movement component of " + this.gameObject.ToString());
+        }
     }
 
     public void Activate(float damage, float duration, float velocity, GameObject shooter)
@@ -31,15 +39,11 @@ public class Bullet : MonoBehaviour
         this.damage = damage;
         this.duration = duration;
 
-        Debug.Log("Shooter set to: " + this.shooter.ToString());
-
-        //set bullet velocity
-        this.gameObject.GetComponent<Movement>().Accelerate(velocity);
-
         //set shooter for this bullet
         this.shooter = shooter;
 
-        //Debug.Log("Shooter set to: " + this.shooter.ToString());
+        //set bullet velocity
+        this.movement.Accelerate(velocity);
     }
 
     //resets all of stats for re-pooling
@@ -68,14 +72,8 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log(other.gameObject.ToString());
-        Debug.Log("was hit by");
-        Debug.Log(this.shooter.ToString());
-
         if (other.gameObject != this.shooter)
         {
-            Debug.Log("Hit registered");
-
             this.durationTimer = this.duration + 1f;
 
             //apply bullet damage

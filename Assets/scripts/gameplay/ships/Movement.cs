@@ -24,7 +24,7 @@ public class Movement : MonoBehaviour
     public float MaxVelocity = 1;
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         try
         {
@@ -32,7 +32,7 @@ public class Movement : MonoBehaviour
         }
         catch
         {
-            Debug.Log("Could not find RigidBody2D component of " + this.gameObject);
+            Debug.Log("Could not find RigidBody2D component of " + this.gameObject.ToString());
         }
 
         this.acceleration = Vector2.zero;
@@ -40,12 +40,6 @@ public class Movement : MonoBehaviour
 
         this.DampenInertia = GameSettings.DampenInteria;
         this.DampeningMultiplier = GameSettings.DampeningMultiplier;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     void FixedUpdate()

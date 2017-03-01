@@ -35,7 +35,7 @@ public class GameSettings : MonoBehaviour
 
     //inertial dampening settings
     public static bool DampenInteria = true;
-    public static float DampeningMultiplier = 0.005f;
+    public static float DampeningMultiplier = 0.01f;
 
     #region keyboard
 

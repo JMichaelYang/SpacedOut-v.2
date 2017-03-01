@@ -50,7 +50,6 @@ public static class ObjectPool
             this.objects.Add(obj);
             obj.SetActive(true);
             return obj;
-
         }
     }
 
