@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CommandHandler : MonoBehaviour
 {
+    //singleton instance
+    public static CommandHandler Instance = null;
+
     //command stream
     private List<Command> commands;
 
@@ -18,15 +21,27 @@ public class CommandHandler : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
+        //maintain singleton pattern
+        if (CommandHandler.Instance == null)
+        {
+            CommandHandler.Instance = this;
+        }
+        else if (CommandHandler.Instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+
+        DontDestroyOnLoad(this.gameObject);
+
         this.commands = new List<Command>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        foreach (Command command in this.commands)
+        for (int i = 0; i < this.commands.Count; i++)
         {
-            command.Execute();
+            this.commands[i].Execute();
         }
 
         //clear list of commands executed this update

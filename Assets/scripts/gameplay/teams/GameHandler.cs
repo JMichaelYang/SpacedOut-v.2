@@ -4,35 +4,50 @@ using UnityEngine;
 
 public class GameHandler : MonoBehaviour
 {
-    public List<Team> Teams { get; protected set; }
+    //singleton pattern
+    public static GameHandler Instance = null;
 
-	// Use this for initialization
-	void Awake ()
+    private List<Team> teams;
+
+    // Use this for initialization
+    void Awake()
     {
+        //maintain singleton pattern
+        if (GameHandler.Instance == null)
+        {
+            GameHandler.Instance = this;
+        }
+        else if (GameHandler.Instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+
+        DontDestroyOnLoad(this.gameObject);
+
         //TODO: Replace this test code
 
-        this.Teams = new List<Team>();
+        this.teams = new List<Team>();
 
-        this.Teams.Add(new Team());
-        this.Teams[0].Name = "Team One";
-        this.Teams[0].TeamColor = Color.blue;
-        this.Teams[0].Ships = new List<GameObject>();
-        this.Teams[0].Ships.Add(this.spawnPlayer(Instantiate<GameObject>(Resources.Load<GameObject>(GameSettings.ShipPrefab))));
+        this.teams.Add(new Team());
+        this.teams[0].Name = "Team One";
+        this.teams[0].TeamColor = Color.blue;
+        this.teams[0].Ships = new List<GameObject>();
+        this.teams[0].Ships.Add(this.spawnPlayer(Instantiate<GameObject>(Resources.Load<GameObject>(GameSettings.ShipPrefab))));
 
-        this.Teams.Add(new Team());
-        this.Teams[1].Name = "Team Two";
-        this.Teams[1].TeamColor = Color.red;
-        this.Teams[1].Ships = new List<GameObject>();
-        this.Teams[1].Ships.Add(Instantiate<GameObject>(Resources.Load<GameObject>(GameSettings.ShipPrefab)));
-        this.Teams[1].Ships[0].tag = "AI";
-        this.Teams[1].Ships[0].transform.position = new Vector3(0, 10, 0);
+        this.teams.Add(new Team());
+        this.teams[1].Name = "Team Two";
+        this.teams[1].TeamColor = Color.red;
+        this.teams[1].Ships = new List<GameObject>();
+
+        for (int i = 0; i < 15; i++)
+        {
+            this.teams[1].Ships.Add(Instantiate<GameObject>(Resources.Load<GameObject>(GameSettings.ShipPrefab)));
+            this.teams[1].Ships[i].tag = "AI";
+            this.teams[1].Ships[i].transform.position = new Vector3(Random.Range(-10f, 10f), Random.Range(10f, 30f), 0);
+            this.teams[1].Ships[i].transform.Rotate(0f, 0f, Random.Range(-180f, 180f));
+            this.teams[1].Ships[i].GetComponent<Movement>().Accelerate(Random.Range(20f, 30f));
+        }
     }
-	
-	// Update is called once per frame
-	void Update ()
-    {
-		
-	}
 
     private GameObject spawnPlayer(GameObject playerObject)
     {

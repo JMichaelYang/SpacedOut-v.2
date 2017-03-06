@@ -1,25 +1,26 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    //life timer
-    private float durationTimer = 0;
     //bulletmovement component
     private Movement movement;
     //shooter
     private GameObject shooter;
 
     //stats
-    private float damage;
-    private float duration = 0;
+    public float Damage { get; protected set; }
+    private float duration = 0f;
+
+    private BulletHitEventArgs e = new BulletHitEventArgs(null, null);
 
     // Use this for initialization
-    void Awake ()
+    void Awake()
     {
-        this.duration = 0;
-        this.durationTimer = 0;
+        this.Damage = 0f;
+        this.duration = 0f;
 
         try
         {
@@ -36,52 +37,44 @@ public class Bullet : MonoBehaviour
         this.reset();
 
         //set bullet stats
-        this.damage = damage;
+        this.Damage = damage;
         this.duration = duration;
-
         //set shooter for this bullet
         this.shooter = shooter;
 
         //set bullet velocity
         this.movement.Accelerate(velocity);
+
+        //set this bullet up to be destroyed after its duration elapses
+        Invoke("Kill", this.duration);
     }
 
     //resets all of stats for re-pooling
     protected void reset()
     {
-        this.duration = 0;
-        this.durationTimer = 0;
-
-        this.damage = 0;
-
+        this.duration = 0f;
+        this.Damage = 0f;
         this.shooter = null;
     }
 
-	// Update is called once per frame
-	void Update ()
+    void Kill()
     {
-        this.durationTimer += Time.deltaTime;
-
-        //check if bullet should be removed
-        if (this.durationTimer > this.duration)
-        {
-            this.reset();
-            ObjectPool.Despawn(this.gameObject);
-        }
-	}
+        this.reset();
+        ObjectPool.Despawn(this.gameObject);
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject != this.shooter)
         {
-            this.durationTimer = this.duration + 1f;
+            CancelInvoke();
 
             //apply bullet damage
-            ShipHandler shipHandler = other.GetComponent<ShipHandler>();
-            if (shipHandler != null)
-            {
-                shipHandler.DamageShip(this.damage);
-            }
+            this.e.Shot = this;
+            this.e.HitCollider = other;
+            GameEventHandler.OnBulletHit(this, this.e);
+
+            this.Kill();
         }
     }
 }

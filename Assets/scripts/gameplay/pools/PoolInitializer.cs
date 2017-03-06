@@ -7,18 +7,22 @@ using UnityEngine;
 /// </summary>
 public class PoolInitializer : MonoBehaviour
 {
-    public GameObject debugBullet = null;
+    public GameObject DebugBullet = null;
+    public int NumBullets = 0;
+    public GameObject Explosion = null;
+    public int NumExplosions = 0;
 
 	// Use this for initialization
 	void Start ()
     {
         //if a debug bullet object exists, preload a pool
-        if (debugBullet != null)
+        if (DebugBullet != null)
         {
-            ObjectPool.Preload(debugBullet, 100);
+            ObjectPool.Preload(this.DebugBullet, this.NumBullets);
+        }
+        if (Explosion != null)
+        {
+            ObjectPool.Preload(this.Explosion, this.NumExplosions);
         }
 	}
-
-    // Update is called once per frame
-    void Update() { }
 }

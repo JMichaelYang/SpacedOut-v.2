@@ -46,10 +46,4 @@ public class GuiHandler : MonoBehaviour
         this.button.GetComponent<Button>().Initialize(GameSettings.ShootButtonWidth, GameSettings.ShootButtonHeight,
             Resources.Load<Sprite>("sprites/gui/button/ButtonUp"), Resources.Load<Sprite>("sprites/gui/button/ButtonDown"), GameSettings.ShootButtonOpacity);
     }
-
-    // Update is called once per frame
-    void Update ()
-    {
-        
-	}
 }

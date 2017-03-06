@@ -24,9 +24,9 @@ public class GameSettings : MonoBehaviour
     public static float CameraAspectRatio = 9f / 16f;
     public static float MinZoom = -100;
     public static float MaxZoom = -10;
-    public static float ZoomSpeed = 20f;
+    public static float ZoomSpeed = 10f;
 
-    public static float ShotShake = 0.4f;
+    public static float ShotShake = 0.2f;
     public static float ShakeDecrease = 4f;
 
     #endregion camera
@@ -83,6 +83,8 @@ public class GameSettings : MonoBehaviour
 
     public static readonly string ShipPrefab = "prefabs/ships/Ship";
     public static readonly string ShipExplosion = "prefabs/ships/ExplosionSystem";
+
+    public static readonly string StarPrefab = "prefabs/arena/Star";
 
     #endregion resources
 }

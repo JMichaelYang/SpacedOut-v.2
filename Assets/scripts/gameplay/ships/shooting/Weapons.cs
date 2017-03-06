@@ -12,10 +12,14 @@ public class Weapons : MonoBehaviour
     private float[] reloadTimers;
     private int[] shotCounters;
 
+    private float oldTime = 0;
+
     public WeaponType type = WeaponTypes.DebugWeapon;
 
     private CommandHandler commandHandler;
     private CameraShake shake;
+
+    private WeaponShootEventArgs e = new WeaponShootEventArgs(0f);
 
     public void ReadWeapons(WeaponType weapons)
     {
@@ -41,6 +45,8 @@ public class Weapons : MonoBehaviour
         this.reloadTimers = new float[this.guns.Length];
         this.shotCounters = new int[this.guns.Length];
 
+        this.oldTime = 0;
+
         //TODO: delete this test code
         for (int i = 0; i < this.guns.Length; i++)
         {
@@ -54,19 +60,17 @@ public class Weapons : MonoBehaviour
         this.shake = GameObject.FindObjectOfType<CameraShake>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        for (int i = 0; i < this.burstTimers.Length; i++)
-        {
-            this.shotTimers[i] += Time.deltaTime;
-            this.burstTimers[i] += Time.deltaTime;
-            this.reloadTimers[i] += Time.deltaTime;
-        }
-    }
-
     public bool ShootWeapons(params int[] slots)
     {
+        for (int i = 0; i < this.guns.Length; i++)
+        {
+            float interval = Time.time - this.oldTime;
+            this.shotTimers[i] += interval;
+            this.burstTimers[i] += interval;
+            this.reloadTimers[i] += interval;
+            this.oldTime = Time.time;
+        }
+
         //this.guns[0].ShootGun(this.transform.position + this.offsets[0], this.transform.rotation);
         for (int i = 0; i < slots.Length; i++)
         {
@@ -108,7 +112,8 @@ public class Weapons : MonoBehaviour
                             this.burstTimers[i] = 0;
                         }
 
-                        this.shake.StartShake(GameSettings.ShotShake, GameSettings.ShakeDecrease);
+                        this.e.Damage = this.guns[slots[i]].Damage;
+                        GameEventHandler.OnWeaponShoot(this, this.e);
 
                         return true;
                     }

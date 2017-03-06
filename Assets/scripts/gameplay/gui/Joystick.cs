@@ -81,9 +81,6 @@ public class Joystick : MonoBehaviour
         this.knob.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, this.knobOpacity);
     }
 
-    // Update is called once per frame
-    void Update() { }
-
     /// <summary>
     /// Updates the joystick
     /// </summary>
@@ -125,7 +122,7 @@ public class Joystick : MonoBehaviour
                 this.knob.transform.localPosition = new Vector3(localTouchX, localTouchY, this.transform.localPosition.z) - this.transform.localPosition;
 
                 //limit magnitude of knob distance to joystick radius
-                if (this.knob.transform.localPosition.sqrMagnitude > Mathf.Pow(this.radius, 2))
+                if (this.knob.transform.localPosition.sqrMagnitude > this.radius * this.radius)
                 {
                     this.knob.transform.localPosition *= (this.radius / this.knob.transform.localPosition.magnitude);
                 }

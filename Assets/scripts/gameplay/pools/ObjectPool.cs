@@ -100,5 +100,4 @@ public static class ObjectPool
     {
         obj.SetActive(false);
     }
-
 }

@@ -11,6 +11,7 @@ public class CameraZoom : MonoBehaviour
     public void ChangeZoom(float value)
     {
         this.zoomAmount = value;
+        Invoke("Zoom", 0f);
     }
 
 	// Use this for initialization
@@ -21,8 +22,8 @@ public class CameraZoom : MonoBehaviour
         this.thisCamera.fieldOfView = GameSettings.CameraFOV;
 	}
 	
-	// Update is called once per frame
-	void Update ()
+	//function to zoom
+	void Zoom ()
     {
         this.zoomAmount *= GameSettings.ZoomSpeed;
 

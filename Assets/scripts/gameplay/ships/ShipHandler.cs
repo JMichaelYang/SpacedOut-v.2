@@ -12,8 +12,11 @@ public class ShipHandler : MonoBehaviour
 
     //explosion particle system
     private GameObject explosion;
+    private ParticleSystem explosionSystem;
     //rigid body
     private Rigidbody2D physicsBody;
+    //collider
+    private Collider2D collider2d;
 
 	// Use this for initialization
 	void Start ()
@@ -21,28 +24,28 @@ public class ShipHandler : MonoBehaviour
         this.Health = 100;
 
         this.explosion = Resources.Load<GameObject>(GameSettings.ShipExplosion);
+        this.explosionSystem = this.explosion.GetComponent<ParticleSystem>();
         this.physicsBody = this.GetComponent<Rigidbody2D>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+        this.collider2d = this.GetComponent<Collider2D>();
 	}
 
     /// <summary>
     /// Damage the ship
     /// </summary>
     /// <param name="damage">Amount to damage the ship by</param>
-    public void DamageShip(float damage)
+    void DamageShip(object sender, BulletHitEventArgs e)
     {
-        this.Health -= damage;
-
-        //ship death
-        if (this.Health < 0)
+        if (e.HitCollider == this.collider2d)
         {
-            this.Health = 0;
+            this.Health -= e.Shot.Damage;
 
-            this.DestroyShip();
+            //ship death
+            if (this.Health < 0)
+            {
+                this.Health = 0;
+
+                this.DestroyShip();
+            }
         }
     }
 
@@ -61,9 +64,32 @@ public class ShipHandler : MonoBehaviour
 
         //add drag to rigid body to stop it
         this.physicsBody.drag = 0.5f;
-        //start explosion on ship location
-        Instantiate(this.explosion, this.transform).transform.localPosition = Vector3.zero;
+        //start explosion on ship location 
+        //TODO: preload explosion
+        ObjectPool.Spawn(this.explosion, this.transform.position, this.transform.rotation);
+        Invoke("AfterExplosion", this.explosionSystem.main.duration + this.explosionSystem.main.startLifetime.constantMax);
     }
+
+    void AfterExplosion()
+    {
+        ObjectPool.Despawn(this.explosion);
+        Debug.Log("Deactivated explosion");
+    }
+
+    #region Event Registration
+
+    void OnEnable()
+    {
+        //register event
+        GameEventHandler.OnBulletHit += this.DamageShip;
+    }
+    void OnDisable()
+    {
+        //de-register event
+        GameEventHandler.OnBulletHit -= this.DamageShip;
+    }
+
+    #endregion Event Registration
 }
 
 public class ShipType

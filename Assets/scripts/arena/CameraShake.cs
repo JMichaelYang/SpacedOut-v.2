@@ -11,6 +11,25 @@ public class CameraShake : MonoBehaviour
     //adjustment vector
     private Vector3 adjust = Vector3.zero;
 
+    #region Event Registration
+
+    void OnEnable()
+    {
+        //register event
+        GameEventHandler.OnWeaponShoot += this.StartShakeEvent;
+    }
+    void OnDisable()
+    {
+        //de-register event
+        GameEventHandler.OnWeaponShoot -= this.StartShakeEvent;
+    }
+    private void StartShakeEvent(object sender, WeaponShootEventArgs e)
+    {
+        this.StartShake(GameSettings.ShotShake, GameSettings.ShakeDecrease);
+    }
+
+    #endregion Event Registration
+
     // Use this for initialization
     void Awake()
     {
@@ -24,30 +43,18 @@ public class CameraShake : MonoBehaviour
         this.transform.localPosition = Vector3.zero;
     }
 
-    // Update is called once per frame
-    //TODO: Add in between object between camera and player, change zoom to use that object
-    void Update()
+    //function to shake the camera
+    void Shake()
     {
         if (this.strength < 0.01f)
         {
             this.strength = 0f;
             this.decrease = 0f;
+            this.transform.localPosition = Vector3.zero;
             this.adjust = Vector3.zero;
+            CancelInvoke("Shake");
         }
         else
-        {
-            this.strength /= this.decrease;
-        }
-
-        if (this.strength == 0f)
-        {
-            if (this.transform.localPosition != Vector3.zero)
-            {
-                this.transform.localPosition = Vector3.zero;
-                this.adjust = Vector3.zero;
-            }
-        }
-        else if (this.strength >= 0.01f)
         {
             this.adjust.x += Random.Range(-this.strength, this.strength);
             this.adjust.y += Random.Range(-this.strength, this.strength);
@@ -72,6 +79,8 @@ public class CameraShake : MonoBehaviour
             //Mathf.Clamp(this.adjust.y, -this.strength, this.strength);
 
             this.transform.localPosition = this.adjust;
+
+            this.strength /= this.decrease;
         }
     }
 
@@ -79,9 +88,11 @@ public class CameraShake : MonoBehaviour
     /// Function to start a camera shake
     /// </summary>
     /// <param name="strength">The magnitude with which to shake the camera</param>
-    public void StartShake(float strength, float decrease)
+    private void StartShake(float strength, float decrease)
     {
         this.strength = strength;
         this.decrease = decrease;
+
+        InvokeRepeating("Shake", 0f, 0.03f);
     }
 }

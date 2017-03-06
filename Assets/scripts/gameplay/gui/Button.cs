@@ -60,9 +60,6 @@ public class Button : MonoBehaviour
         this.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, this.opacity);
     }
 
-    // Update is called once per frame
-    void Update() { }
-
     /// <summary>
     /// Updates the button
     /// </summary>

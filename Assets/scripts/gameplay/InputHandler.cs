@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class InputHandler : MonoBehaviour
 {
+    //singleton pattern
+    public static InputHandler Instance = null;
+
     //store an instance of the player object
     private GameObject player;
     private Weapons weapons;
@@ -27,6 +30,21 @@ public class InputHandler : MonoBehaviour
     private int shootButtonFingerId = -1;
 
     #endregion Touch Input Components
+
+    void Awake()
+    {
+        //maintain singleton pattern
+        if (InputHandler.Instance == null)
+        {
+            InputHandler.Instance = this;
+        }
+        else if (InputHandler.Instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+
+        DontDestroyOnLoad(this.gameObject);
+    }
 
     // Use this for initialization
     void Start()

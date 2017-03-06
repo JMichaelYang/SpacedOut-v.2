@@ -56,9 +56,6 @@ public class ZoomSpot : MonoBehaviour
         this.maxDistance = maxDistance;
     }
 
-    // Update is called once per frame
-    void Update() { }
-
     /// <summary>
     /// Updates the zoom spot
     /// </summary>

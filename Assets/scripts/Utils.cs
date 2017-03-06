@@ -26,9 +26,9 @@ public class Utils : MonoBehaviour
     public static int WeightedRandom(params int[] numbers)
     {
         int maxNum = 0;
-        foreach (int i in numbers)
+        for (int i = 0; i < numbers.Length; i++)
         {
-            maxNum += i;
+            maxNum += numbers[i];
         }
 
         float genNum = Random.Range(0f, maxNum);
