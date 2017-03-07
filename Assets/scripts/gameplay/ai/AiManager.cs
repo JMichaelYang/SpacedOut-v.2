@@ -1,38 +1,89 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class AiManager : MonoBehaviour
-{	
-	// Update is called once per frame
-	void Update ()
+{
+    //current list of behaviors in use
+    private List<AiBehavior> currentBehavior;
+
+    //reference to GameObject components
+    private Transform aiTransform;
+    private Movement movement;
+
+    void Awake()
     {
+        this.currentBehavior = new List<AiBehavior>();
+
+        //assign components
+        this.aiTransform = this.transform;
+        this.movement = this.gameObject.GetComponent<Movement>();
+    }
+
+    void Start()
+    {
+        //TODO: Test code, pleas remove
+        this.addBehavior(new AiSeekBehavior(GameObject.FindGameObjectWithTag("Player").transform, this.aiTransform));
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        //add up all steering forces
         Vector2 steering = Vector2.zero;
-        steering += AiSeek.GetSteeringForce(this.transform);
-        CommandHandler.Instance.AddCommands(new AccelerateCommand(this.gameObject, steering.x, steering.y));
-	}
-}
+        for (int i = 0; i < this.currentBehavior.Count; i++) { steering += this.currentBehavior[i].GetSteeringForce(); }
+        this.currentBehavior.Clear();
 
-/// <summary>
-/// Base class for AI behaviors
-/// </summary>
-public abstract class AiBehavior
-{
+        //get a desired rotation from the steering force
+        float desiredRotation = Mathf.Atan2(steering.y, steering.x);
+        //add command with aggregated steering forces
+        CommandHandler.Instance.AddCommands(new AccelerateCommand(this.movement, steering.x, steering.y), 
+            new RotateCommand(this.movement, desiredRotation - this.aiTransform.rotation.eulerAngles.z));
+    }
+
     /// <summary>
-    /// Function to get result steering force
+    /// Function to add a behavior to the ai
     /// </summary>
-    /// <returns>Returns the force to use</returns>
-    public abstract Vector2 GetSteeringForce(Transform target);
-}
-
-#region Behaviors
-
-public class AiSeek : AiBehavior
-{
-    public static override Vector2 GetSteeringForce(Transform target)
+    /// <param name="behavior">The behavior to be added</param>
+    protected void addBehavior(AiBehavior behavior)
     {
-        return Vector2.zero;
+        this.currentBehavior.Add(behavior);
     }
 }
 
-#endregion Behaviors
+/// <summary>
+/// Parent class for all AI behavior functions
+/// </summary>
+public abstract class AiBehavior
+{
+    protected Transform target;
+    protected Transform aiTransform;
+
+    //parent function, all AiBehaviors should be able to get a force from a target
+    public abstract Vector2 GetSteeringForce(Transform target, Transform ai);
+    public Vector2 GetSteeringForce(Transform target) { return this.GetSteeringForce(target, this.aiTransform); }
+    public Vector2 GetSteeringForce() { return this.GetSteeringForce(this.target, this.aiTransform); }
+}
+
+#region AI Behavior Classes
+
+/// <summary>
+/// Behavior that follows the exact position of a target
+/// </summary>
+public class AiSeekBehavior : AiBehavior
+{
+    public AiSeekBehavior(Transform target, Transform aiTransform)
+    {
+        this.target = target;
+        this.aiTransform = aiTransform;
+    }
+
+    public override Vector2 GetSteeringForce(Transform target, Transform ai)
+    {
+        Vector2 steeringForce = target.position - ai.position;
+        return steeringForce;
+    }
+}
+
+#endregion AI Behavior Classes
