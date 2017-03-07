@@ -33,12 +33,11 @@ public class AiManager : MonoBehaviour
         //add up all steering forces
         Vector2 steering = Vector2.zero;
         for (int i = 0; i < this.currentBehavior.Count; i++) { steering += this.currentBehavior[i].GetSteeringForce(); }
-        this.currentBehavior.Clear();
 
         //get a desired rotation from the steering force
-        float desiredRotation = Mathf.Atan2(steering.y, steering.x);
+        float desiredRotation = Mathf.Atan2(steering.y, steering.x) * Mathf.Rad2Deg - 90f;
         //add command with aggregated steering forces
-        CommandHandler.Instance.AddCommands(new AccelerateCommand(this.movement, steering.x, steering.y), 
+        CommandHandler.Instance.AddCommands(new AccelerateCommand(this.movement, steering.x, steering.y),
             new RotateCommand(this.movement, desiredRotation - this.aiTransform.rotation.eulerAngles.z));
     }
 

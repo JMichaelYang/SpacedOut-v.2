@@ -21,7 +21,8 @@ public class Movement : MonoBehaviour
     public float RotationMultiplier = 1f;
 
     //movement speed cap
-    public float MaxVelocity = 1;
+    public float MaxVelocity = 1f;
+    public float MaxRotationalVelocity = 1f;
 
     // Use this for initialization
     void Awake()
@@ -81,7 +82,7 @@ public class Movement : MonoBehaviour
 
     public void Rotate(float magnitude)
     {
-        this.rotation += magnitude;
+        this.rotation += Mathf.Clamp(magnitude, -this.MaxRotationalVelocity, this.MaxRotationalVelocity);
     }
 
     public void Accelerate(float magnitude)
