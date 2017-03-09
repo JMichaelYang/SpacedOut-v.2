@@ -39,19 +39,19 @@ public class GameHandler : MonoBehaviour
         this.teams[1].TeamColor = Color.red;
         this.teams[1].Ships = new List<GameObject>();
 
-        for (int i = 0; i < 15; i++)
+        for (int i = 0; i < 3; i++)
         {
             this.teams[1].Ships.Add(Instantiate<GameObject>(Resources.Load<GameObject>(GameSettings.ShipPrefab)));
             this.teams[1].Ships[i].tag = "AI";
             this.teams[1].Ships[i].transform.position = new Vector3(Random.Range(-10f, 10f), Random.Range(10f, 30f), 0);
             this.teams[1].Ships[i].transform.Rotate(0f, 0f, Random.Range(-180f, 180f));
-            this.teams[1].Ships[i].GetComponent<Movement>().Accelerate(Random.Range(20f, 30f));
         }
     }
 
     private GameObject spawnPlayer(GameObject playerObject)
     {
         playerObject.tag = "Player";
+        Destroy(playerObject.GetComponent<AiManager>());
 
         GameObject shakeMedium = Instantiate<GameObject>(new GameObject(), playerObject.transform);
         shakeMedium.name = "Intermediate";

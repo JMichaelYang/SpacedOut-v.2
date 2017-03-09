@@ -54,11 +54,12 @@ public class ShipHandler : MonoBehaviour
     /// </summary>
     private void DestroyShip()
     {
-        foreach (Component component in this.gameObject.GetComponents<Component>())
+        Component[] components = this.gameObject.GetComponents<Component>();
+        for(int i = 0; i < components.Length; i++)
         {
-            if (!(component is Transform) && !(component is Rigidbody2D) && !(component is ShipHandler))
+            if (!(components[i] is Transform) && !(components[i] is Rigidbody2D) && !(components[i] is ShipHandler))
             {
-                Destroy(component);
+                Destroy(components[i]);
             }
         }
 
@@ -95,6 +96,7 @@ public class ShipHandler : MonoBehaviour
 public class ShipType
 {
     public float Health;
+    public Vector2[] Offsets;
 
     public ShipType(float health)
     {

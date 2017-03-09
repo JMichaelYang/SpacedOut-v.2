@@ -90,4 +90,11 @@ public class Utils : MonoBehaviour
 
         return new Vector2(cos * tx - sin * ty, sin * tx + cos * ty);
     }
+
+    //finds the smalles angle between two rotations
+    public static float FindAngleDifference(float angle1, float angle2)
+    {
+        float diff = (angle2 - angle1 + 180f) % 360 - 180f;
+        return diff < -180f ? diff + 360f : diff;
+    }
 }
