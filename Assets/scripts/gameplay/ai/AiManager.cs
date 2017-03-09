@@ -23,8 +23,11 @@ public class AiManager : MonoBehaviour
 
     void Start()
     {
-        //TODO: Test code, pleas remove
-        this.addBehavior(new AiSeekBehavior(GameObject.FindGameObjectWithTag("Player").transform, this.aiTransform));
+        //TODO: Test code, please remove
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        this.addBehavior(new AiSeekBehavior(player.transform, this.aiTransform));
+        //this.addBehavior(new AiFleeBehabior(player.transform, this.aiTransform));
+        //this.addBehavior(new AiPursueBehavior(player.transform, this.aiTransform, player.GetComponent<Rigidbody2D>(), player.GetComponent<Movement>().MaxVelocity));
     }
 
     // Update is called once per frame
@@ -35,16 +38,17 @@ public class AiManager : MonoBehaviour
         for (int i = 0; i < this.currentBehavior.Count; i++) { steering += this.currentBehavior[i].GetSteeringForce(); }
 
         //get a desired rotation from the steering force
-        float desiredRotation = Mathf.Atan2(steering.y, steering.x) * Mathf.Rad2Deg - 90f;
+        float desiredRotation = Mathf.Atan2(steering.y, steering.x) * Mathf.Rad2Deg + 90f;
+        desiredRotation = Utils.FindAngleDifference(desiredRotation, this.aiTransform.rotation.eulerAngles.z);
         //add command with aggregated steering forces
         CommandHandler.Instance.AddCommands(new AccelerateCommand(this.movement, steering.x, steering.y),
-            new RotateCommand(this.movement, desiredRotation - this.aiTransform.rotation.eulerAngles.z));
+            new RotateCommand(this.movement, desiredRotation));
     }
 
     /// <summary>
     /// Function to add a behavior to the ai
     /// </summary>
-    /// <param name="behavior">The behavior to be added</param>
+    /// <param name="behavior">the behavior to be added</param>
     protected void addBehavior(AiBehavior behavior)
     {
         this.currentBehavior.Add(behavior);
@@ -80,8 +84,55 @@ public class AiSeekBehavior : AiBehavior
 
     public override Vector2 GetSteeringForce(Transform target, Transform ai)
     {
-        Vector2 steeringForce = target.position - ai.position;
-        return steeringForce;
+        return target.position - ai.position;
+    }
+}
+/// <summary>
+/// Behavior that runs away from the target
+/// </summary>
+public class AiFleeBehabior : AiBehavior
+{
+    public AiFleeBehabior(Transform target, Transform aiTransform)
+    {
+        this.target = target;
+        this.aiTransform = aiTransform;
+    }
+
+    public override Vector2 GetSteeringForce(Transform target, Transform ai)
+    {
+        return ai.position - target.position;
+    }
+}
+/// <summary>
+/// Behavior that follows the future position of a target
+/// </summary>
+public class AiPursueBehavior : AiBehavior
+{
+    protected Rigidbody2D targetBody;
+    protected float aiMaxSpeed;
+
+    public AiPursueBehavior(Transform target, Transform aiTransform, Rigidbody2D targetBody, float aiMaxSpeed)
+    {
+        this.target = target;
+        this.aiTransform = aiTransform;
+
+        this.targetBody = targetBody;
+        this.aiMaxSpeed = aiMaxSpeed;
+    }
+
+    public override Vector2 GetSteeringForce(Transform target, Transform ai)
+    {
+        try
+        {
+            //determine how many frames it will take to get to the target
+            float t = (target.position - ai.position).magnitude / this.aiMaxSpeed;
+            return (Vector2)target.position + this.targetBody.velocity * t - (Vector2)ai.position;
+        }
+        catch (NullReferenceException e)
+        {
+            Debug.Log(e.Message);
+            return Vector2.zero;
+        }
     }
 }
 

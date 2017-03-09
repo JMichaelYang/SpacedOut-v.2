@@ -8,13 +8,14 @@ public class CommandHandler : MonoBehaviour
     public static CommandHandler Instance = null;
 
     //command stream
-    private List<Command> commands;
+    private Queue<Command> commands;
 
     public void AddCommands(params Command[] commands)
     {
-        foreach (Command command in commands)
+        int len = commands.Length;
+        for (int i = 0; i < len; i++)
         {
-            this.commands.Add(command);
+            this.commands.Enqueue(commands[i]);
         }
     }
 
@@ -33,7 +34,7 @@ public class CommandHandler : MonoBehaviour
 
         DontDestroyOnLoad(this.gameObject);
 
-        this.commands = new List<Command>();
+        this.commands = new Queue<Command>();
     }
 
     // Update is called once per frame
@@ -41,10 +42,7 @@ public class CommandHandler : MonoBehaviour
     {
         for (int i = 0; i < this.commands.Count; i++)
         {
-            this.commands[i].Execute();
+            this.commands.Dequeue().Execute();
         }
-
-        //clear list of commands executed this update
-        this.commands.Clear();
     }
 }
