@@ -26,6 +26,7 @@ public class GameSettings : MonoBehaviour
     public static float MaxZoom = -10;
     public static float ZoomSpeed = 10f;
 
+    public static bool ShouldShake = false;
     public static float ShotShake = 0.2f;
     public static float ShakeDecrease = 4f;
 
@@ -34,7 +35,7 @@ public class GameSettings : MonoBehaviour
     #region controls
 
     //inertial dampening settings
-    public static bool DampenInteria = true;
+    public static bool DampenInteria = false;
     public static float DampeningMultiplier = 0.01f;
 
     #region keyboard

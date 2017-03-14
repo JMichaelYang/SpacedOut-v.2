@@ -171,7 +171,7 @@ public class InputHandler : MonoBehaviour
                         {
                             this.joystickComponent.UpdateJoystick(touch);
 
-                            this.commandHandler.AddCommands(new AccelerateCommand(this.movement, this.joystickComponent.ValueY));
+                            this.commandHandler.AddCommands(new AccelerateCommand(this.movement, this.joystickComponent.ValueY, true));
                             this.commandHandler.AddCommands(new RotateCommand(this.movement, -this.joystickComponent.ValueX));
                         }
 
@@ -211,11 +211,11 @@ public class InputHandler : MonoBehaviour
 
         if (Input.GetKey(GameSettings.MoveForward))
         {
-            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), 1));
+            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), 1, true));
         }
         if (Input.GetKey(GameSettings.MoveBack))
         {
-            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), -1));
+            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), -1, true));
         }
         if (Input.GetKey(GameSettings.MoveLeft))
         {

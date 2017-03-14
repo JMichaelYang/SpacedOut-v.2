@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AiManager))]
 public class ShipHandler : MonoBehaviour
 {
     //ship type
@@ -15,19 +16,71 @@ public class ShipHandler : MonoBehaviour
     private ParticleSystem explosionSystem;
     //rigid body
     private Rigidbody2D physicsBody;
+    //movement
+    private Movement movement;
     //collider
     private Collider2D collider2d;
 
+    //whether the ship is on the screen
+    private bool isOffScreen = false;
+    private Transform shipTransform = null;
+    private AiManager shipAi = null;
+
+    void Awake()
+    {
+        this.shipTransform = this.transform;
+        this.shipAi = this.gameObject.GetComponent<AiManager>();
+        this.movement = this.gameObject.GetComponent<Movement>();
+        this.physicsBody = this.GetComponent<Rigidbody2D>();
+        this.collider2d = this.GetComponent<Collider2D>();
+    }
+
 	// Use this for initialization
-	void Start ()
+	void Start()
     {
         this.Health = 100;
 
         this.explosion = Resources.Load<GameObject>(GameSettings.ShipExplosion);
         this.explosionSystem = this.explosion.GetComponent<ParticleSystem>();
-        this.physicsBody = this.GetComponent<Rigidbody2D>();
-        this.collider2d = this.GetComponent<Collider2D>();
 	}
+
+    //used for when the ship exits the arena
+    void Update()
+    {
+        if (!this.isOffScreen &&
+            (this.shipTransform.position.x > GameSettings.ArenaWidth / 2 ||
+            this.shipTransform.position.x < -GameSettings.ArenaWidth / 2 ||
+            this.shipTransform.position.y > GameSettings.ArenaHeight / 2 ||
+            this.shipTransform.position.y < -GameSettings.ArenaHeight / 2))
+        {
+            if (this.gameObject.CompareTag("Player"))
+            {
+                InputHandler.Instance.enabled = false;
+                this.shipAi.enabled = true;
+            }
+
+            this.shipAi.ClearBehavior();
+            this.shipAi.AddBehavior(new AiSeekPointBehavior(Vector2.zero, this.shipTransform, this.movement.MaxAcceleration));
+
+            this.isOffScreen = true;
+        }
+        else if (this.isOffScreen &&
+            (this.shipTransform.position.x > -GameSettings.ArenaWidth / 2 &&
+            this.shipTransform.position.x < GameSettings.ArenaWidth / 2 &&
+            this.shipTransform.position.y > -GameSettings.ArenaHeight / 2 &&
+            this.shipTransform.position.y < GameSettings.ArenaHeight / 2))
+        {
+            this.shipAi.ClearBehavior();
+
+            if (this.gameObject.CompareTag("Player"))
+            {
+                InputHandler.Instance.enabled = true;
+                this.shipAi.enabled = false;
+            }
+
+            this.isOffScreen = false;
+        }
+    }
 
     /// <summary>
     /// Damage the ship
@@ -57,7 +110,7 @@ public class ShipHandler : MonoBehaviour
         Component[] components = this.gameObject.GetComponents<Component>();
         for(int i = 0; i < components.Length; i++)
         {
-            if (!(components[i] is Transform) && !(components[i] is Rigidbody2D) && !(components[i] is ShipHandler))
+            if (!(components[i] is Transform) && !(components[i] is Rigidbody2D) && !(components[i] is ShipHandler) && !(components[i] is AiManager))
             {
                 Destroy(components[i]);
             }
@@ -71,10 +124,10 @@ public class ShipHandler : MonoBehaviour
         Invoke("AfterExplosion", this.explosionSystem.main.duration + this.explosionSystem.main.startLifetime.constantMax);
     }
 
-    void AfterExplosion()
+    private void AfterExplosion()
     {
         ObjectPool.Despawn(this.explosion);
-        Debug.Log("Deactivated explosion");
+        //Debug.Log("Deactivated explosion");
     }
 
     #region Event Registration

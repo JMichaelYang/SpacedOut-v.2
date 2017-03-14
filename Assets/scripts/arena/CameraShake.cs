@@ -18,14 +18,16 @@ public class CameraShake : MonoBehaviour
         //register event
         GameEventHandler.OnWeaponShoot += this.StartShakeEvent;
     }
+
     void OnDisable()
     {
         //de-register event
         GameEventHandler.OnWeaponShoot -= this.StartShakeEvent;
     }
+
     private void StartShakeEvent(object sender, WeaponShootEventArgs e)
     {
-        this.StartShake(GameSettings.ShotShake, GameSettings.ShakeDecrease);
+        if (GameSettings.ShouldShake) { this.StartShake(GameSettings.ShotShake, GameSettings.ShakeDecrease); }
     }
 
     #endregion Event Registration

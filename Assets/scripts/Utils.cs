@@ -78,7 +78,12 @@ public class Utils : MonoBehaviour
         return Mathf.Clamp(min, max, Utils.RandomGaussianFloat() * sigma + mean);
     }
 
-    //rotates a 2D vector
+    /// <summary>
+    /// Rotates a 2D vector
+    /// </summary>
+    /// <param name="vector">the original vector to be rotated</param>
+    /// <param name="degrees">the number of degrees that it is to be rotated by</param>
+    /// <returns>the rotated vector</returns>
     public static Vector2 RotateVector2(Vector2 vector, float degrees)
     {
         float radians = degrees * Mathf.Deg2Rad;
@@ -90,8 +95,49 @@ public class Utils : MonoBehaviour
 
         return new Vector2(cos * tx - sin * ty, sin * tx + cos * ty);
     }
+    /// <summary>
+    /// Limits a vector's magnitude
+    /// </summary>
+    /// <param name="vector">the vector to be limited</param>
+    /// <param name="maxMag">the magnitude to limit the vector to</param>
+    /// <returns>The limited vector</returns>
+    public static Vector2 CapVector2(Vector2 vector, float maxMag)
+    {
+        if (vector.sqrMagnitude > maxMag * maxMag)
+        {
+            vector *= maxMag / vector.magnitude;
+        }
 
-    //finds the smalles angle between two rotations
+        return vector;
+    }
+    /// <summary>
+    /// Limits a vector's magnitude
+    /// </summary>
+    /// <param name="x">the x component of the input vector</param>
+    /// <param name="y">the y component of the input vector</param>
+    /// <param name="maxMag">the magnitude that the vector should be limited to</param>
+    /// <returns>The limited vector</returns>
+    public static Vector2 CapVector2(float x, float y, float maxMag)
+    {
+        return Utils.CapVector2(new Vector2(x, y), maxMag);
+    }
+
+    /// <summary>
+    /// Get the corresponding unit vector for an angle
+    /// </summary>
+    /// <param name="angle">the angle from which to derive the vector in degrees</param>
+    /// <returns>The resulting vector</returns>
+    public static Vector2 GetUnitVectorFromAngle(float angle)
+    {
+        return new Vector2(Mathf.Cos(angle * Mathf.Rad2Deg), Mathf.Sin(angle * Mathf.Rad2Deg));
+    }
+
+    /// <summary>
+    /// Finds the smallest angle between two angles
+    /// </summary>
+    /// <param name="angle1">the first angle to be compared</param>
+    /// <param name="angle2">the second angle to be compared</param>
+    /// <returns>The smallest angle</returns>
     public static float FindAngleDifference(float angle1, float angle2)
     {
         float diff = (angle2 - angle1 + 180f) % 360 - 180f;

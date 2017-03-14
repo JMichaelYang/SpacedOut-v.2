@@ -42,11 +42,11 @@ public class Command
 
 public class AccelerateCommand : Command
 {
-    public AccelerateCommand(object target, float magnitude)
-        : base(target, "Accelerate", magnitude) { }
+    public AccelerateCommand(object target, float magnitude, bool limit)
+        : base(target, "Accelerate", magnitude, limit) { }
 
-    public AccelerateCommand(object target, float xAccel, float yAccel)
-        : base(target, "LinearAccelerate", xAccel, yAccel) { }
+    public AccelerateCommand(object target, float xAccel, float yAccel, bool limit)
+        : base(target, "LinearAccelerate", xAccel, yAccel, limit) { }
 }
 
 public class RotateCommand : Command

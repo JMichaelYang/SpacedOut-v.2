@@ -9,6 +9,8 @@ public class GameHandler : MonoBehaviour
 
     private List<Team> teams;
 
+    public GameObject PlayerShip { get; protected set; }
+
     // Use this for initialization
     void Awake()
     {
@@ -39,7 +41,7 @@ public class GameHandler : MonoBehaviour
         this.teams[1].TeamColor = Color.red;
         this.teams[1].Ships = new List<GameObject>();
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 15; i++)
         {
             this.teams[1].Ships.Add(Instantiate<GameObject>(Resources.Load<GameObject>(GameSettings.ShipPrefab)));
             this.teams[1].Ships[i].tag = "AI";
@@ -51,7 +53,7 @@ public class GameHandler : MonoBehaviour
     private GameObject spawnPlayer(GameObject playerObject)
     {
         playerObject.tag = "Player";
-        Destroy(playerObject.GetComponent<AiManager>());
+        playerObject.GetComponent<AiManager>().enabled = false;
 
         GameObject shakeMedium = Instantiate<GameObject>(new GameObject(), playerObject.transform);
         shakeMedium.name = "Intermediate";
@@ -61,6 +63,8 @@ public class GameHandler : MonoBehaviour
         GameObject camera = Instantiate<GameObject>(Resources.Load<GameObject>("prefabs/PlayerCamera"), shakeMedium.transform);
         camera.name = "Player Camera";
         camera.tag = "MainCamera";
+
+        this.PlayerShip = playerObject;
 
         return playerObject;
     }

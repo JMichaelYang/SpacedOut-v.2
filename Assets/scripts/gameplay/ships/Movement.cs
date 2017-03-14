@@ -24,6 +24,8 @@ public class Movement : MonoBehaviour
     //movement speed cap
     public float MaxVelocity = 1f;
     public float MaxRotationalVelocity = 1f;
+    //acceleration cap
+    public float MaxAcceleration = 1f;
 
     // Use this for initialization
     void Awake()
@@ -75,23 +77,40 @@ public class Movement : MonoBehaviour
         }
     }
 
-    public void LinearAccelerate(float xAxis, float yAxis)
+    /// <summary>
+    /// Accelerate the object by a Vector2
+    /// </summary>
+    /// <param name="xAxis">the x component of the acceleration</param>
+    /// <param name="yAxis">the y component of the acceleration</param>
+    public void LinearAccelerate(float xAxis, float yAxis, bool limit = true)
     {
-        this.acceleration.x += xAxis;
-        this.acceleration.y += yAxis;
+        Vector2 accel = new Vector2(xAxis, yAxis);
+        if (limit) { accel = Utils.CapVector2(xAxis, yAxis, this.MaxAcceleration); }
+        this.acceleration.x += accel.x;
+        this.acceleration.y += accel.y;
     }
-
-    public void Rotate(float magnitude)
+    /// <summary>
+    /// Accelerate the object in the direction of its rotation
+    /// </summary>
+    /// <param name="magnitude">the magnitude to accelerate the object by</param>
+    public void Accelerate(float magnitude, bool limit = true)
     {
-        this.rotation += Mathf.Clamp(magnitude, -this.MaxRotationalVelocity, this.MaxRotationalVelocity);
-    }
+        float mag = magnitude;
+        if (limit) { Mathf.Clamp(mag, -this.MaxAcceleration, this.MaxAcceleration); }
 
-    public void Accelerate(float magnitude)
-    {
-        float xAccel = Mathf.Cos((this.rigidBody.rotation + 90f) * Mathf.Deg2Rad) * magnitude;
-        float yAccel = Mathf.Sin((this.rigidBody.rotation + 90f) * Mathf.Deg2Rad) * magnitude;
+        float xAccel = Mathf.Cos((this.rigidBody.rotation + 90f) * Mathf.Deg2Rad) * mag;
+        float yAccel = Mathf.Sin((this.rigidBody.rotation + 90f) * Mathf.Deg2Rad) * mag;
 
         this.acceleration.x += xAccel;
         this.acceleration.y += yAccel;
+    }
+
+    /// <summary>
+    /// Rotate the object
+    /// </summary>
+    /// <param name="magnitude">the amount to rotate the object by</param>
+    public void Rotate(float magnitude)
+    {
+        this.rotation += Mathf.Clamp(magnitude, -this.MaxRotationalVelocity, this.MaxRotationalVelocity);
     }
 }
