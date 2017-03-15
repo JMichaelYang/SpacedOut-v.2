@@ -44,6 +44,11 @@ public class Movement : MonoBehaviour
         this.DampeningMultiplier = GameSettings.DampeningMultiplier;
     }
 
+    public void SetStatistics(ShipType shipType)
+    {
+        this.MaxRotationalVelocity = shipType.RotAccel;
+    }
+
     void FixedUpdate()
     {
         //add accumulated forces

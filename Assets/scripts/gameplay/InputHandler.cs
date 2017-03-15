@@ -171,8 +171,8 @@ public class InputHandler : MonoBehaviour
                         {
                             this.joystickComponent.UpdateJoystick(touch);
 
-                            this.commandHandler.AddCommands(new AccelerateCommand(this.movement, this.joystickComponent.ValueY, true));
-                            this.commandHandler.AddCommands(new RotateCommand(this.movement, -this.joystickComponent.ValueX));
+                            this.commandHandler.AddCommands(new AccelerateCommand(this.movement, this.joystickComponent.ValueY * this.movement.MaxAcceleration, true));
+                            this.commandHandler.AddCommands(new RotateCommand(this.movement, -this.joystickComponent.ValueX * this.movement.MaxRotationalVelocity));
                         }
 
                         #endregion Joystick Updating
@@ -211,19 +211,19 @@ public class InputHandler : MonoBehaviour
 
         if (Input.GetKey(GameSettings.MoveForward))
         {
-            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), 1, true));
+            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(),this.movement.MaxAcceleration, true));
         }
         if (Input.GetKey(GameSettings.MoveBack))
         {
-            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), -1, true));
+            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), -this.movement.MaxAcceleration, true));
         }
         if (Input.GetKey(GameSettings.MoveLeft))
         {
-            this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), 1));
+            this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), this.movement.MaxRotationalVelocity));
         }
         if (Input.GetKey(GameSettings.MoveRight))
         {
-            this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), -1));
+            this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), -this.movement.MaxRotationalVelocity));
         }
 
         #endregion Player Movement

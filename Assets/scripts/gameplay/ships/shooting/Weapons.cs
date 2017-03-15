@@ -4,19 +4,17 @@ using UnityEngine;
 
 public class Weapons : MonoBehaviour
 {
-    private Gun[] guns;
-    private Vector3[] offsets;
+    private struct OffsetGunPair
+    {
+        public Vector3 ValueOffset;
+        public Gun ValueGun;
+    };
 
-    //timers and counters to keep track of reloads
-    private float[] shotTimers;
-    private float[] burstTimers;
-    private float[] reloadTimers;
-    private int[] burstCounters;
-    private int[] shotCounters;
+    private OffsetGunPair[] weapons;
+    private Vector3 offset;
+    private Gun gun;
 
     private float oldTime = 0;
-
-    public WeaponType type = WeaponTypes.DebugWeapon;
 
     private CommandHandler commandHandler;
     private CameraShake shake;
@@ -26,30 +24,23 @@ public class Weapons : MonoBehaviour
     //collider of this ship
     private Collider2D shipCollider = null;
 
-    public void ReadWeapons(WeaponType weapons)
+    public void ReadWeapons(GunType[] guns, Vector2[] offsets)
     {
-        this.guns = new Gun[weapons.guns.Length];
-        this.offsets = new Vector3[weapons.guns.Length];
+        this.weapons = new OffsetGunPair[offsets.Length];
 
-        //load guns and offsets from weapon type
-        this.offsets = new Vector3[weapons.offsets.Length];
-        for (int i = 0; i < guns.Length; i++)
+        for (int i = 0; i < offsets.Length; i++)
         {
-            this.guns[i] = Gun.LoadFromGunType(weapons.guns[i]);
-            this.offsets[i] = (Vector3)weapons.offsets[i];
+            this.weapons[i] = new OffsetGunPair();
+            this.weapons[i].ValueOffset = offsets[i];
+
+            if (guns[i] != null) { this.weapons[i].ValueGun = Gun.LoadFromGunType(guns[i]); }
+            else { this.weapons[i].ValueGun = null; }
         }
     }
 
     // Use this for initialization
     void Awake()
     {
-        this.ReadWeapons(this.type);
-        this.shotTimers = new float[this.guns.Length];
-        this.burstTimers = new float[this.guns.Length];
-        this.burstCounters = new int[this.guns.Length];
-        this.reloadTimers = new float[this.guns.Length];
-        this.shotCounters = new int[this.guns.Length];
-
         this.oldTime = 0;
     }
 
@@ -64,9 +55,9 @@ public class Weapons : MonoBehaviour
     {
         int numSlots = slots.Length;
 
-        if (numSlots > this.guns.Length)
+        if (numSlots > this.weapons.Length)
         {
-            Debug.Log("Tried to shoot with " + numSlots + " slots and " + this.guns.Length + " guns...");
+            Debug.Log("Tried to shoot with " + numSlots + " slots and " + this.weapons.Length + " guns...");
             return false;
         }
 
@@ -77,65 +68,64 @@ public class Weapons : MonoBehaviour
 
         for (int i = 0; i < numSlots; i++)
         {
-            //update timers
-            this.shotTimers[i] += interval;
-            this.burstTimers[i] += interval;
-            this.reloadTimers[i] += interval;
+            this.offset = this.weapons[i].ValueOffset;
+            this.gun = this.weapons[i].ValueGun;
 
-            //checking reload timers
-            if (this.reloadTimers[i] > this.guns[i].ReloadDelay && this.burstTimers[i] > this.guns[i].BurstDelay && this.shotTimers[i] > this.guns[i].ShotDelay)
+            if (this.gun != null)
             {
-                //shoot the gun and add to the shot counters
-                GameObject shotBullet = this.guns[slots[i]].ShootGun(this.transform.position +
-                    (Vector3)Utils.RotateVector2(this.offsets[slots[i]], this.transform.rotation.eulerAngles.z),
-                    this.transform.rotation, this.gameObject);
-                //increment shot counters
-                this.shotCounters[i]++;
-                this.burstCounters[i]++;
+                //update timers
+                this.gun.shotTimer += interval;
+                this.gun.burstTimer += interval;
+                this.gun.reloadTimer += interval;
 
-                //ignore collisions between whoever fired this and the bullet itself
-                Physics2D.IgnoreCollision(shotBullet.GetComponent<Collider2D>(), this.shipCollider, true);
-
-                //reset shot timer every shot
-                this.shotTimers[i] = 0;
-
-                //if the burst is done, reset the burst counter and timer
-                if (this.burstCounters[i] >= this.guns[i].BurstAmount)
+                //checking reload timers
+                if (this.gun.reloadTimer > this.gun.ReloadDelay &&
+                    this.gun.burstTimer > this.gun.BurstDelay &&
+                    this.gun.shotTimer > this.gun.ShotDelay)
                 {
-                    this.burstCounters[i] = 0;
-                    this.burstTimers[i] = 0;
+                    //shoot the gun and add to the shot counters
+                    GameObject shotBullet = this.gun.ShootGun(this.transform.position +
+                        (Vector3)Utils.RotateVector2(this.offset, this.transform.rotation.eulerAngles.z),
+                        this.transform.rotation, this.gameObject);
+                    //increment shot counters
+                    this.gun.shotCounter++;
+                    this.gun.burstCounter++;
+                    //reset shot timer every shot
+                    this.gun.shotTimer = 0f;
+
+                    //ignore collisions between whoever fired this and the bullet itself
+                    Physics2D.IgnoreCollision(shotBullet.GetComponent<Collider2D>(), this.shipCollider, true);
+
+                    //if the burst is done, reset the burst counter and timer
+                    if (this.gun.burstCounter >= this.gun.BurstAmount)
+                    {
+                        this.gun.burstCounter = 0;
+                        this.gun.burstTimer = 0;
+                    }
+
+                    //if the magazine is done, reset the shot counter and timer
+                    if (this.gun.shotCounter >= this.gun.ReloadAmount)
+                    {
+                        this.gun.shotCounter = 0;
+                        this.gun.reloadTimer = 0f;
+
+                        this.gun.burstCounter = 0;
+                        this.gun.burstTimer = 0f;
+                    }
+
+                    this.e.Damage = this.gun.Damage;
+                    GameEventHandler.OnWeaponShoot(this, this.e);
+
+                    hasShot = true;
                 }
-
-                //if the magazine is done, reset the shot counter and timer
-                if (this.shotCounters[i] >= this.guns[i].ReloadAmount)
-                {
-                    this.shotCounters[i] = 0;
-                    this.reloadTimers[i] = 0;
-
-                    this.burstCounters[i] = 0;
-                    this.burstTimers[i] = 0;
-                }
-
-                this.e.Damage = this.guns[slots[i]].Damage;
-                GameEventHandler.OnWeaponShoot(this, this.e);
-
-                hasShot = true;
+            }
+            else
+            {
+                Debug.Log("Tried to shoot a null gun...");
             }
         }
 
         return hasShot;
-    }
-}
-
-public class WeaponType
-{
-    public GunType[] guns;
-    public Vector2[] offsets;
-
-    public WeaponType(GunType[] guns, Vector2[] offsets)
-    {
-        this.guns = guns;
-        this.offsets = offsets;
     }
 }
 
@@ -159,6 +149,13 @@ public class Gun
     public int BurstAmount { get; protected set; }
     //shots per reload
     public int ReloadAmount { get; protected set; }
+
+    //timers and counters to keep track of reloads
+    public float shotTimer;
+    public float burstTimer;
+    public float reloadTimer;
+    public int burstCounter;
+    public int shotCounter;
 
     //the prefab for the bullet
     private Sprite bulletSprite;
@@ -186,6 +183,12 @@ public class Gun
         try { gun.bulletSprite = Resources.Load<Sprite>("sprites/weapons/bullets/" + gunType.BulletPath); }
         catch { Debug.Log("Could not find bullet sprite with name: " + gunType.BulletPath); }
 
+        gun.shotTimer = 0f;
+        gun.burstTimer = 0f;
+        gun.burstCounter = 0;
+        gun.reloadTimer = 0f;
+        gun.shotCounter = 0;
+
         return gun;
     }
 
@@ -195,60 +198,5 @@ public class Gun
         bullet.transform.Rotate(0, 0, Random.Range(-this.Accuracy, this.Accuracy));
         bullet.GetComponent<Bullet>().Activate(this.Damage, this.Range, this.Velocity, shooter, this.bulletSprite);
         return bullet;
-    }
-}
-
-public class GunType
-{
-    //damage
-    public float Damage;
-    //exit velocity
-    public float Velocity;
-    //time alive
-    public float Range;
-    //accuracy of the bullet
-    public float Accuracy;
-    //time between shots
-    public float ShotDelay;
-    //time between bursts
-    public float BurstDelay;
-    //time between reloads
-    public float ReloadDelay;
-    //shots per burst
-    public int BurstAmount;
-    //shots per reload
-    public int ReloadAmount;
-    //image path of the bullet
-    public string BulletPath;
-
-    /// <summary>
-    /// Constructor that defines the stats of this gun type
-    /// </summary>
-    /// <param name="damage">damage dealt by the gun</param>
-    /// <param name="velocity">exit velocity of gun projectiles</param>
-    /// <param name="range">time that bullets travel in seconds</param>
-    /// <param name="accuracy">accuracy of the bullet (lower is greater accuracy)</param>
-    /// <param name="shotDelay">time between individual shots</param>
-    /// <param name="burstDelay">time between burst reloads (0 for full auto)</param>
-    /// <param name="reloadDelay">time between reloads (0 for semi auto)</param>
-    /// <param name="burstAmount">number of shots per burst</param>
-    /// <param name="reloadAmount">number of shots per reload</param>
-    /// <param name="bulletPath">image path of the bullet</param>
-    public GunType(float damage, float velocity, float range, float accuracy, float shotDelay, float burstDelay, float reloadDelay, 
-        int burstAmount, int reloadAmount, string bulletPath)
-    {
-        this.Damage = damage;
-        this.Velocity = velocity;
-        this.Range = range;
-        this.Accuracy = accuracy;
-
-        this.ShotDelay = shotDelay;
-        this.BurstDelay = burstDelay;
-        this.ReloadDelay = reloadDelay;
-
-        this.BurstAmount = burstAmount;
-        this.ReloadAmount = reloadAmount;
-
-        this.BulletPath = bulletPath;
     }
 }

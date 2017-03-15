@@ -9,7 +9,8 @@ public class ShipHandler : MonoBehaviour
     private ShipType shipType;
 
     //current health of the ship
-    public float Health { get; protected set; }
+    public float MaxHealth { get; protected set; }
+    public float Health = 100f;
 
     //explosion particle system
     private GameObject explosion;
@@ -35,13 +36,18 @@ public class ShipHandler : MonoBehaviour
         this.collider2d = this.GetComponent<Collider2D>();
     }
 
+    public void SetStatistics(ShipType shipType)
+    {
+        this.MaxHealth = shipType.Health;
+    }
+
 	// Use this for initialization
 	void Start()
     {
-        this.Health = 100;
-
         this.explosion = Resources.Load<GameObject>(GameSettings.ShipExplosion);
         this.explosionSystem = this.explosion.GetComponent<ParticleSystem>();
+
+        this.Health = this.MaxHealth;
 	}
 
     //used for when the ship exits the arena
@@ -144,15 +150,4 @@ public class ShipHandler : MonoBehaviour
     }
 
     #endregion Event Registration
-}
-
-public class ShipType
-{
-    public float Health;
-    public Vector2[] Offsets;
-
-    public ShipType(float health)
-    {
-        this.Health = health;
-    }
 }
