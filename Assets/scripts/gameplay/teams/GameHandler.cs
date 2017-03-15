@@ -41,7 +41,7 @@ public class GameHandler : MonoBehaviour
         this.teams[1].TeamColor = Color.red;
         this.teams[1].Ships = new List<GameObject>();
 
-        for (int i = 0; i < 15; i++)
+        for (int i = 0; i < 2; i++)
         {
             this.teams[1].Ships.Add(Instantiate<GameObject>(Resources.Load<GameObject>(GameSettings.ShipPrefab)));
             this.teams[1].Ships[i].tag = "AI";

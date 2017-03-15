@@ -122,6 +122,9 @@ public class Utils : MonoBehaviour
         return Utils.CapVector2(new Vector2(x, y), maxMag);
     }
 
+    /*
+     * UNDER CONSTRUCTION
+     * 
     /// <summary>
     /// Get the corresponding unit vector for an angle
     /// </summary>
@@ -131,6 +134,7 @@ public class Utils : MonoBehaviour
     {
         return new Vector2(Mathf.Cos(angle * Mathf.Rad2Deg), Mathf.Sin(angle * Mathf.Rad2Deg));
     }
+    */
 
     /// <summary>
     /// Finds the smallest angle between two angles

@@ -25,8 +25,8 @@ public class AiManager : MonoBehaviour
     {
         //TODO: Test code, please remove
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        this.AddBehavior(new AiSeekBehavior(player.transform, this.aiTransform, this.movement.MaxAcceleration));
-        //this.AddBehavior(new AiFleeBehabior(player.transform, this.aiTransform, this.movement.MaxAcceleration));
+        //this.AddBehavior(new AiSeekBehavior(player.transform, this.aiTransform, this.movement.MaxAcceleration));
+        this.AddBehavior(new AiFleeBehabior(player.transform, this.aiTransform, this.movement.MaxAcceleration));
         //this.AddBehavior(new AiPursueBehavior(player.transform, this.aiTransform, player.GetComponent<Rigidbody2D>(), player.GetComponent<Movement>().MaxVelocity, this.movement.MaxAcceleration));
     }
 
@@ -38,14 +38,16 @@ public class AiManager : MonoBehaviour
         //add up all steering forces
         Vector2 steering = Vector2.zero;
         for (int i = 0; i < this.currentBehavior.Count; i++) { steering += this.currentBehavior[i].GetSteeringForce(); }
-
         steering = Utils.CapVector2(steering, this.movement.MaxAcceleration);
-        Vector2 heading = Utils.GetUnitVectorFromAngle(currentRot);
+
+        //get magnitude of movement in steering direction
+        Vector2 heading = this.aiTransform.up;
         float magnitude = heading.x * steering.x + heading.y * steering.y;
 
         //get a desired rotation from the steering force
         float desiredRotation = Mathf.Atan2(steering.y, steering.x) * Mathf.Rad2Deg + 90f;
         desiredRotation = Utils.FindAngleDifference(desiredRotation, currentRot);
+
         //add command with aggregated steering forces
         CommandHandler.Instance.AddCommands(new AccelerateCommand(this.movement, magnitude, true),
             new RotateCommand(this.movement, desiredRotation));

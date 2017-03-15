@@ -7,6 +7,8 @@ public class Movement : MonoBehaviour
 {
     //rigid body to use
     private Rigidbody2D rigidBody;
+    //transform to use
+    private Transform bodyTransform;
 
     //force to add every FixedUpdate
     private Vector2 acceleration;
@@ -30,14 +32,10 @@ public class Movement : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
-        try
-        {
-            this.rigidBody = this.gameObject.GetComponent<Rigidbody2D>();
-        }
-        catch
-        {
-            Debug.Log("Could not find RigidBody2D component of " + this.gameObject.ToString());
-        }
+        try { this.rigidBody = this.gameObject.GetComponent<Rigidbody2D>(); }
+        catch { Debug.Log("Could not find RigidBody2D component of " + this.gameObject.ToString()); }
+        try { this.bodyTransform = this.transform; }
+        catch { Debug.Log("Could not find Transform component of " + this.gameObject.ToString()); }
 
         this.acceleration = Vector2.zero;
         this.rotation = 0;
@@ -98,11 +96,12 @@ public class Movement : MonoBehaviour
         float mag = magnitude;
         if (limit) { Mathf.Clamp(mag, -this.MaxAcceleration, this.MaxAcceleration); }
 
-        float xAccel = Mathf.Cos((this.rigidBody.rotation + 90f) * Mathf.Deg2Rad) * mag;
-        float yAccel = Mathf.Sin((this.rigidBody.rotation + 90f) * Mathf.Deg2Rad) * mag;
+        Vector2 accel = this.bodyTransform.up * mag;
+        //float xAccel = Mathf.Cos((this.rigidBody.rotation + 90f) * Mathf.Deg2Rad) * mag;
+        //float yAccel = Mathf.Sin((this.rigidBody.rotation + 90f) * Mathf.Deg2Rad) * mag;
 
-        this.acceleration.x += xAccel;
-        this.acceleration.y += yAccel;
+        this.acceleration.x += accel.x;
+        this.acceleration.y += accel.y;
     }
 
     /// <summary>
