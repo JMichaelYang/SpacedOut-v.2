@@ -67,9 +67,17 @@ public class Movement : MonoBehaviour
         {
             if (originalMagnitude != 0)
             {
-                Vector2 inertialForce = ((Vector2)this.transform.up * this.rigidBody.velocity.magnitude) - this.rigidBody.velocity;
-                this.rigidBody.velocity += inertialForce * this.DampeningMultiplier;
+                Vector2 inertialForce = Vector2.zero;
 
+                // convert Rigidbody2D velocity to local space in terms of the transform
+                // take negative of the x component
+                // convert this back to world space
+                inertialForce = this.bodyTransform.InverseTransformDirection(this.rigidBody.velocity);
+                inertialForce.x *= -1f;
+                inertialForce.y = 0f;
+                inertialForce = this.bodyTransform.TransformDirection(inertialForce);
+
+                this.rigidBody.velocity += inertialForce * this.DampeningMultiplier;
                 this.rigidBody.velocity *= originalMagnitude / this.rigidBody.velocity.magnitude;
             }
         }

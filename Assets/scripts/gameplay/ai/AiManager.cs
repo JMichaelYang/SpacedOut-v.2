@@ -6,7 +6,7 @@ using UnityEngine;
 public class AiManager : MonoBehaviour
 {
     //current list of behaviors in use
-    private List<AiBehavior> currentBehavior;
+    private List<AiMoveBehavior> currentMoveBehavior;
 
     //reference to GameObject components
     private Transform aiTransform;
@@ -14,7 +14,7 @@ public class AiManager : MonoBehaviour
 
     void Awake()
     {
-        this.currentBehavior = new List<AiBehavior>();
+        this.currentMoveBehavior = new List<AiMoveBehavior>();
 
         //assign components
         this.aiTransform = this.transform;
@@ -25,8 +25,8 @@ public class AiManager : MonoBehaviour
     {
         //TODO: Test code, please remove
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        //this.AddBehavior(new AiSeekBehavior(player.transform, this.aiTransform, this.movement.MaxAcceleration));
-        this.AddBehavior(new AiFleeBehabior(player.transform, this.aiTransform, this.movement.MaxAcceleration));
+        this.AddBehavior(new AiSeekBehavior(player.transform, this.aiTransform, this.movement.MaxAcceleration));
+        //this.AddBehavior(new AiFleeBehabior(player.transform, this.aiTransform, this.movement.MaxAcceleration));
         //this.AddBehavior(new AiPursueBehavior(player.transform, this.aiTransform, player.GetComponent<Rigidbody2D>(), player.GetComponent<Movement>().MaxVelocity, this.movement.MaxAcceleration));
     }
 
@@ -37,7 +37,7 @@ public class AiManager : MonoBehaviour
 
         //add up all steering forces
         Vector2 steering = Vector2.zero;
-        for (int i = 0; i < this.currentBehavior.Count; i++) { steering += this.currentBehavior[i].GetSteeringForce(); }
+        for (int i = 0; i < this.currentMoveBehavior.Count; i++) { steering += this.currentMoveBehavior[i].GetSteeringForce(); }
         steering = Utils.CapVector2(steering, this.movement.MaxAcceleration);
 
         //get magnitude of movement in steering direction
@@ -57,20 +57,20 @@ public class AiManager : MonoBehaviour
     /// Function to add a behavior to the ai
     /// </summary>
     /// <param name="behavior">the behavior to be added</param>
-    public void AddBehavior(AiBehavior behavior)
+    public void AddBehavior(AiMoveBehavior behavior)
     {
-        this.currentBehavior.Add(behavior);
+        this.currentMoveBehavior.Add(behavior);
     }
     public void ClearBehavior()
     {
-        this.currentBehavior.Clear();
+        this.currentMoveBehavior.Clear();
     }
 }
 
 /// <summary>
 /// Parent class for all AI behavior functions
 /// </summary>
-public abstract class AiBehavior
+public abstract class AiMoveBehavior
 {
     protected Transform target = null;
     protected Transform aiTransform = null;
@@ -82,12 +82,12 @@ public abstract class AiBehavior
     public Vector2 GetSteeringForce() { return this.GetSteeringForce(this.target, this.aiTransform); }
 }
 
-#region AI Behavior Classes
+#region AI Movement Behavior Classes
 
 /// <summary>
 /// Behavior that follows the exact position of a target
 /// </summary>
-public class AiSeekBehavior : AiBehavior
+public class AiSeekBehavior : AiMoveBehavior
 {
     public AiSeekBehavior(Transform target, Transform aiTransform, float maxAccel)
     {
@@ -101,7 +101,7 @@ public class AiSeekBehavior : AiBehavior
         return Utils.CapVector2(target.position - ai.position, this.maxAccel);
     }
 }
-public class AiSeekPointBehavior : AiBehavior
+public class AiSeekPointBehavior : AiMoveBehavior
 {
     protected Vector2 targetPoint;
 
@@ -124,7 +124,7 @@ public class AiSeekPointBehavior : AiBehavior
 /// <summary>
 /// Behavior that runs away from the target
 /// </summary>
-public class AiFleeBehabior : AiBehavior
+public class AiFleeBehabior : AiMoveBehavior
 {
     public AiFleeBehabior(Transform target, Transform aiTransform, float maxAccel)
     {
@@ -141,7 +141,7 @@ public class AiFleeBehabior : AiBehavior
 /// <summary>
 /// Behavior that follows the future position of a target
 /// </summary>
-public class AiPursueBehavior : AiBehavior
+public class AiPursueBehavior : AiMoveBehavior
 {
     protected Rigidbody2D targetBody;
     protected float aiMaxSpeed;
@@ -172,4 +172,4 @@ public class AiPursueBehavior : AiBehavior
     }
 }
 
-#endregion AI Behavior Classes
+#endregion AI Movement Behavior Classes
