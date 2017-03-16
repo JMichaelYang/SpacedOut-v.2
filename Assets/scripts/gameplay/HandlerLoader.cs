@@ -11,7 +11,7 @@ public class HandlerLoader : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
-        if (GameHandler.Instance == null) { Instantiate(this.gameHandler); }
+        if (DeathmatchGameHandler.Instance == null) { Instantiate(this.gameHandler); }
         if (InputHandler.Instance == null) { Instantiate(this.inputHandler); }
         if (CommandHandler.Instance == null) { Instantiate(this.commandHandler); }
     }

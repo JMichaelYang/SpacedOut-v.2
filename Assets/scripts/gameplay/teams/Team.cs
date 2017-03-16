@@ -5,6 +5,6 @@ using UnityEngine;
 public class Team
 {
     public string Name;
-    public List<GameObject> Ships;
+    public List<Ship> Ships;
     public Color TeamColor;
 }

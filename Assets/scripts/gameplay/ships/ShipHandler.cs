@@ -151,3 +151,15 @@ public class ShipHandler : MonoBehaviour
 
     #endregion Event Registration
 }
+
+public class Ship
+{
+    public ShipType Type;
+    public GunType[] Guns;
+
+    public Ship(ShipType type, params GunType[] guns)
+    {
+        this.Type = type;
+        this.Guns = guns;
+    }
+}
