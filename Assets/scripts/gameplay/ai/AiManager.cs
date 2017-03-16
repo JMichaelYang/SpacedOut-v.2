@@ -110,15 +110,12 @@ public class AiSeekPointBehavior : AiMoveBehavior
         this.targetPoint = target;
         this.aiTransform = aiTransform;
         this.maxAccel = maxAccel;
+        this.target = null;
     }
-
-    public new Vector2 GetSteeringForce()
-    {
-        return Utils.CapVector2(this.targetPoint - (Vector2)this.aiTransform.position, this.maxAccel);
-    }
+    
     public override Vector2 GetSteeringForce(Transform target, Transform ai)
     {
-        return this.GetSteeringForce();
+        return Utils.CapVector2((Vector3)this.targetPoint - ai.position, this.maxAccel);
     }
 }
 /// <summary>

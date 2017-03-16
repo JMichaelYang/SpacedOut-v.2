@@ -147,4 +147,58 @@ public class Utils : MonoBehaviour
         float diff = (angle2 - angle1 + 180f) % 360 - 180f;
         return diff < -180f ? diff + 360f : diff;
     }
+
+    /// <summary>
+    /// Returns a copy of the original color with certain pixels repainted
+    /// </summary>
+    /// <param name="original">the original texture</param>
+    /// <param name="colorFrom">the pixel color to change from</param>
+    /// <param name="colorTo">the pixel color to change to</param>
+    /// <returns>The new recolored copy of the texture</returns>
+    public static Texture2D ColorTexture2D(Texture2D original, Color colorFrom, Color colorTo)
+    {
+        //create a new Texture2D copy
+        Texture2D newTex = new Texture2D(original.width, original.height);
+        newTex.filterMode = original.filterMode;
+        newTex.wrapMode = original.wrapMode;
+        newTex.name = original.name;
+
+        for (int y = 0; y < newTex.height; y++)
+        {
+            for(int x = 0; x < newTex.width; x++)
+            {
+                //replace pixels that need to be replaced
+                if (original.GetPixel(x, y) == colorFrom)
+                {
+                    newTex.SetPixel(x, y, colorTo);
+                }
+                else
+                {
+                    newTex.SetPixel(x, y, original.GetPixel(x, y));
+                }
+            }
+        }
+
+        //apply changes
+        newTex.Apply();
+        
+        return newTex;
+    }
+    /// <summary>
+    /// Updates a sprite's color with new colors
+    /// </summary>
+    /// <param name="sr">the sprite renderer</param>
+    /// <param name="colorFrom">the color to change from</param>
+    /// <param name="colorTo">the color to change to</param>
+    public static void UpdateSpriteColor(SpriteRenderer sr, Color colorFrom, Color colorTo)
+    {
+        //recolor new sprite
+        Texture2D tex = Utils.ColorTexture2D(sr.sprite.texture, colorFrom, colorTo);
+        string tempName = sr.sprite.name;
+        
+        //replace the SpriteRenderer sprite with a new one using the new texture
+        sr.sprite = Sprite.Create(tex, sr.sprite.rect, new Vector2(sr.sprite.pivot.x / sr.sprite.rect.width, sr.sprite.pivot.y / sr.sprite.rect.height), sr.sprite.pixelsPerUnit);
+        sr.sprite.name = tempName;
+        sr.material.mainTexture = tex;
+    }
 }

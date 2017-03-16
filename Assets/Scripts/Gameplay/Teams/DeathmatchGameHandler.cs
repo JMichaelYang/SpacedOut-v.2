@@ -54,7 +54,7 @@ public class DeathmatchGameHandler : MonoBehaviour
             for (int i = 0; i < teams[j].Ships.Count; i++)
             {
                 Vector3 nextSpawn = this.getSpawnPoint(j, i);
-                GameObject shipSpawn = spawnAi(teams[j].Ships[i]);
+                GameObject shipSpawn = spawnAi(teams[j].Ships[i], this.teams[j].TeamColor);
                 if (i == 0 && j == 0)
                 {
                     this.convertPlayer(shipSpawn);
@@ -113,7 +113,7 @@ public class DeathmatchGameHandler : MonoBehaviour
         return spawn;
     }
 
-    private GameObject spawnAi(Ship ship)
+    private GameObject spawnAi(Ship ship, Color team)
     {
         GameObject aiObject = Instantiate<GameObject>(Resources.Load<GameObject>(GameSettings.ShipPrefab));
 
@@ -122,6 +122,9 @@ public class DeathmatchGameHandler : MonoBehaviour
         aiObject.GetComponent<Weapons>().ReadWeapons(ship.Guns, ship.Type.Offsets);
         aiObject.GetComponent<Movement>().SetStatistics(ship.Type);
         aiObject.GetComponent<ShipHandler>().SetStatistics(ship.Type);
+
+        SpriteRenderer spriteRenderer = aiObject.GetComponent<SpriteRenderer>();
+        Utils.UpdateSpriteColor(spriteRenderer, GameSettings.ColorToReplace, team);
 
         return aiObject;
     }

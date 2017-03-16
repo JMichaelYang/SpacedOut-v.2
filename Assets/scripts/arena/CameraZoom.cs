@@ -29,7 +29,7 @@ public class CameraZoom : MonoBehaviour
 
         Vector3 newPos = this.transform.localPosition;
         float newZ = newPos.z + zoomAmount;
-        float newY = newPos.y + zoomAmount * Mathf.Sin(Mathf.Deg2Rad * -20f);
+        float newY = newPos.y + zoomAmount * Mathf.Sin(-25f * Mathf.Deg2Rad);
         newPos.z = Mathf.Lerp(newPos.z, newZ, Time.deltaTime * this.smoothing);
         newPos.y = Mathf.Lerp(newPos.y, newY, Time.deltaTime * this.smoothing);
 

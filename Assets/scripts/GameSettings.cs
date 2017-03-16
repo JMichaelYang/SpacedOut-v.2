@@ -82,6 +82,8 @@ public class GameSettings : MonoBehaviour
 
     #region resources
 
+    public static readonly Color ColorToReplace = Color.white;
+
     public static readonly string ShipPrefab = "prefabs/ships/Ship";
     public static readonly string ShipExplosion = "prefabs/ships/ExplosionSystem";
 

@@ -124,7 +124,9 @@ public class ShipHandler : MonoBehaviour
 
         //add drag to rigid body to stop it
         this.physicsBody.drag = 0.5f;
-        //start explosion on ship location 
+        //tag object as dead
+        this.gameObject.tag = "Dead";
+        //start explosion on ship location
         //TODO: preload explosion
         ObjectPool.Spawn(this.explosion, this.transform.position, this.transform.rotation);
         Invoke("AfterExplosion", this.explosionSystem.main.duration + this.explosionSystem.main.startLifetime.constantMax);
