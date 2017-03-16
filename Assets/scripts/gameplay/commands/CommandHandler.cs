@@ -32,8 +32,6 @@ public class CommandHandler : MonoBehaviour
             Destroy(this.gameObject);
         }
 
-        DontDestroyOnLoad(this.gameObject);
-
         this.commands = new Queue<Command>();
     }
 

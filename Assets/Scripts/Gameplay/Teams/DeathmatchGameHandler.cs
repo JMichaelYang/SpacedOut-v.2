@@ -25,8 +25,6 @@ public class DeathmatchGameHandler : MonoBehaviour
             Destroy(this.gameObject);
         }
 
-        DontDestroyOnLoad(this.gameObject);
-
         //TODO: Replace this test code
 
         this.teams = new List<Team>();

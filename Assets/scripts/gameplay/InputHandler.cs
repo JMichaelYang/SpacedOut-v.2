@@ -42,8 +42,6 @@ public class InputHandler : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-
-        DontDestroyOnLoad(this.gameObject);
     }
 
     // Use this for initialization
