@@ -11,7 +11,7 @@ public class CameraZoom : MonoBehaviour
     public void ChangeZoom(float value)
     {
         this.zoomAmount = value;
-        Invoke("Zoom", 0f);
+        this.Zoom();
     }
 
 	// Use this for initialization

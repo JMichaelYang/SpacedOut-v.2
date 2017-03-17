@@ -52,29 +52,16 @@ public class GameSettings : MonoBehaviour
     #region touch
 
     //joystick
-    public static float JoystickRadius = 2f;
-    public static float JoystickMinX = -6.5f;
-    public static float JoystickMaxX = -1f;
-    public static float JoystickMinY = -11f;
-    public static float JoystickMaxY = -6.5f;
+    public static float JoystickRadius = .2f;
+    public static float JoystickMinX = .05f;
+    public static float JoystickMaxX = .45f;
+    public static float JoystickMinY = .05f;
+    public static float JoystickMaxY = .3f;
+    public static float JoystickPixelWidth = 30f;
+    public static float JoystickPixelHeight = 30f;
     public static bool JoystickDisappear = false;
     public static float JoystickBaseOpacity = 0.6f;
     public static float JoystickKnobOpacity = 0.6f;
-
-    //zoom spot
-    public static float ZoomSpotMinX = 2f;
-    public static float ZoomSpotMaxX = 6.5f;
-    public static float ZoomSpotMinY = 6f;
-    public static float ZoomSpotMaxY = 11.5f;
-    public static float ZoomMaxSwipe = 2f;
-    public static float ZoomSpotMultiplier = 0.05f;
-
-    //shoot button
-    public static float ShootButtonX = 5f;
-    public static float ShootButtonY = -10f;
-    public static float ShootButtonWidth = 2f;
-    public static float ShootButtonHeight = 2f;
-    public static float ShootButtonOpacity = 0.6f;
 
     #endregion touch
 

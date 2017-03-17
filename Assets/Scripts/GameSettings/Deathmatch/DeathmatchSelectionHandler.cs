@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class DeathmatchSelectionHandler : MonoBehaviour
 {
@@ -72,8 +74,9 @@ public class DeathmatchSelectionHandler : MonoBehaviour
         #region Navigation Controls
 
         this.backButton = this.BackButton.GetComponent<Button>();
-        //this.backButton
+        this.backButton.onClick.AddListener(backButtonClick);
         this.startButton = this.StartButton.GetComponent<Button>();
+        this.startButton.onClick.AddListener(startButtonClick);
 
         #endregion Navigation Controls
 
@@ -83,8 +86,15 @@ public class DeathmatchSelectionHandler : MonoBehaviour
     #region UI Controls
 
     #region Navigation Controls
-    
 
+    private void backButtonClick()
+    {
+
+    }
+    private void startButtonClick()
+    {
+        SceneManager.LoadScene("Singleplayer");
+    }
 
     #endregion Navigation Controls
 

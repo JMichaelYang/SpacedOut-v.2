@@ -1,18 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class Joystick : MonoBehaviour
+public class Joystick : Button
 {
     //the current x and y values for the joystick (between -1 and 1)
-    public float ValueX
-    {
-        get { return this.knob.transform.localPosition.x / this.radius; }
-    }
-    public float ValueY
-    {
-        get { return this.knob.transform.localPosition.y / this.radius; }
-    }
+    public float ValueX { get { return this.knobTransform.anchoredPosition.x / this.radius; } }
+    public float ValueY { get { return this.knobTransform.anchoredPosition.y / this.radius; } }
+
+    private float centerX { get { return (this.minX + this.maxX) / 2; } }
+    private float centerY { get { return (this.minY + this.maxY) / 2; } }
+
+    //if the joystick is currently being pressed
+    private bool isPressed = false;
 
     //bounds of the joystick
     private float minX = GameSettings.JoystickMinX;
@@ -26,14 +28,16 @@ public class Joystick : MonoBehaviour
     private float baseOpacity = GameSettings.JoystickBaseOpacity;
     private float knobOpacity = GameSettings.JoystickKnobOpacity;
 
-    //knob object
-    public GameObject knob;
-    
-    //if this joystick is currently active
-    public bool IsActive { get; protected set; }
+    //base and knob object
+    public GameObject BaseObject;
+    public GameObject KnobObject;
+    private Image baseImage;
+    private RectTransform baseTransform;
+    private Image knobImage;
+    private RectTransform knobTransform;
 
     /// <summary>
-    /// Method to set the bounds of the joystick
+    /// Method to set the bounds of the joystick's original touch
     /// </summary>
     /// <param name="minX">Minimum X value of the joystick</param>
     /// <param name="minY">Minimum Y value of the joystick</param>
@@ -58,77 +62,100 @@ public class Joystick : MonoBehaviour
     {
         this.baseOpacity = baseOpacity;
         this.knobOpacity = knobOpacity;
-        
-        this.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, this.baseOpacity);
-        this.knob.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, this.knobOpacity);
+
+        Color baseColor = this.baseImage.color;
+        baseColor.a = this.baseOpacity;
+        this.baseImage.color = baseColor;
+
+        Color knobColor = this.knobImage.color;
+        knobColor.a = this.knobOpacity;
+        this.knobImage.color = knobColor;
     }
 
     // Use this for initialization
-    void Start()
+    protected override void Awake()
     {
-        this.IsActive = false;
+        this.isPressed = false;
+
+        //set the real radius of the object
+        this.radius = GameSettings.JoystickRadius * Screen.width;
+
+        //find the objects that constitute this joystick
+        this.BaseObject = GameObject.Find("JoystickBase");
+        this.KnobObject = GameObject.Find("JoystickKnob");
+
+        //get the base and knob components
+        this.baseImage = this.BaseObject.GetComponent<Image>();
+        this.baseTransform = this.BaseObject.GetComponent<RectTransform>();
+        this.knobImage = this.KnobObject.GetComponent<Image>();
+        this.knobTransform = this.KnobObject.GetComponent<RectTransform>();
+
+        //set opacity of the joystick
+        this.SetOpacity(GameSettings.JoystickBaseOpacity, GameSettings.JoystickKnobOpacity);
+
+        //set the positions of the base and knob
+        this.baseTransform.anchorMin = new Vector2((this.minX + this.maxX) / 2, (this.minY + this.maxY) / 2);
+        this.baseTransform.anchorMax = new Vector2((this.minX + this.maxX) / 2, (this.minY + this.maxY) / 2);
+        this.knobTransform.anchorMin = new Vector2((this.minX + this.maxX) / 2, (this.minY + this.maxY) / 2);
+        this.knobTransform.anchorMax = new Vector2((this.minX + this.maxX) / 2, (this.minY + this.maxY) / 2);
+        //set the size of the base and knob
+        this.baseTransform.sizeDelta = new Vector2(GameSettings.JoystickPixelWidth, GameSettings.JoystickPixelHeight);
+        this.knobTransform.sizeDelta = new Vector2(GameSettings.JoystickPixelWidth / 2, GameSettings.JoystickPixelHeight / 2);
+        //set the positions to match the anchors
+        this.baseTransform.anchoredPosition = Vector2.zero;
+        this.knobTransform.anchoredPosition = Vector2.zero;
 
         //hide joystick if it can dissapear
         if (GameSettings.JoystickDisappear)
         {
-            this.transform.localScale = Vector3.zero;
-            this.knob.transform.localScale = Vector3.zero;
+            this.baseTransform.localScale = Vector3.zero;
+            this.knobTransform.localScale = Vector3.zero;
         }
-
-        this.knob.transform.localPosition = Vector3.zero;
-
-        this.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, this.baseOpacity);
-        this.knob.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, this.knobOpacity);
     }
 
-    /// <summary>
-    /// Updates the joystick
-    /// </summary>
-    /// <param name="touch">The touch object that is interacting with the joystick</param>
-    /// <returns>Returns true if the initial touch lands within bounds, otherwise returns false</returns>
-    public bool UpdateJoystick(Touch touch)
+    //initiate knob update
+    public override void OnPointerDown(PointerEventData eventData)
     {
-        float localTouchX = Utils.ConvertScale(touch.position.x, 0, Screen.width, -6.5f, 6.5f);
-        float localTouchY = Utils.ConvertScale(touch.position.y, 0, Screen.height, -11.5f, 11.5f);
+        base.OnPointerDown(eventData);
 
-        switch (touch.phase)
+        Vector2 newPress = eventData.pressPosition;
+        float sWidth = Screen.width;
+        float sHeight = Screen.height;
+
+        //check whether press is within our bounds
+        if (newPress.x / sWidth > this.minX &&
+            newPress.x / sWidth < this.maxX &&
+            newPress.y / sHeight > this.minY &&
+            newPress.y / sHeight < this.maxY)
         {
-            case TouchPhase.Began:
-                if (localTouchX > this.minX && localTouchX < this.maxX && localTouchY > this.minY && localTouchY < this.maxY)
-                {
-                    this.IsActive = true;
-                    if (GameSettings.JoystickDisappear)
-                    {
-                        this.transform.localScale = Vector3.one;
-                        this.knob.transform.localScale = Vector3.one;
-                    }
-                    this.transform.localPosition = new Vector3(localTouchX, localTouchY);
-                    this.knob.transform.localPosition = Vector3.zero;
-                    return true;
-                }
-                break;
+            this.isPressed = true;
 
-            case TouchPhase.Ended:
-                this.IsActive = false;
-                if (GameSettings.JoystickDisappear)
-                {
-                    this.transform.localScale = Vector3.zero;
-                    this.knob.transform.localScale = Vector3.zero;
-                }
-                this.knob.transform.localPosition = Vector3.zero;
-                break;
+            if (GameSettings.JoystickDisappear)
+            {
+                this.baseTransform.localScale = Vector3.one;
+                this.knobTransform.localScale = Vector3.one;
+            }
 
-            default:
-                this.knob.transform.localPosition = new Vector3(localTouchX, localTouchY, this.transform.localPosition.z) - this.transform.localPosition;
+            float pressX = newPress.x - (this.centerX * sWidth);
+            float pressY = newPress.y - (this.centerY * sHeight);
 
-                //limit magnitude of knob distance to joystick radius
-                if (this.knob.transform.localPosition.sqrMagnitude > this.radius * this.radius)
-                {
-                    this.knob.transform.localPosition *= (this.radius / this.knob.transform.localPosition.magnitude);
-                }
-                break;
+            this.knobTransform.anchoredPosition = new Vector2(pressX, pressY);
         }
+    }
 
-        return false;
+    //reset knob position
+    public override void OnPointerUp(PointerEventData eventData)
+    {
+        base.OnPointerUp(eventData);
+
+        this.isPressed = true;
+
+        this.knobTransform.anchoredPosition = Vector2.zero;
+
+        if (GameSettings.JoystickDisappear)
+        {
+            this.baseTransform.localScale = Vector3.zero;
+            this.knobTransform.localScale = Vector3.zero;
+        }
     }
 }
