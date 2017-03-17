@@ -56,20 +56,16 @@ public class DeathmatchSelectionHandler : MonoBehaviour
 
         this.teams = new List<Team>();
 
+        Color[] colors = { Color.blue, Color.red };
         //default values
         for (int i = 0; i < 2; i++)
         {
-            this.teams.Add(new Team());
-            this.teams[i].Ships = new List<Ship>();
-            this.teams[i].Ships.Add(new Ship(ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
-            this.teams[i].Ships.Add(new Ship(ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
-            this.teams[i].Ships.Add(new Ship(ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
-            this.teams[i].Ships.Add(new Ship(ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams.Add(new Team("Team One", colors[i]));
+            this.teams[i].Ships.Add(new Ship(this.teams[i], ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[i].Ships.Add(new Ship(this.teams[i], ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[i].Ships.Add(new Ship(this.teams[i], ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[i].Ships.Add(new Ship(this.teams[i], ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
         }
-        this.teams[0].Name = "Team One";
-        this.teams[0].TeamColor = Color.blue;
-        this.teams[1].Name = "Team Two";
-        this.teams[1].TeamColor = Color.red;
 
         #endregion Defaults
 

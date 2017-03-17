@@ -156,12 +156,14 @@ public class ShipHandler : MonoBehaviour
 
 public class Ship
 {
+    public Team ShipTeam { get; protected set; }
     public ShipType Type { get; protected set; }
     public EngineType Engine { get; protected set; }
     public GunType[] Guns { get; protected set; }
 
-    public Ship(ShipType type, EngineType engine, params GunType[] guns)
+    public Ship(Team team, ShipType type, EngineType engine, params GunType[] guns)
     {
+        this.ShipTeam = team;
         this.Type = type;
         this.Engine = engine;
         this.Guns = guns;

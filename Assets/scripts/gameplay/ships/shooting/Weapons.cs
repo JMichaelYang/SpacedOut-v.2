@@ -22,7 +22,20 @@ public class Weapons : MonoBehaviour
     private WeaponShootEventArgs e = new WeaponShootEventArgs(0f);
 
     //collider of this ship
-    private Collider2D shipCollider = null;
+    //private Collider2D shipCollider = null;
+
+    private Team shooterTeam;
+    private Collider2D[] teamColliders;
+
+    public void SetTeam(Team team)
+    {
+        this.shooterTeam = team;
+        this.teamColliders = new Collider2D[this.shooterTeam.FriendlyShips.Count];
+        for (int i = 0; i < this.shooterTeam.FriendlyShips.Count; i++)
+        {
+            this.teamColliders[i] = this.shooterTeam.FriendlyShips[i].GetComponent<Collider2D>();
+        }
+    }
 
     public void ReadWeapons(GunType[] guns, Vector2[] offsets)
     {
@@ -48,7 +61,7 @@ public class Weapons : MonoBehaviour
     {
         this.commandHandler = GameObject.FindObjectOfType<CommandHandler>();
         this.shake = GameObject.FindObjectOfType<CameraShake>();
-        this.shipCollider = this.gameObject.GetComponent<Collider2D>();
+        //this.shipCollider = this.gameObject.GetComponent<Collider2D>();
     }
 
     public bool ShootWeapons(params int[] slots)
@@ -93,8 +106,12 @@ public class Weapons : MonoBehaviour
                     //reset shot timer every shot
                     this.gun.shotTimer = 0f;
 
+                    Collider2D shotCollider = shotBullet.GetComponent<Collider2D>();
                     //ignore collisions between whoever fired this and the bullet itself
-                    Physics2D.IgnoreCollision(shotBullet.GetComponent<Collider2D>(), this.shipCollider, true);
+                    for (int c = 0; c < this.teamColliders.Length; c++)
+                    {
+                        Physics2D.IgnoreCollision(shotCollider, this.teamColliders[c], true);
+                    }
 
                     //if the burst is done, reset the burst counter and timer
                     if (this.gun.burstCounter >= this.gun.BurstAmount)

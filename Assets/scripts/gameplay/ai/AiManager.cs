@@ -12,12 +12,18 @@ public class AiManager : MonoBehaviour
         public Rigidbody2D rigidBody;
     }
 
+    //the team of this ship
+    private Team aiTeam;
+
     //current list of behaviors in use
     private List<AiMoveBehavior> currentMoveBehavior;
 
     //local storage of components that we are interested in
     private Dictionary<GameObject, ComponentsOfInterest> friendlyComponents;
     private Dictionary<GameObject, ComponentsOfInterest> enemyComponents;
+    //the currently focused enemy and friends
+    private int enemyTarget;
+    private int friendlyTarget;
 
     //reference to this AI's components
     private ComponentsOfInterest aiComponents;
@@ -75,6 +81,11 @@ public class AiManager : MonoBehaviour
     public void ClearBehavior()
     {
         this.currentMoveBehavior.Clear();
+    }
+
+    public void ShootBehavior()
+    {
+
     }
 }
 
