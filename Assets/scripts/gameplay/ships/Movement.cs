@@ -56,6 +56,7 @@ public class Movement : MonoBehaviour
 
         this.rigidBody.AddForce(this.acceleration, ForceMode2D.Impulse);
         this.rigidBody.MoveRotation(this.rigidBody.rotation + this.rotation);
+
         //reset forces
         this.acceleration = Vector2.zero;
         this.rotation = 0;
@@ -106,10 +107,9 @@ public class Movement : MonoBehaviour
     /// Accelerate the object in the direction of its rotation
     /// </summary>
     /// <param name="magnitude">the magnitude to accelerate the object by</param>
-    public void Accelerate(float magnitude, bool limit = true)
+    public void Accelerate(float magnitude)
     {
         float mag = magnitude;
-        if (limit) { Mathf.Clamp(mag, -this.MaxAcceleration, this.MaxAcceleration); }
 
         Vector2 accel = this.bodyTransform.up * mag;
 

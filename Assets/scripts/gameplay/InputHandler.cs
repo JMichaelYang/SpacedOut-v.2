@@ -81,11 +81,11 @@ public class InputHandler : MonoBehaviour
 
         if (Input.GetKey(GameSettings.MoveForward))
         {
-            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.MaxAcceleration, true));
+            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.MaxAcceleration));
         }
         if (Input.GetKey(GameSettings.MoveBack))
         {
-            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), -this.movement.MaxAcceleration, true));
+            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), -this.movement.MaxAcceleration));
         }
         if (Input.GetKey(GameSettings.MoveLeft))
         {
@@ -137,7 +137,7 @@ public class InputHandler : MonoBehaviour
         float y = CnInputManager.GetAxis("Vertical");
         if (y != 0f)
         {
-            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.MaxAcceleration * y, true));
+            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.MaxAcceleration * y));
         }
 
         #endregion Player Movement

@@ -5,27 +5,38 @@ using UnityEngine;
 
 public class AiManager : MonoBehaviour
 {
+    public struct ComponentsOfInterest
+    {
+        public Transform transform;
+        public Movement movement;
+        public Rigidbody2D rigidBody;
+    }
+
     //current list of behaviors in use
     private List<AiMoveBehavior> currentMoveBehavior;
 
-    //reference to GameObject components
-    private Transform aiTransform;
-    private Movement movement;
+    //local storage of components that we are interested in
+    private Dictionary<GameObject, ComponentsOfInterest> friendlyComponents;
+    private Dictionary<GameObject, ComponentsOfInterest> enemyComponents;
+
+    //reference to this AI's components
+    private ComponentsOfInterest aiComponents;
 
     void Awake()
     {
         this.currentMoveBehavior = new List<AiMoveBehavior>();
-
+        
         //assign components
-        this.aiTransform = this.transform;
-        this.movement = this.gameObject.GetComponent<Movement>();
+        this.aiComponents.transform = this.transform;
+        this.aiComponents.movement = this.gameObject.GetComponent<Movement>();
+        this.aiComponents.rigidBody = this.gameObject.GetComponent<Rigidbody2D>();
     }
 
     void Start()
     {
         //TODO: Test code, please remove
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        this.AddBehavior(new AiSeekBehavior(player.transform, this.aiTransform, this.movement.MaxAcceleration));
+        this.AddBehavior(new AiSeekBehavior(player.transform, this.aiComponents.transform, this.aiComponents.movement.MaxAcceleration));
         //this.AddBehavior(new AiFleeBehabior(player.transform, this.aiTransform, this.movement.MaxAcceleration));
         //this.AddBehavior(new AiPursueBehavior(player.transform, this.aiTransform, player.GetComponent<Rigidbody2D>(), player.GetComponent<Movement>().MaxVelocity, this.movement.MaxAcceleration));
     }
@@ -33,15 +44,15 @@ public class AiManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float currentRot = this.aiTransform.rotation.eulerAngles.z;
+        float currentRot = this.aiComponents.transform.rotation.eulerAngles.z;
 
         //add up all steering forces
         Vector2 steering = Vector2.zero;
         for (int i = 0; i < this.currentMoveBehavior.Count; i++) { steering += this.currentMoveBehavior[i].GetSteeringForce(); }
-        steering = Utils.CapVector2(steering, this.movement.MaxAcceleration);
+        steering = Utils.CapVector2(steering, this.aiComponents.movement.MaxAcceleration);
 
         //get magnitude of movement in steering direction
-        Vector2 heading = this.aiTransform.up;
+        Vector2 heading = this.aiComponents.transform.up;
         float magnitude = heading.x * steering.x + heading.y * steering.y;
 
         //get a desired rotation from the steering force
@@ -49,8 +60,8 @@ public class AiManager : MonoBehaviour
         desiredRotation = Utils.FindAngleDifference(desiredRotation, currentRot);
 
         //add command with aggregated steering forces
-        CommandHandler.Instance.AddCommands(new AccelerateCommand(this.movement, magnitude, true),
-            new RotateCommand(this.movement, desiredRotation));
+        CommandHandler.Instance.AddCommands(new AccelerateCommand(this.aiComponents.movement, magnitude),
+            new RotateCommand(this.aiComponents.movement, desiredRotation));
     }
 
     /// <summary>
