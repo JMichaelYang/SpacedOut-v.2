@@ -46,6 +46,8 @@ public class Bullet : MonoBehaviour
         this.bulletCollider.size = this.bulletRenderer.bounds.size;
 
         //set bullet velocity
+        this.bulletMovement.MaxAcceleration = velocity;
+        this.bulletMovement.MaxVelocity = velocity;
         this.bulletMovement.Accelerate(velocity, false);
 
         //set this bullet up to be destroyed after its duration elapses

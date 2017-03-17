@@ -19,10 +19,6 @@ public class Movement : MonoBehaviour
     private bool DampenInertia = true;
     private float DampeningMultiplier = 1f;
 
-    //changes acceleration of object
-    public float AccelerationMultiplier = 1f;
-    public float RotationMultiplier = 1f;
-
     //movement speed cap
     public float MaxVelocity = 1f;
     public float MaxRotationalVelocity = 1f;
@@ -44,16 +40,22 @@ public class Movement : MonoBehaviour
         this.DampeningMultiplier = GameSettings.DampeningMultiplier;
     }
 
-    public void SetStatistics(ShipType shipType)
+    public void SetStatistics(ShipType shipType, EngineType engine)
     {
         this.MaxRotationalVelocity = shipType.RotAccel;
+
+        this.MaxAcceleration = engine.MaxAccel;
+        this.MaxVelocity = engine.MaxVelocity;
     }
 
     void FixedUpdate()
     {
         //add accumulated forces
-        this.rigidBody.AddForce(this.acceleration * this.AccelerationMultiplier, ForceMode2D.Impulse);
-        this.rigidBody.MoveRotation(this.rigidBody.rotation + (this.rotation * this.RotationMultiplier));
+        this.acceleration = Utils.CapVector2(this.acceleration, this.MaxAcceleration);
+        this.rotation = Mathf.Clamp(this.rotation, -this.MaxRotationalVelocity, this.MaxRotationalVelocity);
+
+        this.rigidBody.AddForce(this.acceleration, ForceMode2D.Impulse);
+        this.rigidBody.MoveRotation(this.rigidBody.rotation + this.rotation);
         //reset forces
         this.acceleration = Vector2.zero;
         this.rotation = 0;
@@ -110,8 +112,6 @@ public class Movement : MonoBehaviour
         if (limit) { Mathf.Clamp(mag, -this.MaxAcceleration, this.MaxAcceleration); }
 
         Vector2 accel = this.bodyTransform.up * mag;
-        //float xAccel = Mathf.Cos((this.rigidBody.rotation + 90f) * Mathf.Deg2Rad) * mag;
-        //float yAccel = Mathf.Sin((this.rigidBody.rotation + 90f) * Mathf.Deg2Rad) * mag;
 
         this.acceleration.x += accel.x;
         this.acceleration.y += accel.y;

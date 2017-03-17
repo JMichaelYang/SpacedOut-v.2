@@ -111,6 +111,8 @@ namespace CnControls
             _stickTransform.anchoredPosition = _initialStickPosition;
             _baseTransform.anchoredPosition = _initialBasePosition;
 
+            //EDIT: allow for movement range to scale with screen width
+            MovementRange *= Screen.width;
             _oneOverMovementRange = 1f / MovementRange;
 
             if (HideOnRelease)

@@ -41,14 +41,14 @@ public class ShipHandler : MonoBehaviour
         this.MaxHealth = shipType.Health;
     }
 
-	// Use this for initialization
-	void Start()
+    // Use this for initialization
+    void Start()
     {
         this.explosion = Resources.Load<GameObject>(GameSettings.ShipExplosion);
         this.explosionSystem = this.explosion.GetComponent<ParticleSystem>();
 
         this.Health = this.MaxHealth;
-	}
+    }
 
     //used for when the ship exits the arena
     void Update()
@@ -114,7 +114,7 @@ public class ShipHandler : MonoBehaviour
     private void DestroyShip()
     {
         Component[] components = this.gameObject.GetComponents<Component>();
-        for(int i = 0; i < components.Length; i++)
+        for (int i = 0; i < components.Length; i++)
         {
             if (!(components[i] is Transform) && !(components[i] is Rigidbody2D) && !(components[i] is ShipHandler) && !(components[i] is AiManager))
             {
@@ -156,12 +156,26 @@ public class ShipHandler : MonoBehaviour
 
 public class Ship
 {
-    public ShipType Type;
-    public GunType[] Guns;
+    public ShipType Type { get; protected set; }
+    public EngineType Engine { get; protected set; }
+    public GunType[] Guns { get; protected set; }
 
-    public Ship(ShipType type, params GunType[] guns)
+    public Ship(ShipType type, EngineType engine, params GunType[] guns)
     {
         this.Type = type;
+        this.Engine = engine;
         this.Guns = guns;
+    }
+
+    public GameObject GetShipObject(GameObject shipObject)
+    {
+        shipObject.GetComponent<Weapons>().ReadWeapons(this.Guns, this.Type.Offsets);
+        shipObject.GetComponent<Movement>().SetStatistics(this.Type, this.Engine);
+        shipObject.GetComponent<ShipHandler>().SetStatistics(this.Type);
+
+        SpriteRenderer spriteRenderer = shipObject.GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = Resources.Load<Sprite>(GameSettings.ShipTexPath + this.Type.SpritePath);
+
+        return shipObject;
     }
 }

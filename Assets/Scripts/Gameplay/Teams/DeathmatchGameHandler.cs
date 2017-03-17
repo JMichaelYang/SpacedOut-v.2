@@ -34,18 +34,26 @@ public class DeathmatchGameHandler : MonoBehaviour
         this.teams[0].Name = "Team One";
         this.teams[0].TeamColor = Color.blue;
         this.teams[0].Ships = new List<Ship>();
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 2; i++)
         {
-            this.teams[0].Ships.Add(new Ship(ShipTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[0].Ships.Add(new Ship(ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+        }
+        for (int i = 0; i < 2; i++)
+        {
+            this.teams[0].Ships.Add(new Ship(ShipTypes.DebugSlow, EngineTypes.DebugSlow, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
         }
 
         this.teams.Add(new Team());
         this.teams[1].Name = "Team Two";
         this.teams[1].TeamColor = Color.red;
         this.teams[1].Ships = new List<Ship>();
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 4; i++)
         {
-            this.teams[1].Ships.Add(new Ship(ShipTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[1].Ships.Add(new Ship(ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            this.teams[1].Ships.Add(new Ship(ShipTypes.DebugSlow, EngineTypes.DebugSlow, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
         }
 
         //spawn ships
@@ -115,15 +123,12 @@ public class DeathmatchGameHandler : MonoBehaviour
 
     private GameObject spawnAi(Ship ship, Color team)
     {
-        GameObject aiObject = Instantiate<GameObject>(Resources.Load<GameObject>(GameSettings.ShipPrefab));
+        GameObject aiObject = ship.GetShipObject(Instantiate<GameObject>(Resources.Load<GameObject>(GameSettings.ShipPrefab)));
 
         aiObject.tag = "AI";
 
-        aiObject.GetComponent<Weapons>().ReadWeapons(ship.Guns, ship.Type.Offsets);
-        aiObject.GetComponent<Movement>().SetStatistics(ship.Type);
-        aiObject.GetComponent<ShipHandler>().SetStatistics(ship.Type);
-
         SpriteRenderer spriteRenderer = aiObject.GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = Resources.Load<Sprite>(GameSettings.ShipTexPath + ship.Type.SpritePath);
         Utils.UpdateSpriteColor(spriteRenderer, GameSettings.ColorToReplace, team);
 
         return aiObject;

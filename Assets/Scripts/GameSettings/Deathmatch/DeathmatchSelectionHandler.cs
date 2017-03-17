@@ -5,7 +5,11 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class DeathmatchSelectionHandler : MonoBehaviour
-{
+{/*
+    //reset player preferences in editor
+    [MenuItem("Edit/Reset Playerprefs")]
+    public static void DeletePlayerPrefs() { PlayerPrefs.DeleteAll(); }
+    */
     public static DeathmatchSelectionHandler Instance;
 
     private float arenaWidth = 500f;
@@ -57,10 +61,10 @@ public class DeathmatchSelectionHandler : MonoBehaviour
         {
             this.teams.Add(new Team());
             this.teams[i].Ships = new List<Ship>();
-            this.teams[i].Ships.Add(new Ship(ShipTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
-            this.teams[i].Ships.Add(new Ship(ShipTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
-            this.teams[i].Ships.Add(new Ship(ShipTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
-            this.teams[i].Ships.Add(new Ship(ShipTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[i].Ships.Add(new Ship(ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[i].Ships.Add(new Ship(ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[i].Ships.Add(new Ship(ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[i].Ships.Add(new Ship(ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
         }
         this.teams[0].Name = "Team One";
         this.teams[0].TeamColor = Color.blue;

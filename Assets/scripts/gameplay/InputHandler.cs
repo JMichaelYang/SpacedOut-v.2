@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using CnControls;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,18 +19,6 @@ public class InputHandler : MonoBehaviour
     private GameObject playerCamera;
     private CameraZoom zoom;
     private CameraShake shake;
-
-    #region Touch Input Components
-
-    private Joystick joystickComponent;
-    private int joystickFingerId = -1;
-
-    private Button zoomOutButton;
-    private Button zoomInButton;
-
-    private Button shootButton;
-
-    #endregion Touch Input Components
 
     void Awake()
     {
@@ -59,17 +48,7 @@ public class InputHandler : MonoBehaviour
 
         #region Touch Components
 
-#if !UNITY_STANDALONE && !UNITY_WEBPLAYER && !UNITY_WSA //&& !UNITY_EDITOR
-
-        this.zoomInButton = GameObject.Find("ZoomIn").GetComponent<Button>();
-        this.zoomInButton.onClick.AddListener(zoomIn);
-        this.zoomOutButton = GameObject.Find("ZoomOut").GetComponent<Button>();
-        this.zoomOutButton.onClick.AddListener(zoomOut);
-
-        this.shootButton = GameObject.Find("ShootButton").GetComponent<Button>();
-        this.shootButton.onClick.AddListener(shoot);
-
-#else
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WSA || UNITY_EDITOR
 
         GameObject.Find("TouchPanel").SetActive(false);
 
@@ -78,26 +57,23 @@ public class InputHandler : MonoBehaviour
         #endregion Touch Components
     }
 
-    #region Touchscreen Functions
-
-    void zoomIn() { this.zoom.ChangeZoom(.5f); }
-    void zoomOut() { this.zoom.ChangeZoom(-.5f); }
-
-    void shoot() { this.commandHandler.AddCommands(new ShootCommand(this.weapons, 0, 1)); }
-
-    #endregion Touchscreen Functions
-
     // Update is called once per frame
     void Update()
     {
         // preprocessor code
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_WSA || UNITY_EDITOR
+
         this.keyboardUpdate();
+
+#else
+
+        this.touchUpdate();
+
 #endif
     }
 
     /// <summary>
-    /// keyboard update function
+    /// Keyboard update function
     /// </summary>
     private void keyboardUpdate()
     {
@@ -141,6 +117,42 @@ public class InputHandler : MonoBehaviour
         {
             this.zoom.ChangeZoom(-1f);
         }
+
+        #endregion Camera
+    }
+
+    /// <summary>
+    /// Touchscreen update function
+    /// </summary>
+    private void touchUpdate()
+    {
+        #region Player Movement
+
+        float x = -CnInputManager.GetAxis("Horizontal");
+        if (x != 0f)
+        {
+            this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), this.movement.MaxRotationalVelocity * x));
+        }
+
+        float y = CnInputManager.GetAxis("Vertical");
+        if (y != 0f)
+        {
+            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.MaxAcceleration * y, true));
+        }
+
+        #endregion Player Movement
+        #region Player Shooting
+
+        if (CnInputManager.GetButton("Shoot"))
+        {
+            this.commandHandler.AddCommands(new ShootCommand(this.weapons, 0, 1));
+        }
+
+        #endregion Player Shooting
+
+        #region Camera
+
+        this.zoom.ChangeZoom(CnInputManager.GetAxisRaw("Zoom"));
 
         #endregion Camera
     }

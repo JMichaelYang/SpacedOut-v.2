@@ -74,7 +74,7 @@ public class GameSettings : MonoBehaviour
     public static readonly string ShipPrefab = "prefabs/ships/Ship";
     public static readonly string ShipExplosion = "prefabs/ships/ExplosionSystem";
 
-    public static readonly string StarPrefab = "prefabs/arena/Star";
+    public static readonly string ShipTexPath = "sprites/ships/";
 
     #endregion resources
 }

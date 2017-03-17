@@ -1,0 +1,42 @@
+Initialize engine version: 5.5.0f3 (38b4efef76f0)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: Intel(R) HD Graphics 4000 (ID=0x166)
+    Vendor:   Intel
+    VRAM:     912 MB
+    Driver:   10.18.10.4358
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\Jaewon\Documents\Unity\SpacedOut\Builds\v0.0a_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Jaewon\Documents\Unity\SpacedOut\Builds\v0.0a_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Jaewon\Documents\Unity\SpacedOut\Builds\v0.0a_Data\Managed\Assembly-CSharp-firstpass.dll (this message is harmless)
+Loading C:\Users\Jaewon\Documents\Unity\SpacedOut\Builds\v0.0a_Data\Managed\Assembly-CSharp-firstpass.dll into Unity Child Domain
+Platform assembly: C:\Users\Jaewon\Documents\Unity\SpacedOut\Builds\v0.0a_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Jaewon\Documents\Unity\SpacedOut\Builds\v0.0a_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\Jaewon\Documents\Unity\SpacedOut\Builds\v0.0a_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\Jaewon\Documents\Unity\SpacedOut\Builds\v0.0a_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\Jaewon\Documents\Unity\SpacedOut\Builds\v0.0a_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\Jaewon\Documents\Unity\SpacedOut\Builds\v0.0a_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: C:\Users\Jaewon\Documents\Unity\SpacedOut\Builds\v0.0a_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll (this message is harmless)
+Loading C:\Users\Jaewon\Documents\Unity\SpacedOut\Builds\v0.0a_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll into Unity Child Domain
+- Completed reload, in  0.351 seconds
+Platform assembly: C:\Users\Jaewon\Documents\Unity\SpacedOut\Builds\v0.0a_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\Jaewon\Documents\Unity\SpacedOut\Builds\v0.0a_Data\Managed\System.dll (this message is harmless)
+desktop: 1440x900 60Hz; virtual: 1600x1800 at 0,-900
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+UnloadTime: 2.191420 ms
+Setting up 2 worker threads for Enlighten.
+  Thread -> id: 5d24 -> priority: 1 
+  Thread -> id: 5a10 -> priority: 1 
+The referenced script on this Behaviour (Game Object 'Handlers') is missing!
+ 
+(Filename:  Line: 1754)
+
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 14.355567 ms
+
+Unloading 23 unused Assets to reduce memory usage. Loaded Objects now: 510.
+Total: 0.778666 ms (FindLiveObjects: 0.071842 ms CreateObjectMapping: 0.107986 ms MarkObjects: 0.558229 ms  DeleteObjects: 0.039267 ms)
+
