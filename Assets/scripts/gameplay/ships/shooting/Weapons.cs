@@ -22,10 +22,29 @@ public class Weapons : MonoBehaviour
     private WeaponShootEventArgs e = new WeaponShootEventArgs(0f);
 
     //collider of this ship
-    private Collider2D shipCollider = null;
+    //private Collider2D shipCollider = null;
+
+    private Team shooterTeam;
+    private Collider2D[] teamColliders;
+
+    //maximum range and spread of weapons for use by AI
+    public float MaxRange { get; protected set; }
+    public float MaxSpread { get; protected set; }
+
+    public void SetTeam(Team team)
+    {
+        this.shooterTeam = team;
+        this.teamColliders = new Collider2D[this.shooterTeam.FriendlyShips.Count];
+        for (int i = 0; i < this.shooterTeam.FriendlyShips.Count; i++)
+        {
+            this.teamColliders[i] = this.shooterTeam.FriendlyShips[i].GetComponent<Collider2D>();
+        }
+    }
 
     public void ReadWeapons(GunType[] guns, Vector2[] offsets)
     {
+        this.MaxRange = 0f;
+        this.MaxSpread = 0f;
         this.weapons = new OffsetGunPair[offsets.Length];
 
         for (int i = 0; i < offsets.Length; i++)
@@ -33,7 +52,12 @@ public class Weapons : MonoBehaviour
             this.weapons[i] = new OffsetGunPair();
             this.weapons[i].ValueOffset = offsets[i];
 
-            if (guns[i] != null) { this.weapons[i].ValueGun = Gun.LoadFromGunType(guns[i]); }
+            if (guns[i] != null)
+            {
+                this.weapons[i].ValueGun = Gun.LoadFromGunType(guns[i]);
+                if (guns[i].Range * guns[i].Velocity > this.MaxRange) { this.MaxRange = guns[i].Range * guns[i].Velocity; }
+                if (guns[i].Accuracy > this.MaxSpread) { this.MaxSpread = guns[i].Accuracy; }
+            }
             else { this.weapons[i].ValueGun = null; }
         }
     }
@@ -48,7 +72,7 @@ public class Weapons : MonoBehaviour
     {
         this.commandHandler = GameObject.FindObjectOfType<CommandHandler>();
         this.shake = GameObject.FindObjectOfType<CameraShake>();
-        this.shipCollider = this.gameObject.GetComponent<Collider2D>();
+        //this.shipCollider = this.gameObject.GetComponent<Collider2D>();
     }
 
     public bool ShootWeapons(params int[] slots)
@@ -93,8 +117,12 @@ public class Weapons : MonoBehaviour
                     //reset shot timer every shot
                     this.gun.shotTimer = 0f;
 
+                    Collider2D shotCollider = shotBullet.GetComponent<Collider2D>();
                     //ignore collisions between whoever fired this and the bullet itself
-                    Physics2D.IgnoreCollision(shotBullet.GetComponent<Collider2D>(), this.shipCollider, true);
+                    for (int c = 0; c < this.teamColliders.Length; c++)
+                    {
+                        Physics2D.IgnoreCollision(shotCollider, this.teamColliders[c], true);
+                    }
 
                     //if the burst is done, reset the burst counter and timer
                     if (this.gun.burstCounter >= this.gun.BurstAmount)

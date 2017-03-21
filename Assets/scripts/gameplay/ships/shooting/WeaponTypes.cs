@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class WeaponTypes
 {
-    public static readonly GunType DebugGun1 = new GunType(10f, 30f, 6f, 6f, 0.05f, 0.5f, 2f, 5, 100, "bullet");
-    public static readonly GunType DebugGun2 = new GunType(20f, 25f, 8f, 2f, 0.2f, 1f, 4f, 5, 20, "rocket");
+    public static readonly GunType DebugGun1 = new GunType(15f, 30f, 6f, 6f, 0.1f, 0.5f, 2f, 5, 100, "bullet");
+    public static readonly GunType DebugGun2 = new GunType(25f, 25f, 8f, 2f, 0.2f, 1f, 3f, 5, 20, "rocket");
 }
 
 public class GunType

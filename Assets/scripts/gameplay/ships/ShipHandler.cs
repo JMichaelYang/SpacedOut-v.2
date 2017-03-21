@@ -6,7 +6,7 @@ using UnityEngine;
 public class ShipHandler : MonoBehaviour
 {
     //ship type
-    private ShipType shipType;
+    //private ShipType shipType;
 
     //current health of the ship
     public float MaxHealth { get; protected set; }
@@ -27,6 +27,8 @@ public class ShipHandler : MonoBehaviour
     private Transform shipTransform = null;
     private AiManager shipAi = null;
 
+    public bool IsAlive { get; protected set; }
+
     void Awake()
     {
         this.shipTransform = this.transform;
@@ -34,6 +36,7 @@ public class ShipHandler : MonoBehaviour
         this.movement = this.gameObject.GetComponent<Movement>();
         this.physicsBody = this.GetComponent<Rigidbody2D>();
         this.collider2d = this.GetComponent<Collider2D>();
+        this.IsAlive = true;
     }
 
     public void SetStatistics(ShipType shipType)
@@ -66,7 +69,7 @@ public class ShipHandler : MonoBehaviour
             }
 
             this.shipAi.ClearBehavior();
-            this.shipAi.AddBehavior(new AiSeekPointBehavior(Vector2.zero, this.shipTransform, this.movement.MaxAcceleration));
+            this.shipAi.AddBehavior(AvailableBehaviors.RETURN_CENTER);
 
             this.isOffScreen = true;
         }
@@ -130,6 +133,9 @@ public class ShipHandler : MonoBehaviour
         //TODO: preload explosion
         ObjectPool.Spawn(this.explosion, this.transform.position, this.transform.rotation);
         Invoke("AfterExplosion", this.explosionSystem.main.duration + this.explosionSystem.main.startLifetime.constantMax);
+
+        //set this ship to dead
+        this.IsAlive = false;
     }
 
     private void AfterExplosion()
@@ -156,12 +162,14 @@ public class ShipHandler : MonoBehaviour
 
 public class Ship
 {
+    public Team ShipTeam { get; protected set; }
     public ShipType Type { get; protected set; }
     public EngineType Engine { get; protected set; }
     public GunType[] Guns { get; protected set; }
 
-    public Ship(ShipType type, EngineType engine, params GunType[] guns)
+    public Ship(Team team, ShipType type, EngineType engine, params GunType[] guns)
     {
+        this.ShipTeam = team;
         this.Type = type;
         this.Engine = engine;
         this.Guns = guns;

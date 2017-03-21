@@ -4,10 +4,21 @@ using UnityEngine;
 
 public class Team
 {
-    public string Name;
-    public List<Ship> Ships;
-    public Color TeamColor;
 
-    public GameObject[] FriendlyShips { get; protected set; }
-    public GameObject[] EnemyShips { get; protected set; }
+    public string Name;
+    public Color TeamColor;
+    public List<Ship> Ships;
+
+    public List<GameObject> FriendlyShips { get; protected set; }
+    public List<GameObject> EnemyShips { get; protected set; }
+
+    public Team(string name, Color teamColor)
+    {
+        this.Name = name;
+        this.TeamColor = teamColor;
+        this.Ships = new List<Ship>();
+
+        this.FriendlyShips = new List<GameObject>();
+        this.EnemyShips = new List<GameObject>();
+    }
 }

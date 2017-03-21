@@ -25,50 +25,67 @@ public class DeathmatchGameHandler : MonoBehaviour
             Destroy(this.gameObject);
         }
 
-        //TODO: Replace this test code
-
+        //set up lists
         this.teams = new List<Team>();
         this.ships = new List<GameObject>();
 
-        this.teams.Add(new Team());
-        this.teams[0].Name = "Team One";
-        this.teams[0].TeamColor = Color.blue;
-        this.teams[0].Ships = new List<Ship>();
-        for (int i = 0; i < 2; i++)
+        //TODO: Replace this test code with code that loads from a "level select" screen
+
+        this.teams.Add(new Team("Team One", Color.blue));
+        for (int i = 0; i < 4; i++)
         {
-            this.teams[0].Ships.Add(new Ship(ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
         }
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 4; i++)
         {
-            this.teams[0].Ships.Add(new Ship(ShipTypes.DebugSlow, EngineTypes.DebugSlow, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.DebugSlow, EngineTypes.DebugSlow, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
         }
 
-        this.teams.Add(new Team());
-        this.teams[1].Name = "Team Two";
-        this.teams[1].TeamColor = Color.red;
-        this.teams[1].Ships = new List<Ship>();
+        this.teams.Add(new Team("Team Two", Color.red));
         for (int i = 0; i < 4; i++)
         {
-            this.teams[1].Ships.Add(new Ship(ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
         }
         for (int i = 0; i < 4; i++)
         {
-            this.teams[1].Ships.Add(new Ship(ShipTypes.DebugSlow, EngineTypes.DebugSlow, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
+            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.DebugSlow, EngineTypes.DebugSlow, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
         }
 
         //spawn ships
-        for (int j = 0; j < teams.Count; j++)
+        for (int j = 0; j < this.teams.Count; j++)
         {
-            for (int i = 0; i < teams[j].Ships.Count; i++)
+            for (int i = 0; i < this.teams[j].Ships.Count; i++)
             {
+                //find spawn point
                 Vector3 nextSpawn = this.getSpawnPoint(j, i);
-                GameObject shipSpawn = spawnAi(teams[j].Ships[i], this.teams[j].TeamColor);
-                if (i == 0 && j == 0)
-                {
-                    this.convertPlayer(shipSpawn);
-                }
+                GameObject shipSpawn = spawnAi(this.teams[j].Ships[i], this.teams[j].TeamColor);
+
+                //TODO: replace this code, which changes the first player on the first team into the player
+                if (i == 0 && j == 0) { this.convertPlayer(shipSpawn); }
+
                 shipSpawn.transform.position = (Vector2)nextSpawn;
                 shipSpawn.transform.Rotate(0f, 0f, nextSpawn.z);
+
+                //add ship to teams' lists of friends and enemies
+                for (int t = 0; t < this.teams.Count; t++)
+                {
+                    if (t == j) { this.teams[t].FriendlyShips.Add(shipSpawn); }
+                    else { this.teams[t].EnemyShips.Add(shipSpawn); }
+                }
+
+                //add the spawned ship to this list of ships
+                this.ships.Add(shipSpawn);
+            }
+        }
+
+        //set weapon and ai lists
+        //iterating through each team, using the friendly ships array in order to cover every ship
+        for (int i = 0; i < this.teams.Count; i++)
+        {
+            for (int j = 0; j < this.teams[i].FriendlyShips.Count; j++)
+            {
+                this.teams[i].FriendlyShips[j].GetComponent<Weapons>().SetTeam(this.teams[i]);
+                this.teams[i].FriendlyShips[j].GetComponent<AiManager>().SetTeam(this.teams[i]);
             }
         }
     }
@@ -134,7 +151,7 @@ public class DeathmatchGameHandler : MonoBehaviour
         return aiObject;
     }
 
-    private GameObject convertPlayer (GameObject playerObject)
+    private GameObject convertPlayer(GameObject playerObject)
     {
         playerObject.tag = "Player";
         playerObject.GetComponent<AiManager>().enabled = false;
