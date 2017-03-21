@@ -7,6 +7,11 @@ using System.Collections;
  */
 public class GameSettings : MonoBehaviour
 {
+    void Awake()
+    {
+        Application.targetFrameRate = 30;
+    }
+
     #region arena
 
     public static int ArenaWidth = 500;

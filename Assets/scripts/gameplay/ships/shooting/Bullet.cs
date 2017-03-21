@@ -6,7 +6,8 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     //components
-    private Movement bulletMovement;
+    private Transform bulletTransform;
+    private Rigidbody2D bulletBody;
     private SpriteRenderer bulletRenderer;
     private BoxCollider2D bulletCollider;
     //shooter
@@ -24,8 +25,10 @@ public class Bullet : MonoBehaviour
         this.Damage = 0f;
         this.duration = 0f;
 
-        try { this.bulletMovement = this.gameObject.GetComponent<Movement>(); }
-        catch { Debug.Log("Could not find Movement component of " + this.gameObject.ToString()); }
+        try { this.bulletTransform = this.transform; }
+        catch { Debug.Log("Could not find Transform component of " + this.gameObject.ToString()); }
+        try { this.bulletBody = this.gameObject.GetComponent<Rigidbody2D>(); }
+        catch { Debug.Log("Could not find RigidBody component of " + this.gameObject.ToString()); }
         try { this.bulletRenderer = this.gameObject.GetComponent<SpriteRenderer>(); }
         catch { Debug.Log("Could not find Renderer component of " + this.gameObject.ToString()); }
         try { this.bulletCollider = this.gameObject.GetComponent<BoxCollider2D>(); }
@@ -41,14 +44,12 @@ public class Bullet : MonoBehaviour
         this.duration = duration;
         //set shooter for this bullet
         this.shooter = shooter;
-        
+
         this.bulletRenderer.sprite = image;
         this.bulletCollider.size = this.bulletRenderer.bounds.size;
 
-        //set bullet velocity
-        this.bulletMovement.MaxAcceleration = velocity;
-        this.bulletMovement.MaxVelocity = velocity;
-        this.bulletMovement.Accelerate(velocity);
+        //accelerate bullet
+        this.bulletBody.velocity = this.bulletTransform.up * velocity;
 
         //set this bullet up to be destroyed after its duration elapses
         Invoke("Kill", this.duration);
