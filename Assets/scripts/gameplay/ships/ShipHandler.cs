@@ -69,7 +69,7 @@ public class ShipHandler : MonoBehaviour
             }
 
             this.shipAi.ClearBehavior();
-            this.shipAi.AddBehavior(new AiSeekPointBehavior(Vector2.zero, this.shipTransform, this.movement.MaxAcceleration));
+            this.shipAi.AddBehavior(AvailableBehaviors.RETURN_CENTER);
 
             this.isOffScreen = true;
         }

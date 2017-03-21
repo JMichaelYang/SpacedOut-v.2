@@ -15,38 +15,73 @@ public struct ComponentsOfInterest
     public ShipHandler handler;
 }
 
+public enum AvailableBehaviors
+{
+    SEEK,
+    PURSUE,
+    FLEE,
+    SHOOT,
+    RETURN_CENTER
+}
+
 public class AiManager : MonoBehaviour
 {
     //the team of this ship
-    [SerializeField]
     private Team aiTeam;
 
-    //current list of behaviors in use
-    [SerializeField]
-    private List<AiMoveBehavior> currentMoveBehavior;
-
     //local storage of components that we are interested in
-    [SerializeField]
     private Dictionary<GameObject, ComponentsOfInterest> friendlyComponents;
-    [SerializeField]
     private Dictionary<GameObject, ComponentsOfInterest> enemyComponents;
+    //reference to this AI's components
+    private ComponentsOfInterest aiComponents;
+    //reference to this Ai's weapons
+    private Weapons aiWeapons;
     //the currently focused enemy and friends
     [SerializeField]
     private GameObject enemyTarget = null;
+    [SerializeField]
     private GameObject friendlyTarget = null;
 
-    //reference to this AI's components
-    private ComponentsOfInterest aiComponents;
+    #region Delegate Behavior Stuff
+
+    [System.Serializable]
+    public delegate void AiBehavior();
+    //dictionary of available behaviors
+    private Dictionary<AvailableBehaviors, AiBehavior> availableBehaviors;
+    //current list of behaviors in use
+    [SerializeField]
+    private List<AiBehavior> currentBehavior;
+
+    //steering vector for use by delegate behaviors
+    [SerializeField]
+    private Vector2 steering = Vector2.zero;
+    //bool to determine whether to shoot to be used by delegate behaviors
+    [SerializeField]
+    private bool shouldShoot = false;
+
+    #endregion Delegate Behavior Stuff
 
     void Awake()
     {
-        this.currentMoveBehavior = new List<AiMoveBehavior>();
-        
+        this.availableBehaviors = new Dictionary<AvailableBehaviors, AiBehavior>();
+        //populate our list of available behaviors
+        this.availableBehaviors.Add(AvailableBehaviors.SEEK, BehaviorSeek);
+        this.availableBehaviors.Add(AvailableBehaviors.FLEE, BehaviorFlee);
+        this.availableBehaviors.Add(AvailableBehaviors.PURSUE, BehaviorPursue);
+        this.availableBehaviors.Add(AvailableBehaviors.SHOOT, BehaviorShoot);
+        this.availableBehaviors.Add(AvailableBehaviors.RETURN_CENTER, BehaviorReturnCenter);
+
+        //set up our behavior architecture
+        this.currentBehavior = new List<AiBehavior>();
+        this.steering = Vector2.zero;
+        this.shouldShoot = false;
+
         //assign components
         this.aiComponents.transform = this.transform;
         this.aiComponents.movement = this.gameObject.GetComponent<Movement>();
         this.aiComponents.rigidBody = this.gameObject.GetComponent<Rigidbody2D>();
         this.aiComponents.handler = this.gameObject.GetComponent<ShipHandler>();
+        this.aiWeapons = this.gameObject.GetComponent<Weapons>();
 
         //set initial targets to null (to be found later)
         enemyTarget = null;
@@ -110,6 +145,7 @@ public class AiManager : MonoBehaviour
                 if (!this.enemyComponents[this.enemyTarget].handler.IsAlive)
                 {
                     this.enemyTarget = null;
+                    this.ClearBehavior();
                 }
             }
             catch
@@ -120,44 +156,60 @@ public class AiManager : MonoBehaviour
         else if(this.aiTeam != null && this.aiTeam.EnemyShips != null && this.aiTeam.EnemyShips.Count > 0)
         {
             this.enemyTarget = this.acquireTargetObject();
-            this.AddBehavior(new AiSeekBehavior(this.enemyComponents[this.acquireTargetObject()].transform, this.aiComponents.transform, this.aiComponents.movement.MaxAcceleration));
+            if (this.enemyTarget != null)
+            {
+                this.AddBehavior(AvailableBehaviors.SEEK);
+                this.AddBehavior(AvailableBehaviors.SHOOT);
+            }
         }
 
         //TODO: Make it so that all Ai's on one team do not target the same target
 
         #endregion Targeting
 
+        #region Steering
+
+        //reset delegate behvaior variables
+        this.shouldShoot = false;
+        this.steering = Vector2.zero;
+
+        //find current rotation
         float currentRot = this.aiComponents.transform.rotation.eulerAngles.z;
 
-        //add up all steering forces
-        Vector2 steering = Vector2.zero;
-        for (int i = 0; i < this.currentMoveBehavior.Count; i++) { steering += this.currentMoveBehavior[i].GetSteeringForce(); }
-        steering = Utils.CapVector2(steering, this.aiComponents.movement.MaxAcceleration);
+        //execute all behaviors
+        for (int i = 0; i < this.currentBehavior.Count; i++) { this.currentBehavior[i](); }
 
+        //cap our steering force
+        steering = Utils.CapVector2(steering, this.aiComponents.movement.MaxAcceleration);
         //get magnitude of movement in steering direction
         Vector2 heading = this.aiComponents.transform.up;
         float magnitude = heading.x * steering.x + heading.y * steering.y;
-
         //get a desired rotation from the steering force
         float desiredRotation = Mathf.Atan2(steering.y, steering.x) * Mathf.Rad2Deg + 90f;
         desiredRotation = Utils.FindAngleDifference(desiredRotation, currentRot);
-
         //add command with aggregated steering forces
         CommandHandler.Instance.AddCommands(new AccelerateCommand(this.aiComponents.movement, magnitude),
             new RotateCommand(this.aiComponents.movement, desiredRotation));
+
+        #endregion Steering
+
+        if (this.shouldShoot)
+        {
+            CommandHandler.Instance.AddCommands(new ShootCommand(this.aiWeapons, 0, 1));
+        }
     }
 
     /// <summary>
     /// Function to add a behavior to the ai
     /// </summary>
     /// <param name="behavior">the behavior to be added</param>
-    public void AddBehavior(AiMoveBehavior behavior)
+    public void AddBehavior(AvailableBehaviors behavior)
     {
-        this.currentMoveBehavior.Add(behavior);
+        this.currentBehavior.Add(this.availableBehaviors[behavior]);
     }
     public void ClearBehavior()
     {
-        this.currentMoveBehavior.Clear();
+        this.currentBehavior.Clear();
     }
 
     /// <summary>
@@ -187,18 +239,72 @@ public class AiManager : MonoBehaviour
             }
         }
 
-        return this.aiTeam.EnemyShips[closestIndex];
+        return closestIndex < 0 ? null : this.aiTeam.EnemyShips[closestIndex];
     }
 
-    public void ShootBehavior()
+    #region Behaviors
+
+    /// <summary>
+    /// Guide the ship towards the current enemy target
+    /// </summary>
+    public void BehaviorSeek()
     {
-
+        Vector2 targetHeading = this.enemyComponents[this.enemyTarget].transform.position - this.aiComponents.transform.position;
+        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.MaxAcceleration);
     }
+    /// <summary>
+    /// Guide the ship away from the current enemy target
+    /// </summary>
+    public void BehaviorFlee()
+    {
+        Vector2 targetHeading = this.aiComponents.transform.position - this.enemyComponents[this.enemyTarget].transform.position;
+        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.MaxAcceleration);
+    }
+    /// <summary>
+    /// Guide the ship towards the current enemy target accounting for its velocity
+    /// </summary>
+    public void BehaviorPursue()
+    {
+        Transform enemyTransform = this.enemyComponents[this.enemyTarget].transform;
+        float t = (enemyTransform.position - this.aiComponents.transform.position).magnitude / this.aiComponents.movement.MaxVelocity;
+        this.steering += Utils.CapVector2((Vector2)enemyTransform.position + this.enemyComponents[this.enemyTarget].rigidBody.velocity * t - (Vector2)this.aiComponents.transform.position,
+            this.aiComponents.movement.MaxAcceleration);
+    }
+    /// <summary>
+    /// Determine whether the ship should attempt to shoot the target
+    /// </summary>
+    public void BehaviorShoot()
+    {
+        //find out if target is in range
+        Vector2 vectorBetween = this.enemyComponents[this.enemyTarget].transform.position - this.aiComponents.transform.position;
+        float distanceBetweenSqr = vectorBetween.sqrMagnitude;
+        float rangeSqr = this.aiWeapons.MaxRange * this.aiWeapons.MaxRange;
+
+        if (distanceBetweenSqr < rangeSqr)
+        {
+            //check if target is within acceptable field in front of ai
+            if (Utils.FindAngleDifference(Mathf.Atan2(vectorBetween.y, vectorBetween.x) * Mathf.Rad2Deg + 90f, this.aiComponents.transform.eulerAngles.z) < this.aiWeapons.MaxSpread)
+            {
+                this.shouldShoot = true;
+            }
+        }
+    }
+    /// <summary>
+    /// Guide the ship towards the center of the arena (0, 0)
+    /// </summary>
+    public void BehaviorReturnCenter()
+    {
+        Vector2 targetHeading = (Vector2)this.aiComponents.transform.position - Vector2.zero;
+        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.MaxAcceleration);
+    }
+
+    #endregion Behaviors
 }
 
 /// <summary>
 /// Parent class for all AI behavior functions
 /// </summary>
+[System.Obsolete("Now using delegates instead of classes; this has been left in case we want to revert to classes for behaviors...")]
 public abstract class AiMoveBehavior
 {
     protected Transform target = null;
@@ -210,92 +316,3 @@ public abstract class AiMoveBehavior
     public Vector2 GetSteeringForce(Transform target) { return this.GetSteeringForce(target, this.aiTransform); }
     public Vector2 GetSteeringForce() { return this.GetSteeringForce(this.target, this.aiTransform); }
 }
-
-#region AI Movement Behavior Classes
-
-/// <summary>
-/// Behavior that follows the exact position of a target
-/// </summary>
-public class AiSeekBehavior : AiMoveBehavior
-{
-    public AiSeekBehavior(Transform target, Transform aiTransform, float maxAccel)
-    {
-        this.target = target;
-        this.aiTransform = aiTransform;
-        this.maxAccel = maxAccel;
-    }
-
-    public override Vector2 GetSteeringForce(Transform target, Transform ai)
-    {
-        return Utils.CapVector2(target.position - ai.position, this.maxAccel);
-    }
-}
-public class AiSeekPointBehavior : AiMoveBehavior
-{
-    protected Vector2 targetPoint;
-
-    public AiSeekPointBehavior(Vector2 target, Transform aiTransform, float maxAccel)
-    {
-        this.targetPoint = target;
-        this.aiTransform = aiTransform;
-        this.maxAccel = maxAccel;
-        this.target = null;
-    }
-    
-    public override Vector2 GetSteeringForce(Transform target, Transform ai)
-    {
-        return Utils.CapVector2((Vector3)this.targetPoint - ai.position, this.maxAccel);
-    }
-}
-/// <summary>
-/// Behavior that runs away from the target
-/// </summary>
-public class AiFleeBehabior : AiMoveBehavior
-{
-    public AiFleeBehabior(Transform target, Transform aiTransform, float maxAccel)
-    {
-        this.target = target;
-        this.aiTransform = aiTransform;
-        this.maxAccel = maxAccel;
-    }
-
-    public override Vector2 GetSteeringForce(Transform target, Transform ai)
-    {
-        return Utils.CapVector2(ai.position - target.position, this.maxAccel);
-    }
-}
-/// <summary>
-/// Behavior that follows the future position of a target
-/// </summary>
-public class AiPursueBehavior : AiMoveBehavior
-{
-    protected Rigidbody2D targetBody;
-    protected float aiMaxSpeed;
-
-    public AiPursueBehavior(Transform target, Transform aiTransform, Rigidbody2D targetBody, float aiMaxSpeed, float maxAccel)
-    {
-        this.target = target;
-        this.aiTransform = aiTransform;
-
-        this.targetBody = targetBody;
-        this.aiMaxSpeed = aiMaxSpeed;
-        this.maxAccel = maxAccel;
-    }
-
-    public override Vector2 GetSteeringForce(Transform target, Transform ai)
-    {
-        try
-        {
-            //determine how many frames it will take to get to the target
-            float t = (target.position - ai.position).magnitude / this.aiMaxSpeed;
-            return Utils.CapVector2((Vector2)target.position + this.targetBody.velocity * t - (Vector2)ai.position, maxAccel);
-        }
-        catch (NullReferenceException e)
-        {
-            Debug.Log(e.Message);
-            return Vector2.zero;
-        }
-    }
-}
-
-#endregion AI Movement Behavior Classes

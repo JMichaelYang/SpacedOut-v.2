@@ -27,6 +27,10 @@ public class Weapons : MonoBehaviour
     private Team shooterTeam;
     private Collider2D[] teamColliders;
 
+    //maximum range and spread of weapons for use by AI
+    public float MaxRange { get; protected set; }
+    public float MaxSpread { get; protected set; }
+
     public void SetTeam(Team team)
     {
         this.shooterTeam = team;
@@ -39,6 +43,8 @@ public class Weapons : MonoBehaviour
 
     public void ReadWeapons(GunType[] guns, Vector2[] offsets)
     {
+        this.MaxRange = 0f;
+        this.MaxSpread = 0f;
         this.weapons = new OffsetGunPair[offsets.Length];
 
         for (int i = 0; i < offsets.Length; i++)
@@ -46,7 +52,12 @@ public class Weapons : MonoBehaviour
             this.weapons[i] = new OffsetGunPair();
             this.weapons[i].ValueOffset = offsets[i];
 
-            if (guns[i] != null) { this.weapons[i].ValueGun = Gun.LoadFromGunType(guns[i]); }
+            if (guns[i] != null)
+            {
+                this.weapons[i].ValueGun = Gun.LoadFromGunType(guns[i]);
+                if (guns[i].Range * guns[i].Velocity > this.MaxRange) { this.MaxRange = guns[i].Range * guns[i].Velocity; }
+                if (guns[i].Accuracy > this.MaxSpread) { this.MaxSpread = guns[i].Accuracy; }
+            }
             else { this.weapons[i].ValueGun = null; }
         }
     }
