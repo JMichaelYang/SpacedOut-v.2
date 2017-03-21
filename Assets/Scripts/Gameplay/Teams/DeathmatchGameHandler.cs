@@ -82,11 +82,13 @@ public class DeathmatchGameHandler : MonoBehaviour
             }
         }
 
+        //set weapon lists
         for (int i = 0; i < this.teams.Count; i++)
         {
             for (int j = 0; j < this.teams[i].FriendlyShips.Count; j++)
             {
                 this.teams[i].FriendlyShips[j].GetComponent<Weapons>().SetTeam(this.teams[i]);
+                this.teams[i].FriendlyShips[i].GetComponent<AiManager>().SetTeam(this.teams[i]);
             }
         }
     }

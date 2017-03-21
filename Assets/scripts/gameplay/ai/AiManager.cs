@@ -10,6 +10,7 @@ public class AiManager : MonoBehaviour
         public Transform transform;
         public Movement movement;
         public Rigidbody2D rigidBody;
+        public ShipHandler handler;
     }
 
     //the team of this ship
@@ -22,8 +23,9 @@ public class AiManager : MonoBehaviour
     private Dictionary<GameObject, ComponentsOfInterest> friendlyComponents;
     private Dictionary<GameObject, ComponentsOfInterest> enemyComponents;
     //the currently focused enemy and friends
-    private int enemyTarget;
-    private int friendlyTarget;
+    [SerializeField]
+    private GameObject enemyTarget = null;
+    private GameObject friendlyTarget;
 
     //reference to this AI's components
     private ComponentsOfInterest aiComponents;
@@ -36,20 +38,81 @@ public class AiManager : MonoBehaviour
         this.aiComponents.transform = this.transform;
         this.aiComponents.movement = this.gameObject.GetComponent<Movement>();
         this.aiComponents.rigidBody = this.gameObject.GetComponent<Rigidbody2D>();
+        this.aiComponents.handler = this.gameObject.GetComponent<ShipHandler>();
+
+        //set initial targets to null (to be found later)
+        enemyTarget = null;
+        friendlyTarget = null;
     }
 
     void Start()
     {
         //TODO: Test code, please remove
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        this.AddBehavior(new AiSeekBehavior(player.transform, this.aiComponents.transform, this.aiComponents.movement.MaxAcceleration));
         //this.AddBehavior(new AiFleeBehabior(player.transform, this.aiTransform, this.movement.MaxAcceleration));
         //this.AddBehavior(new AiPursueBehavior(player.transform, this.aiTransform, player.GetComponent<Rigidbody2D>(), player.GetComponent<Movement>().MaxVelocity, this.movement.MaxAcceleration));
+    }
+
+    public void SetTeam(Team team)
+    {
+        //set our team to the new team and create our dictionaries
+        this.aiTeam = team;
+        this.friendlyComponents = new Dictionary<GameObject, ComponentsOfInterest>();
+        this.enemyComponents = new Dictionary<GameObject, ComponentsOfInterest>();
+
+        //add the friendly team's components to our dictionary
+        for (int i = 0; i < team.FriendlyShips.Count; i++)
+        {
+            GameObject shipObject = team.FriendlyShips[i];
+
+            ComponentsOfInterest components = new ComponentsOfInterest();
+            components.transform = shipObject.transform;
+            components.movement = shipObject.GetComponent<Movement>();
+            components.rigidBody = shipObject.GetComponent<Rigidbody2D>();
+            components.handler = shipObject.GetComponent<ShipHandler>();
+
+            this.friendlyComponents.Add(shipObject, components);
+        }
+
+        //add the enemy team's components to our dictionary
+        for (int i = 0; i < team.EnemyShips.Count; i++)
+        {
+            GameObject shipObject = team.EnemyShips[i];
+
+            ComponentsOfInterest components = new ComponentsOfInterest();
+            components.transform = shipObject.transform;
+            components.movement = shipObject.GetComponent<Movement>();
+            components.rigidBody = shipObject.GetComponent<Rigidbody2D>();
+            components.handler = shipObject.GetComponent<ShipHandler>();
+
+            this.enemyComponents.Add(shipObject, components);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        //if we have a target, check if it still alive, otherwise, try to acquire a target (if we can't, just leave at null)
+        if (this.enemyTarget != null)
+        {
+            //if its dead, set our target index to null (if this fails then we probably tried to check an enemy that wasn't on the team list)
+            try
+            {
+                if (!this.enemyComponents[this.enemyTarget].handler.IsAlive)
+                {
+                    this.enemyTarget = null;
+                }
+            }
+            catch
+            {
+                Debug.Log("Ai target alive check failed, probably trying to check an object not on a team somehow");
+            }
+        }
+        else if(this.aiTeam != null && this.aiTeam.EnemyShips != null && this.aiTeam.EnemyShips.Count > 0)
+        {
+            this.enemyTarget = this.acquireTargetObject();
+            this.AddBehavior(new AiSeekBehavior(this.enemyComponents[this.acquireTargetObject()].transform, this.aiComponents.transform, this.aiComponents.movement.MaxAcceleration));
+        }
+
         float currentRot = this.aiComponents.transform.rotation.eulerAngles.z;
 
         //add up all steering forces
@@ -81,6 +144,36 @@ public class AiManager : MonoBehaviour
     public void ClearBehavior()
     {
         this.currentMoveBehavior.Clear();
+    }
+
+    /// <summary>
+    /// Acquire the closest target among the list of enemies from our team
+    /// </summary>
+    /// <returns>The index of the closest target</returns>
+    private GameObject acquireTargetObject()
+    {
+        //the closest target's distance squared
+        float closestSqr = -1;
+        float distance = 0;
+        int closestIndex = -1;
+
+        for (int i = 0; i < this.aiTeam.EnemyShips.Count; i++)
+        {
+            //make sure the target is alive
+            if (this.enemyComponents[this.aiTeam.EnemyShips[i]].handler.IsAlive)
+            {
+                //get the distance between the enemy and the ai
+                distance = (this.enemyComponents[this.aiTeam.EnemyShips[i]].transform.position - this.aiComponents.transform.position).sqrMagnitude;
+
+                if (distance < closestSqr || closestSqr == -1f)
+                {
+                    closestIndex = i;
+                    closestSqr = distance;
+                }
+            }
+        }
+
+        return this.aiTeam.EnemyShips[closestIndex];
     }
 
     public void ShootBehavior()
