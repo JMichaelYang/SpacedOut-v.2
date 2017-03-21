@@ -3,29 +3,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Struct for components of the enemies and friends that we should keep track of
+/// </summary>
+[System.Serializable]
+public struct ComponentsOfInterest
+{
+    public Transform transform;
+    public Movement movement;
+    public Rigidbody2D rigidBody;
+    public ShipHandler handler;
+}
+
 public class AiManager : MonoBehaviour
 {
-    public struct ComponentsOfInterest
-    {
-        public Transform transform;
-        public Movement movement;
-        public Rigidbody2D rigidBody;
-        public ShipHandler handler;
-    }
-
     //the team of this ship
+    [SerializeField]
     private Team aiTeam;
 
     //current list of behaviors in use
+    [SerializeField]
     private List<AiMoveBehavior> currentMoveBehavior;
 
     //local storage of components that we are interested in
+    [SerializeField]
     private Dictionary<GameObject, ComponentsOfInterest> friendlyComponents;
+    [SerializeField]
     private Dictionary<GameObject, ComponentsOfInterest> enemyComponents;
     //the currently focused enemy and friends
     [SerializeField]
     private GameObject enemyTarget = null;
-    private GameObject friendlyTarget;
+    private GameObject friendlyTarget = null;
 
     //reference to this AI's components
     private ComponentsOfInterest aiComponents;
@@ -91,6 +99,8 @@ public class AiManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        #region Targeting
+
         //if we have a target, check if it still alive, otherwise, try to acquire a target (if we can't, just leave at null)
         if (this.enemyTarget != null)
         {
@@ -112,6 +122,10 @@ public class AiManager : MonoBehaviour
             this.enemyTarget = this.acquireTargetObject();
             this.AddBehavior(new AiSeekBehavior(this.enemyComponents[this.acquireTargetObject()].transform, this.aiComponents.transform, this.aiComponents.movement.MaxAcceleration));
         }
+
+        //TODO: Make it so that all Ai's on one team do not target the same target
+
+        #endregion Targeting
 
         float currentRot = this.aiComponents.transform.rotation.eulerAngles.z;
 

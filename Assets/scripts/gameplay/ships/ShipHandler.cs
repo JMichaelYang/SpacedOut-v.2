@@ -6,7 +6,7 @@ using UnityEngine;
 public class ShipHandler : MonoBehaviour
 {
     //ship type
-    private ShipType shipType;
+    //private ShipType shipType;
 
     //current health of the ship
     public float MaxHealth { get; protected set; }

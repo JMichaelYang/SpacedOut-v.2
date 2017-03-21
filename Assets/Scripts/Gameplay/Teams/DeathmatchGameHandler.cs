@@ -25,10 +25,11 @@ public class DeathmatchGameHandler : MonoBehaviour
             Destroy(this.gameObject);
         }
 
-        //TODO: Replace this test code
-
+        //set up lists
         this.teams = new List<Team>();
         this.ships = new List<GameObject>();
+
+        //TODO: Replace this test code with code that loads from a "level select" screen
 
         this.teams.Add(new Team("Team One", Color.blue));
         for (int i = 0; i < 2; i++)
@@ -55,26 +56,21 @@ public class DeathmatchGameHandler : MonoBehaviour
         {
             for (int i = 0; i < this.teams[j].Ships.Count; i++)
             {
+                //find spawn point
                 Vector3 nextSpawn = this.getSpawnPoint(j, i);
                 GameObject shipSpawn = spawnAi(this.teams[j].Ships[i], this.teams[j].TeamColor);
-                if (i == 0 && j == 0)
-                {
-                    this.convertPlayer(shipSpawn);
-                }
+
+                //TODO: replace this code, which changes the first player on the first team into the player
+                if (i == 0 && j == 0) { this.convertPlayer(shipSpawn); }
+
                 shipSpawn.transform.position = (Vector2)nextSpawn;
                 shipSpawn.transform.Rotate(0f, 0f, nextSpawn.z);
 
                 //add ship to teams' lists of friends and enemies
                 for (int t = 0; t < this.teams.Count; t++)
                 {
-                    if (t == j)
-                    {
-                        this.teams[t].FriendlyShips.Add(shipSpawn);
-                    }
-                    else
-                    {
-                        this.teams[t].EnemyShips.Add(shipSpawn);
-                    }
+                    if (t == j) { this.teams[t].FriendlyShips.Add(shipSpawn); }
+                    else { this.teams[t].EnemyShips.Add(shipSpawn); }
                 }
 
                 //add the spawned ship to this list of ships
@@ -82,13 +78,14 @@ public class DeathmatchGameHandler : MonoBehaviour
             }
         }
 
-        //set weapon lists
+        //set weapon and ai lists
+        //iterating through each team, using the friendly ships array in order to cover every ship
         for (int i = 0; i < this.teams.Count; i++)
         {
             for (int j = 0; j < this.teams[i].FriendlyShips.Count; j++)
             {
                 this.teams[i].FriendlyShips[j].GetComponent<Weapons>().SetTeam(this.teams[i]);
-                this.teams[i].FriendlyShips[i].GetComponent<AiManager>().SetTeam(this.teams[i]);
+                this.teams[i].FriendlyShips[j].GetComponent<AiManager>().SetTeam(this.teams[i]);
             }
         }
     }

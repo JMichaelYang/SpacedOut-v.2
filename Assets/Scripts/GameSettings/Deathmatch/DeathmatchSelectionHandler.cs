@@ -16,8 +16,8 @@ public class DeathmatchSelectionHandler : MonoBehaviour
     private float arenaHeight = 500f;
 
     private List<Team> teams;
-    private int focusedTeam;
-    private int focusedShip;
+    private int focusedTeam = 0;
+    private int focusedShip = 0;
 
     #region UI Controls
 
