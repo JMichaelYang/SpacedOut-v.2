@@ -283,7 +283,7 @@ public class AiManager : MonoBehaviour
         if (distanceBetweenSqr < rangeSqr)
         {
             //check if target is within acceptable field in front of ai
-            if (Utils.FindAngleDifference(Mathf.Atan2(vectorBetween.y, vectorBetween.x) * Mathf.Rad2Deg + 90f, this.aiComponents.transform.eulerAngles.z) < this.aiWeapons.MaxSpread)
+            if (Mathf.Abs(Utils.FindAngleDifference(Mathf.Atan2(vectorBetween.y, vectorBetween.x) * Mathf.Rad2Deg - 90f, this.aiComponents.transform.eulerAngles.z)) < this.aiWeapons.MaxSpread)
             {
                 this.shouldShoot = true;
             }

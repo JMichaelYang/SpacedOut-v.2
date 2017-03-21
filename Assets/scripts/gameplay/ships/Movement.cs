@@ -50,44 +50,51 @@ public class Movement : MonoBehaviour
 
     void FixedUpdate()
     {
-        //add accumulated forces
-        this.acceleration = Utils.CapVector2(this.acceleration, this.MaxAcceleration);
-        this.rotation = Mathf.Clamp(this.rotation, -this.MaxRotationalVelocity, this.MaxRotationalVelocity);
-
-        this.rigidBody.AddForce(this.acceleration, ForceMode2D.Impulse);
-        this.rigidBody.MoveRotation(this.rigidBody.rotation + this.rotation);
-
-        //reset forces
-        this.acceleration = Vector2.zero;
-        this.rotation = 0;
-
-        float originalMagnitude = this.rigidBody.velocity.magnitude;
-
-        //limit velocity
-        if (originalMagnitude > this.MaxVelocity)
+        if (this.acceleration.x != 0f || this.acceleration.y != 0f)
         {
-            this.rigidBody.velocity *= this.MaxVelocity / originalMagnitude;
-            originalMagnitude = this.MaxVelocity;
+            //add accumulated forces
+            this.acceleration = Utils.CapVector2(this.acceleration, this.MaxAcceleration);
+
+            this.rigidBody.AddForce(this.acceleration, ForceMode2D.Impulse);
+
+            //reset forces
+            this.acceleration = Vector2.zero;
+
+            float originalMagnitude = this.rigidBody.velocity.magnitude;
+
+            //limit velocity
+            if (originalMagnitude > this.MaxVelocity)
+            {
+                this.rigidBody.velocity *= this.MaxVelocity / originalMagnitude;
+                originalMagnitude = this.MaxVelocity;
+            }
+
+            //dampen interia
+            if (this.DampenInertia)
+            {
+                if (originalMagnitude != 0)
+                {
+                    Vector2 inertialForce = Vector2.zero;
+
+                    // convert Rigidbody2D velocity to local space in terms of the transform
+                    // take negative of the x component
+                    // convert this back to world space
+                    inertialForce = this.bodyTransform.InverseTransformDirection(this.rigidBody.velocity);
+                    inertialForce.x *= -1f;
+                    inertialForce.y = 0f;
+                    inertialForce = this.bodyTransform.TransformDirection(inertialForce);
+
+                    this.rigidBody.velocity += inertialForce * this.DampeningMultiplier;
+                    this.rigidBody.velocity *= originalMagnitude / this.rigidBody.velocity.magnitude;
+                }
+            }
         }
 
-        //dampen interia
-        if (this.DampenInertia)
+        if (this.rotation != 0f)
         {
-            if (originalMagnitude != 0)
-            {
-                Vector2 inertialForce = Vector2.zero;
-
-                // convert Rigidbody2D velocity to local space in terms of the transform
-                // take negative of the x component
-                // convert this back to world space
-                inertialForce = this.bodyTransform.InverseTransformDirection(this.rigidBody.velocity);
-                inertialForce.x *= -1f;
-                inertialForce.y = 0f;
-                inertialForce = this.bodyTransform.TransformDirection(inertialForce);
-
-                this.rigidBody.velocity += inertialForce * this.DampeningMultiplier;
-                this.rigidBody.velocity *= originalMagnitude / this.rigidBody.velocity.magnitude;
-            }
+            this.rotation = Mathf.Clamp(this.rotation, -this.MaxRotationalVelocity, this.MaxRotationalVelocity);
+            this.rigidBody.MoveRotation(this.rigidBody.rotation + this.rotation);
+            this.rotation = 0f;
         }
     }
 

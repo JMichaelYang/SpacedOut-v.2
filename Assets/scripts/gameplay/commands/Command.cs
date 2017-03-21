@@ -26,7 +26,11 @@ public class Command
         {
             this.receiver.GetType().GetMethod(this.name).Invoke(this.receiver, this.args);
         }
-        catch (MissingMethodException)
+        catch
+        {
+
+        }
+        /*catch (MissingMethodException)
         {
             Debug.Log("Could not find method " + this.name + " in class " + this.receiver);
         }
@@ -36,7 +40,7 @@ public class Command
             Debug.Log(this.name);
             Debug.Log(this.args[0]);
             Debug.Log("Unknown error when calling command");
-        }
+        }*/
     }
 }
 
