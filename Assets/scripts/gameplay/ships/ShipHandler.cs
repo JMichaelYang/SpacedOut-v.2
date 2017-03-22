@@ -10,7 +10,7 @@ public class ShipHandler : MonoBehaviour
 
     //current health of the ship
     public float MaxHealth { get; protected set; }
-    public float Health = 100f;
+    public float Health { get; protected set; }
 
     //explosion particle system
     private GameObject explosion;
