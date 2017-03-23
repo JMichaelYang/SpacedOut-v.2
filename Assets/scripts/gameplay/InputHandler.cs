@@ -1,4 +1,5 @@
 ﻿using CnControls;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,25 @@ public class InputHandler : MonoBehaviour
     private GameObject playerCamera;
     private CameraZoom zoom;
     private CameraShake shake;
+
+    #region Event Registration
+
+    void OnEnable()
+    {
+        GameEventHandler.OnPlayerDead += this.onPlayerDeath;
+    }
+
+    void OnDisable()
+    {
+        GameEventHandler.OnPlayerDead -= this.onPlayerDeath;
+    }
+
+    private void onPlayerDeath(object sender, EventArgs e)
+    {
+        this.player = null;
+    }
+
+    #endregion Event Registration
 
     void Awake()
     {
@@ -77,34 +97,41 @@ public class InputHandler : MonoBehaviour
     /// </summary>
     private void keyboardUpdate()
     {
-        #region Player Movement
+        if (this.player != null)
+        {
+            #region Player Movement
 
-        if (Input.GetKey(GameSettings.MoveForward))
-        {
-            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.MaxAcceleration));
-        }
-        if (Input.GetKey(GameSettings.MoveBack))
-        {
-            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), -this.movement.MaxAcceleration));
-        }
-        if (Input.GetKey(GameSettings.MoveLeft))
-        {
-            this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), this.movement.MaxRotationalVelocity));
-        }
-        if (Input.GetKey(GameSettings.MoveRight))
-        {
-            this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), -this.movement.MaxRotationalVelocity));
-        }
+            if (Input.GetKey(GameSettings.MoveForward))
+            {
+                this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.MaxAcceleration));
+            }
+            if (Input.GetKey(GameSettings.MoveBack))
+            {
+                this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), -this.movement.MaxAcceleration));
+            }
+            if (Input.GetKey(GameSettings.MoveLeft))
+            {
+                this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), this.movement.MaxRotationalVelocity));
+            }
+            if (Input.GetKey(GameSettings.MoveRight))
+            {
+                this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), -this.movement.MaxRotationalVelocity));
+            }
 
-        #endregion Player Movement
-        #region Player Shooting
+            #endregion Player Movement
+            #region Player Shooting
 
-        if (Input.GetKey(GameSettings.Shoot))
-        {
-            this.commandHandler.AddCommands(new ShootCommand(this.weapons, 0, 1));
+            if (Input.GetKey(GameSettings.Shoot))
+            {
+                this.commandHandler.AddCommands(new ShootCommand(this.weapons, 0, 1));
+            }
+
+            #endregion Player Shooting
         }
+        else
+        {
 
-        #endregion Player Shooting
+        }
 
         #region Camera
 
@@ -126,29 +153,36 @@ public class InputHandler : MonoBehaviour
     /// </summary>
     private void touchUpdate()
     {
-        #region Player Movement
-
-        float x = -CnInputManager.GetAxis("Horizontal");
-        if (x != 0f)
+        if (this.player != null)
         {
-            this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), this.movement.MaxRotationalVelocity * x));
-        }
+            #region Player Movement
 
-        float y = CnInputManager.GetAxis("Vertical");
-        if (y != 0f)
+            float x = -CnInputManager.GetAxis("Horizontal");
+            if (x != 0f)
+            {
+                this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), this.movement.MaxRotationalVelocity * x));
+            }
+
+            float y = CnInputManager.GetAxis("Vertical");
+            if (y != 0f)
+            {
+                this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.MaxAcceleration * y));
+            }
+
+            #endregion Player Movement
+            #region Player Shooting
+
+            if (CnInputManager.GetButton("Shoot"))
+            {
+                this.commandHandler.AddCommands(new ShootCommand(this.weapons, 0, 1));
+            }
+
+            #endregion Player Shooting
+        }
+        else
         {
-            this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.MaxAcceleration * y));
+
         }
-
-        #endregion Player Movement
-        #region Player Shooting
-
-        if (CnInputManager.GetButton("Shoot"))
-        {
-            this.commandHandler.AddCommands(new ShootCommand(this.weapons, 0, 1));
-        }
-
-        #endregion Player Shooting
 
         #region Camera
 

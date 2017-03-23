@@ -5,6 +5,7 @@ public static class GameEventHandler
 {
     public static EventHandler<BulletHitEventArgs> OnBulletHit;
     public static EventHandler<WeaponShootEventArgs> OnWeaponShoot;
+    public static EventHandler<EventArgs> OnPlayerDead;
 }
 
 public class BulletHitEventArgs : EventArgs

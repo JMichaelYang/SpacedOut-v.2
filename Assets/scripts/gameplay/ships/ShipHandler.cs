@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -116,6 +117,12 @@ public class ShipHandler : MonoBehaviour
     /// </summary>
     private void DestroyShip()
     {
+        //broadcast event that the player has died
+        if (this.CompareTag("Player"))
+        {
+            GameEventHandler.OnPlayerDead(this, new EventArgs());
+        }
+
         Component[] components = this.gameObject.GetComponents<Component>();
         for (int i = 0; i < components.Length; i++)
         {
