@@ -32,23 +32,31 @@ public class DeathmatchGameHandler : MonoBehaviour
         //TODO: Replace this test code with code that loads from a "level select" screen
 
         this.teams.Add(new Team("Team One", Color.blue));
-        for (int i = 0; i < 4; i++)
-        {
-            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
-        }
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 1; i++)
         {
             this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.DebugSlow, EngineTypes.DebugSlow, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
         }
+        for (int i = 0; i < 2; i++)
+        {
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.DebugMedium, EngineTypes.DebugMedium, WeaponTypes.DebugGun1, WeaponTypes.DebugGun2));
+        }
+        for (int i = 0; i < 2; i++)
+        {
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+        }
 
         this.teams.Add(new Team("Team Two", Color.red));
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 2; i++)
         {
-            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
         }
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 1; i++)
         {
-            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.DebugSlow, EngineTypes.DebugSlow, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
+            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.DebugSlow, EngineTypes.DebugSlow, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
+        }
+        for (int i = 0; i < 2; i++)
+        {
+            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.DebugMedium, EngineTypes.DebugMedium, WeaponTypes.DebugGun1, WeaponTypes.DebugGun2));
         }
 
         //spawn ships

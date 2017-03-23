@@ -4,6 +4,7 @@ public class ShipTypes
 {
     public static readonly ShipType Debug = new ShipType(200f, 1.5f, "one/Debug", new Vector2(-0.2f, 0.2f), new Vector2(0.2f, 0.2f));
     public static readonly ShipType DebugSlow = new ShipType(400f, 1f, "one/DebugSlow", new Vector2(-0.2f, 0.2f), new Vector2(0.2f, 0.2f));
+    public static readonly ShipType DebugMedium = new ShipType(300, 1.2f, "one/DebugMedium", new Vector2(-0.2f, 0.2f), new Vector2(0.2f, 0.2f));
 }
 
 public class ShipType

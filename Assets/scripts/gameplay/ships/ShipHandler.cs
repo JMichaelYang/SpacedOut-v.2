@@ -17,11 +17,13 @@ public class ShipHandler : MonoBehaviour
     private GameObject explosion;
     private ParticleSystem explosionSystem;
     //rigid body
-    private Rigidbody2D physicsBody;
+    private new Rigidbody2D rigidbody;
     //movement
     private Movement movement;
     //collider
-    private Collider2D collider2d;
+    private new Collider2D collider;
+    //renderer
+    private new SpriteRenderer renderer;
 
     //whether the ship is on the screen
     private bool isOffScreen = false;
@@ -35,8 +37,9 @@ public class ShipHandler : MonoBehaviour
         this.shipTransform = this.transform;
         this.shipAi = this.gameObject.GetComponent<AiManager>();
         this.movement = this.gameObject.GetComponent<Movement>();
-        this.physicsBody = this.GetComponent<Rigidbody2D>();
-        this.collider2d = this.GetComponent<Collider2D>();
+        this.rigidbody = this.GetComponent<Rigidbody2D>();
+        this.collider = this.GetComponent<Collider2D>();
+        this.renderer = this.GetComponent<SpriteRenderer>();
         this.IsAlive = true;
     }
 
@@ -98,7 +101,7 @@ public class ShipHandler : MonoBehaviour
     /// <param name="damage">Amount to damage the ship by</param>
     void DamageShip(object sender, BulletHitEventArgs e)
     {
-        if (e.HitCollider == this.collider2d)
+        if (e.HitCollider == this.collider)
         {
             this.Health -= e.Shot.Damage;
 
@@ -118,22 +121,20 @@ public class ShipHandler : MonoBehaviour
     private void DestroyShip()
     {
         //broadcast event that the player has died
-        if (this.CompareTag("Player"))
-        {
-            GameEventHandler.OnPlayerDead(this, new EventArgs());
-        }
+        if (this.CompareTag("Player")) { GameEventHandler.OnPlayerDead(this, new EventArgs()); }
 
-        Component[] components = this.gameObject.GetComponents<Component>();
+        MonoBehaviour[] components = this.gameObject.GetComponents<MonoBehaviour>();
         for (int i = 0; i < components.Length; i++)
         {
-            if (!(components[i] is Transform) && !(components[i] is Rigidbody2D) && !(components[i] is ShipHandler) && !(components[i] is AiManager))
+            if (!(components[i] is ShipHandler))
             {
-                Destroy(components[i]);
+                components[i].enabled = false;
             }
         }
-
+        this.renderer.enabled = false;
+        this.collider.enabled = false;
         //add drag to rigid body to stop it
-        this.physicsBody.drag = 0.5f;
+        this.rigidbody.drag = 1f;
         //tag object as dead
         this.gameObject.tag = "Dead";
         //start explosion on ship location
@@ -148,6 +149,7 @@ public class ShipHandler : MonoBehaviour
     private void AfterExplosion()
     {
         ObjectPool.Despawn(this.explosion);
+        this.rigidbody.Sleep();
         //Debug.Log("Deactivated explosion");
     }
 
