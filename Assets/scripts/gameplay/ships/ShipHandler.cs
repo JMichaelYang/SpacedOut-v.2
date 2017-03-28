@@ -184,6 +184,11 @@ public class Ship
         this.Guns = guns;
     }
 
+    /// <summary>
+    /// Set the corresponding stats for an instance of the Ship prefab
+    /// </summary>
+    /// <param name="shipObject"></param>
+    /// <returns></returns>
     public GameObject GetShipObject(GameObject shipObject)
     {
         shipObject.GetComponent<Weapons>().ReadWeapons(this.Guns, this.Type.Offsets);
