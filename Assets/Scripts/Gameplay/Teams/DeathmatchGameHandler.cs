@@ -155,6 +155,8 @@ public class DeathmatchGameHandler : MonoBehaviour
         SpriteRenderer spriteRenderer = aiObject.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = Resources.Load<Sprite>(GameSettings.ShipTexPath + ship.Type.SpritePath);
         Utils.UpdateSpriteColor(spriteRenderer, GameSettings.ColorToReplace, team);
+        spriteRenderer = aiObject.transform.FindChild("Shield").GetComponent<SpriteRenderer>();
+        spriteRenderer.color = team;
 
         return aiObject;
     }

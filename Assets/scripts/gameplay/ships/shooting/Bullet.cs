@@ -10,14 +10,14 @@ public class Bullet : MonoBehaviour
     private Rigidbody2D bulletBody;
     private SpriteRenderer bulletRenderer;
     private BoxCollider2D bulletCollider;
-    //shooter
+    //shooter and its shield
     private GameObject shooter;
 
     //stats
     public float Damage { get; protected set; }
     private float duration = 0f;
 
-    private BulletHitEventArgs e = new BulletHitEventArgs(null, null);
+    private BulletHitEventArgs e = new BulletHitEventArgs(0f, null);
 
     // Use this for initialization
     void Awake()
@@ -76,7 +76,7 @@ public class Bullet : MonoBehaviour
             CancelInvoke();
 
             //apply bullet damage
-            this.e.Shot = this;
+            this.e.ShotDamage = this.Damage;
             this.e.HitCollider = other;
             GameEventHandler.OnBulletHit(this, this.e);
 

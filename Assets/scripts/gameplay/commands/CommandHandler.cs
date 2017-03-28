@@ -6,10 +6,10 @@ public class CommandHandler : MonoBehaviour
 {
     //singleton instance
     public static CommandHandler Instance = null;
-
+    
     //command stream
     private Queue<Command> commands;
-
+    
     public void AddCommands(params Command[] commands)
     {
         int len = commands.Length;

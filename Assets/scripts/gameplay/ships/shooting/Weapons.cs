@@ -21,11 +21,9 @@ public class Weapons : MonoBehaviour
 
     private WeaponShootEventArgs e = new WeaponShootEventArgs(0f);
 
-    //collider of this ship
-    //private Collider2D shipCollider = null;
-
     private Team shooterTeam;
     private Collider2D[] teamColliders;
+    private Collider2D[] teamShields;
 
     //maximum range and spread of weapons for use by AI
     public float MaxRange { get; protected set; }
@@ -35,9 +33,11 @@ public class Weapons : MonoBehaviour
     {
         this.shooterTeam = team;
         this.teamColliders = new Collider2D[this.shooterTeam.FriendlyShips.Count];
+        this.teamShields = new Collider2D[this.shooterTeam.FriendlyShips.Count];
         for (int i = 0; i < this.shooterTeam.FriendlyShips.Count; i++)
         {
-            this.teamColliders[i] = this.shooterTeam.FriendlyShips[i].GetComponent<Collider2D>();
+            this.teamColliders[i] = this.shooterTeam.FriendlyShips[i].GetComponent<CircleCollider2D>();
+            this.teamShields[i] = this.shooterTeam.FriendlyShips[i].GetComponentInChildren<CapsuleCollider2D>();
         }
     }
 
@@ -122,6 +122,7 @@ public class Weapons : MonoBehaviour
                     for (int c = 0; c < this.teamColliders.Length; c++)
                     {
                         Physics2D.IgnoreCollision(shotCollider, this.teamColliders[c], true);
+                        Physics2D.IgnoreCollision(shotCollider, this.teamShields[c], true);
                     }
 
                     //if the burst is done, reset the burst counter and timer

@@ -6,9 +6,6 @@ using UnityEngine;
 [RequireComponent(typeof(AiManager))]
 public class ShipHandler : MonoBehaviour
 {
-    //ship type
-    //private ShipType shipType;
-
     //current health of the ship
     public float MaxHealth { get; protected set; }
     public float Health { get; protected set; }
@@ -25,21 +22,29 @@ public class ShipHandler : MonoBehaviour
     //renderer
     private new SpriteRenderer renderer;
 
+    //components for the shield
+    private Collider2D shieldCollider;
+    private SpriteRenderer shieldRenderer;
+
     //whether the ship is on the screen
     private bool isOffScreen = false;
-    private Transform shipTransform = null;
+    private new Transform transform = null;
     private AiManager shipAi = null;
 
     public bool IsAlive { get; protected set; }
 
     void Awake()
     {
-        this.shipTransform = this.transform;
+        this.transform = this.gameObject.GetComponent<Transform>();
         this.shipAi = this.gameObject.GetComponent<AiManager>();
         this.movement = this.gameObject.GetComponent<Movement>();
         this.rigidbody = this.GetComponent<Rigidbody2D>();
         this.collider = this.GetComponent<Collider2D>();
         this.renderer = this.GetComponent<SpriteRenderer>();
+
+        this.shieldCollider = this.transform.FindChild("Shield").GetComponent<Collider2D>();
+        this.shieldRenderer = this.transform.FindChild("Shield").GetComponent<SpriteRenderer>();
+
         this.IsAlive = true;
     }
 
@@ -61,10 +66,10 @@ public class ShipHandler : MonoBehaviour
     void Update()
     {
         if (!this.isOffScreen &&
-            (this.shipTransform.position.x > GameSettings.ArenaWidth / 2 ||
-            this.shipTransform.position.x < -GameSettings.ArenaWidth / 2 ||
-            this.shipTransform.position.y > GameSettings.ArenaHeight / 2 ||
-            this.shipTransform.position.y < -GameSettings.ArenaHeight / 2))
+            (this.transform.position.x > GameSettings.ArenaWidth / 2 ||
+            this.transform.position.x < -GameSettings.ArenaWidth / 2 ||
+            this.transform.position.y > GameSettings.ArenaHeight / 2 ||
+            this.transform.position.y < -GameSettings.ArenaHeight / 2))
         {
             if (this.gameObject.CompareTag("Player"))
             {
@@ -78,10 +83,10 @@ public class ShipHandler : MonoBehaviour
             this.isOffScreen = true;
         }
         else if (this.isOffScreen &&
-            (this.shipTransform.position.x > -GameSettings.ArenaWidth / 2 &&
-            this.shipTransform.position.x < GameSettings.ArenaWidth / 2 &&
-            this.shipTransform.position.y > -GameSettings.ArenaHeight / 2 &&
-            this.shipTransform.position.y < GameSettings.ArenaHeight / 2))
+            (this.transform.position.x > -GameSettings.ArenaWidth / 2 &&
+            this.transform.position.x < GameSettings.ArenaWidth / 2 &&
+            this.transform.position.y > -GameSettings.ArenaHeight / 2 &&
+            this.transform.position.y < GameSettings.ArenaHeight / 2))
         {
             this.shipAi.ClearBehavior();
 
@@ -103,7 +108,7 @@ public class ShipHandler : MonoBehaviour
     {
         if (e.HitCollider == this.collider)
         {
-            this.Health -= e.Shot.Damage;
+            this.Health -= e.ShotDamage;
 
             //ship death
             if (this.Health < 0)
@@ -123,16 +128,15 @@ public class ShipHandler : MonoBehaviour
         //broadcast event that the player has died
         if (this.CompareTag("Player")) { GameEventHandler.OnPlayerDead(this, new EventArgs()); }
 
+        //disable components
         MonoBehaviour[] components = this.gameObject.GetComponents<MonoBehaviour>();
-        for (int i = 0; i < components.Length; i++)
-        {
-            if (!(components[i] is ShipHandler))
-            {
-                components[i].enabled = false;
-            }
-        }
+        for (int i = 0; i < components.Length; i++) { if (!(components[i] is ShipHandler)) { components[i].enabled = false; } }
         this.renderer.enabled = false;
         this.collider.enabled = false;
+
+        this.shieldRenderer.enabled = false;
+        this.shieldRenderer.enabled = false;
+
         //add drag to rigid body to stop it
         this.rigidbody.drag = 1f;
         //tag object as dead

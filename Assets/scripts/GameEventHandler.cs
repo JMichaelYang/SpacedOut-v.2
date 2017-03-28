@@ -10,11 +10,11 @@ public static class GameEventHandler
 
 public class BulletHitEventArgs : EventArgs
 {
-    public Bullet Shot;
+    public float ShotDamage;
     public Collider2D HitCollider;
-    public BulletHitEventArgs(Bullet shot, Collider2D hitCollider)
+    public BulletHitEventArgs(float shotDamage, Collider2D hitCollider)
     {
-        this.Shot = shot;
+        this.ShotDamage = shotDamage;
         this.HitCollider = hitCollider;
     }
 }
