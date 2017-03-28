@@ -12,6 +12,7 @@ public class Bullet : MonoBehaviour
     private BoxCollider2D bulletCollider;
     //shooter and its shield
     private GameObject shooter;
+    private Collider2D shieldCollider;
 
     //stats
     public float Damage { get; protected set; }
@@ -35,7 +36,7 @@ public class Bullet : MonoBehaviour
         catch { Debug.Log("Could not find Collider component of " + this.gameObject.ToString()); }
     }
 
-    public void Activate(float damage, float duration, float velocity, GameObject shooter, Sprite image)
+    public void Activate(float damage, float duration, float velocity, GameObject shooter, Collider2D shield, Sprite image)
     {
         this.reset();
 
@@ -44,6 +45,7 @@ public class Bullet : MonoBehaviour
         this.duration = duration;
         //set shooter for this bullet
         this.shooter = shooter;
+        this.shieldCollider = shield;
 
         this.bulletRenderer.sprite = image;
         this.bulletCollider.size = this.bulletRenderer.bounds.size;
@@ -73,6 +75,11 @@ public class Bullet : MonoBehaviour
     {
         if (other.gameObject != this.shooter)
         {
+            if (this.shieldCollider != null && other.Equals(shieldCollider))
+            {
+                return;
+            }
+
             CancelInvoke();
 
             //apply bullet damage

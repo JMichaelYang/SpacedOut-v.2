@@ -24,6 +24,7 @@ public class Weapons : MonoBehaviour
     private Team shooterTeam;
     private Collider2D[] teamColliders;
     private Collider2D[] teamShields;
+    private Collider2D shield;
 
     //maximum range and spread of weapons for use by AI
     public float MaxRange { get; protected set; }
@@ -34,11 +35,16 @@ public class Weapons : MonoBehaviour
         this.shooterTeam = team;
         this.teamColliders = new Collider2D[this.shooterTeam.FriendlyShips.Count];
         this.teamShields = new Collider2D[this.shooterTeam.FriendlyShips.Count];
+
+        List<Collider2D> shieldColliders = new List<Collider2D>();
+        Collider2D shield;
         for (int i = 0; i < this.shooterTeam.FriendlyShips.Count; i++)
         {
             this.teamColliders[i] = this.shooterTeam.FriendlyShips[i].GetComponent<CircleCollider2D>();
-            this.teamShields[i] = this.shooterTeam.FriendlyShips[i].GetComponentInChildren<CapsuleCollider2D>();
+            shield = this.shooterTeam.FriendlyShips[i].GetComponentInChildren<CapsuleCollider2D>();
+            if (shield != null) { shieldColliders.Add(shield); }
         }
+        this.teamShields = shieldColliders.ToArray();
     }
 
     public void ReadWeapons(GunType[] guns, Vector2[] offsets)
@@ -72,7 +78,7 @@ public class Weapons : MonoBehaviour
     {
         this.commandHandler = GameObject.FindObjectOfType<CommandHandler>();
         this.shake = GameObject.FindObjectOfType<CameraShake>();
-        //this.shipCollider = this.gameObject.GetComponent<Collider2D>();
+        this.shield = this.gameObject.transform.Find("Shield").GetComponent<Collider2D>();
     }
 
     public bool ShootWeapons(params int[] slots)
@@ -110,7 +116,7 @@ public class Weapons : MonoBehaviour
                     //shoot the gun and add to the shot counters
                     GameObject shotBullet = this.gun.ShootGun(this.transform.position +
                         (Vector3)Utils.RotateVector2(this.offset, this.transform.rotation.eulerAngles.z),
-                        this.transform.rotation, this.gameObject);
+                        this.transform.rotation, this.gameObject, this.shield);
                     //increment shot counters
                     this.gun.shotCounter++;
                     this.gun.burstCounter++;
@@ -122,6 +128,9 @@ public class Weapons : MonoBehaviour
                     for (int c = 0; c < this.teamColliders.Length; c++)
                     {
                         Physics2D.IgnoreCollision(shotCollider, this.teamColliders[c], true);
+                    }
+                    for (int c = 0; c < this.teamShields.Length; c++)
+                    {
                         Physics2D.IgnoreCollision(shotCollider, this.teamShields[c], true);
                     }
 
@@ -221,11 +230,11 @@ public class Gun
         return gun;
     }
 
-    public GameObject ShootGun(Vector3 pos, Quaternion rot, GameObject shooter)
+    public GameObject ShootGun(Vector3 pos, Quaternion rot, GameObject shooter, Collider2D shield = null)
     {
         GameObject bullet = ObjectPool.Spawn(this.bulletPrefab, pos, rot);
         bullet.transform.Rotate(0, 0, Random.Range(-this.Accuracy, this.Accuracy));
-        bullet.GetComponent<Bullet>().Activate(this.Damage, this.Range, this.Velocity, shooter, this.bulletSprite);
+        bullet.GetComponent<Bullet>().Activate(this.Damage, this.Range, this.Velocity, shooter, shield, this.bulletSprite);
         return bullet;
     }
 }
