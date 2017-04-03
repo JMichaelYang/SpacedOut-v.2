@@ -19,7 +19,7 @@ public interface IConsideration
     /// <summary>
     /// The calculator used to get the utility of this consideration
     /// </summary>
-    IUtilCalculator Calculator { get; set; }
+    IEvaluator Calculator { get; set; }
     /// <summary>
     /// The minimum value that the consideration can have
     /// </summary>
@@ -65,7 +65,7 @@ public class ConsiderationBase : IConsideration
     public float Value { get; set; }
     public float Min { get; set; }
     public float Max { get; set; }
-    public IUtilCalculator Calculator { get; set; }
+    public IEvaluator Calculator { get; set; }
     public float InAdj { get; set; }
     public float OutAdj { get; set; }
     public bool Inverted { get; set; }
@@ -78,7 +78,7 @@ public class ConsiderationBase : IConsideration
     /// <param name="min">the minimum value of the consideration</param>
     /// <param name="max">the maximum value of the consideration</param>
     /// <param name="value">the initial value of the consideration</param>
-    public ConsiderationBase(string name, float min, float max, IUtilCalculator calculator, float value = 0f)
+    public ConsiderationBase(string name, float min, float max, IEvaluator calculator, float value = 0f)
     {
         this.Name = name;
         this.Min = min;
@@ -99,7 +99,7 @@ public class ConsiderationBase : IConsideration
     /// <param name="inAdj">the adjustment to be made to the value initally</param>
     /// <param name="outAdj">the adjustment to be made to the final value</param>
     /// <param name="value">the initial value of the consideration</param>
-    public ConsiderationBase(string name, float min, float max, IUtilCalculator calculator, float inAdj, float outAdj, bool inverted, float finalMultiplier, float value = 0f)
+    public ConsiderationBase(string name, float min, float max, IEvaluator calculator, float inAdj, float outAdj, bool inverted, float finalMultiplier, float value = 0f)
     {
         this.Name = name;
         this.Min = min;

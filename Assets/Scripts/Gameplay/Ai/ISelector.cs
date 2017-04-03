@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum SelectorMode
+{
+    HIGHEST,
+    WEIGHTED,
+    THRESHOLD
+}
+
 /// <summary>
 /// Interface for an object to select the next action
 /// </summary>
 public interface ISelector
 { 
     /// <summary>
-    /// Dictionary of consideratioins and actions to complete if they are selected
+    /// Dictionary of considerations and actions to complete if they are selected
     /// </summary>
     Dictionary<IConsideration, IAction> Options { get; set; }
 

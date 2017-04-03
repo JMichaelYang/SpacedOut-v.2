@@ -23,6 +23,7 @@ public class ShipHandler : MonoBehaviour
     private new SpriteRenderer renderer;
 
     //components for the shield
+    private bool hasShield;
     private Collider2D shieldCollider;
     private SpriteRenderer shieldRenderer;
 
@@ -42,8 +43,16 @@ public class ShipHandler : MonoBehaviour
         this.collider = this.GetComponent<Collider2D>();
         this.renderer = this.GetComponent<SpriteRenderer>();
 
-        this.shieldCollider = this.transform.FindChild("Shield").GetComponent<Collider2D>();
-        this.shieldRenderer = this.transform.FindChild("Shield").GetComponent<SpriteRenderer>();
+        if (this.transform.FindChild("Shield") != null)
+        {
+            this.hasShield = true;
+            this.shieldCollider = this.transform.FindChild("Shield").GetComponent<Collider2D>();
+            this.shieldRenderer = this.transform.FindChild("Shield").GetComponent<SpriteRenderer>();
+        }
+        else
+        {
+            this.hasShield = false;
+        }
 
         this.IsAlive = true;
     }
@@ -134,8 +143,11 @@ public class ShipHandler : MonoBehaviour
         this.renderer.enabled = false;
         this.collider.enabled = false;
 
-        this.shieldRenderer.enabled = false;
-        this.shieldRenderer.enabled = false;
+        if (this.hasShield)
+        {
+            this.shieldRenderer.enabled = false;
+            this.shieldCollider.enabled = false;
+        }
 
         //add drag to rigid body to stop it
         this.rigidbody.drag = 1f;
@@ -178,6 +190,7 @@ public class Ship
     public Team ShipTeam { get; protected set; }
     public ShipType Type { get; protected set; }
     public EngineType Engine { get; protected set; }
+    public ShieldType Shield { get; protected set; }
     public GunType[] Guns { get; protected set; }
 
     public Ship(Team team, ShipType type, EngineType engine, params GunType[] guns)

@@ -42,9 +42,9 @@ public class Movement : MonoBehaviour
 
     public void SetStatistics(ShipType shipType, EngineType engine)
     {
-        this.MaxRotationalVelocity = shipType.RotAccel;
+        this.MaxRotationalVelocity = shipType.RotVel;
 
-        this.MaxAcceleration = engine.MaxAccel;
+        this.MaxAcceleration = engine.Thrust;
         this.MaxVelocity = engine.MaxVelocity;
     }
 

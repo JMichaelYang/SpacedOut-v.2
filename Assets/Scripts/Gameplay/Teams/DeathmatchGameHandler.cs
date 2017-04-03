@@ -34,29 +34,29 @@ public class DeathmatchGameHandler : MonoBehaviour
         this.teams.Add(new Team("Team One", Color.blue));
         for (int i = 0; i < 1; i++)
         {
-            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.DebugSlow, EngineTypes.DebugSlow, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.C20H, EngineTypes.F1140, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
         }
         for (int i = 0; i < 2; i++)
         {
-            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.DebugMedium, EngineTypes.DebugMedium, WeaponTypes.DebugGun1, WeaponTypes.DebugGun2));
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.B12M, EngineTypes.F1150, WeaponTypes.DebugGun1, WeaponTypes.DebugGun2));
         }
         for (int i = 0; i < 2; i++)
         {
-            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.A23F, EngineTypes.F1160, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
         }
 
         this.teams.Add(new Team("Team Two", Color.red));
         for (int i = 0; i < 2; i++)
         {
-            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.Debug, EngineTypes.Debug, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.C20H, EngineTypes.F1140, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
         }
         for (int i = 0; i < 1; i++)
         {
-            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.DebugSlow, EngineTypes.DebugSlow, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
+            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.B12M, EngineTypes.F1150, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
         }
         for (int i = 0; i < 2; i++)
         {
-            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.DebugMedium, EngineTypes.DebugMedium, WeaponTypes.DebugGun1, WeaponTypes.DebugGun2));
+            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.A23F, EngineTypes.F1160, WeaponTypes.DebugGun1, WeaponTypes.DebugGun2));
         }
 
         //spawn ships

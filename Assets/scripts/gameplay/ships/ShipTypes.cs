@@ -2,28 +2,57 @@
 
 public class ShipTypes
 {
-    public static readonly ShipType Debug = new ShipType(200f, 1.5f, "one/Debug", new Vector2(-0.2f, 0.2f), new Vector2(0.2f, 0.2f));
-    public static readonly ShipType DebugSlow = new ShipType(400f, 1f, "one/DebugSlow", new Vector2(-0.2f, 0.2f), new Vector2(0.2f, 0.2f));
-    public static readonly ShipType DebugMedium = new ShipType(300, 1.2f, "one/DebugMedium", new Vector2(-0.2f, 0.2f), new Vector2(0.2f, 0.2f));
+    public static readonly ShipType A23F = new ShipType("A23F", 40000f, 1, 200f, 1.5f, 14f, "one/Debug", new Vector2(-0.2f, 0.2f), new Vector2(0.2f, 0.2f));
+    public static readonly ShipType C20H = new ShipType("C20H", 60000f, 1, 400f, 1f, 10f, "one/DebugSlow", new Vector2(-0.2f, 0.2f), new Vector2(0.2f, 0.2f));
+    public static readonly ShipType B12M = new ShipType("B12M", 50000f, 1, 300f, 1.2f, 12f, "one/DebugMedium", new Vector2(-0.2f, 0.2f), new Vector2(0.2f, 0.2f));
 }
 
-public class ShipType
+/// <summary>
+/// A type of ship
+/// </summary>
+public struct ShipType : IShipComponent
 {
-    public float Health { get; protected set; }
-    public float RotAccel { get; protected set; }
-    public string SpritePath { get; protected set; }
-    public Vector2[] Offsets { get; protected set; }
-
     /// <summary>
-    /// Constructor for a ship type
+    /// The name of this ship
     /// </summary>
-    /// <param name="health">the health of the ship</param>
-    /// <param name="rotAccel">how fast the ship can rotate</param>
-    /// <param name="offsets">the offsets of the ship's weapons</param>
-    public ShipType(float health, float rotAccel, string spritePath, params Vector2[] offsets)
+    public string Name { get; private set; }
+    /// <summary>
+    /// The weight of this ship
+    /// </summary>
+    public float Weight { get; private set; }
+    /// <summary>
+    /// The tier of this ship
+    /// </summary>
+    public int Tier { get; private set; }
+    /// <summary>
+    /// The health of this ship
+    /// </summary>
+    public readonly float Health;
+    /// <summary>
+    /// The rotational velocity of this ship (in degrees)
+    /// </summary>
+    public readonly float RotVel;
+    /// <summary>
+    /// The maximum velocity that this ship can attain (in m/s)
+    /// </summary>
+    public readonly float MaxVel;
+    /// <summary>
+    /// The path to this ship's sprite
+    /// </summary>
+    public readonly string SpritePath;
+    /// <summary>
+    /// The places where this ship can shoot from
+    /// </summary>
+    public Vector2[] Offsets;
+
+    public ShipType(string name, float weight, int tier, float health, float rotVel, float maxVel, string spritePath, params Vector2[] offsets)
     {
+        this.Name = name;
+        this.Weight = weight;
+        this.Tier = tier;
         this.Health = health;
-        this.RotAccel = rotAccel;
+        this.RotVel = rotVel;
+        this.MaxVel = maxVel;
         this.SpritePath = spritePath;
         this.Offsets = offsets;
     }
