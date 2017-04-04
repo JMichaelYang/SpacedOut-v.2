@@ -227,8 +227,35 @@ public class Ship
         SpriteRenderer spriteRenderer = shipObject.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = Resources.Load<Sprite>(GameSettings.ShipTexPath + this.Type.SpritePath);
 
+        CircleCollider2D collider = shipObject.GetComponent<CircleCollider2D>();
+        collider.radius = (spriteRenderer.bounds.extents.x + spriteRenderer.bounds.extents.y) / 2;
+
         Rigidbody2D rigidBody = shipObject.GetComponent<Rigidbody2D>();
         rigidBody.mass = this.totalWeight;
+
+        #region Layers
+
+        switch (this.ShipTeam.Index)
+        {
+            case TeamIndex.ONE:
+                shipObject.layer = GameSettings.TeamOneShipLayer;
+                foreach (Transform child in shipObject.GetComponentsInChildren<Transform>()) { child.gameObject.layer = GameSettings.TeamOneShipLayer; }
+                break;
+            case TeamIndex.TWO:
+                shipObject.layer = GameSettings.TeamTwoShipLayer;
+                foreach (Transform child in shipObject.GetComponentsInChildren<Transform>()) { child.gameObject.layer = GameSettings.TeamTwoShipLayer; }
+                break;
+            case TeamIndex.THREE:
+                shipObject.layer = GameSettings.TeamThreeShipLayer;
+                foreach (Transform child in shipObject.GetComponentsInChildren<Transform>()) { child.gameObject.layer = GameSettings.TeamThreeShipLayer; }
+                break;
+            case TeamIndex.FOUR:
+                shipObject.layer = GameSettings.TeamFourShipLayer;
+                foreach (Transform child in shipObject.GetComponentsInChildren<Transform>()) { child.gameObject.layer = GameSettings.TeamFourShipLayer; }
+                break;
+        }
+
+        #endregion Layers
 
         return shipObject;
     }

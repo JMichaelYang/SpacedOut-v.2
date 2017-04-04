@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-/*
- * class to store game settings
- * note scale: 1 game unit to 8m (all assets should be 32 ppm)
- */
+/// <summary>
+/// Class for all game settings
+/// Note that default scale is 1 unit : 1 meter
+/// </summary>
 public class GameSettings : MonoBehaviour
 {
     void Awake()
@@ -83,4 +83,31 @@ public class GameSettings : MonoBehaviour
     public static readonly string ShipTexPath = "sprites/ships/";
 
     #endregion resources
+
+    #region Teams
+
+
+    #endregion Teams
+
+    #region Layers
+
+    public static readonly int TeamOneBulletLayer = 8;
+    public static readonly int TeamTwoBulletLayer = 9;
+    public static readonly int TeamThreeBulletLayer = 10;
+    public static readonly int TeamFourBulletLayer = 11;
+
+    public static readonly int TeamOneShipLayer = 12;
+    public static readonly int TeamTwoShipLayer = 13;
+    public static readonly int TeamThreeShipLayer = 14;
+    public static readonly int TeamFourShipLayer = 15;
+
+    #endregion Layers
 }
+
+public enum TeamIndex
+{
+    ONE,
+    TWO,
+    THREE,
+    FOUR
+};

@@ -116,23 +116,12 @@ public class Weapons : MonoBehaviour
                     //shoot the gun and add to the shot counters
                     GameObject shotBullet = this.gun.ShootGun(this.transform.position +
                         (Vector3)Utils.RotateVector2(this.offset, this.transform.rotation.eulerAngles.z),
-                        this.transform.rotation, this.gameObject, this.shield);
+                        this.transform.rotation, this.gameObject, this.shooterTeam.Index);
                     //increment shot counters
                     this.gun.shotCounter++;
                     this.gun.burstCounter++;
                     //reset shot timer every shot
                     this.gun.shotTimer = 0f;
-
-                    Collider2D shotCollider = shotBullet.GetComponent<Collider2D>();
-                    //ignore collisions between whoever fired this and the bullet itself
-                    for (int c = 0; c < this.teamColliders.Length; c++)
-                    {
-                        Physics2D.IgnoreCollision(shotCollider, this.teamColliders[c], true);
-                    }
-                    for (int c = 0; c < this.teamShields.Length; c++)
-                    {
-                        Physics2D.IgnoreCollision(shotCollider, this.teamShields[c], true);
-                    }
 
                     //if the burst is done, reset the burst counter and timer
                     if (this.gun.burstCounter >= this.gun.BurstAmount)
@@ -230,11 +219,11 @@ public class Gun
         return gun;
     }
 
-    public GameObject ShootGun(Vector3 pos, Quaternion rot, GameObject shooter, Collider2D shield = null)
+    public GameObject ShootGun(Vector3 pos, Quaternion rot, GameObject shooter, TeamIndex team)
     {
         GameObject bullet = ObjectPool.Spawn(this.bulletPrefab, pos, rot);
         bullet.transform.Rotate(0, 0, Random.Range(-this.Accuracy, this.Accuracy));
-        bullet.GetComponent<Bullet>().Activate(this.Damage, this.Range, this.Velocity, shooter, shield, this.bulletSprite);
+        bullet.GetComponent<Bullet>().Activate(this.Damage, this.Range, this.Velocity, team, this.bulletSprite);
         return bullet;
     }
 }

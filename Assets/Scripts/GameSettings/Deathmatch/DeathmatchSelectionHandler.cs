@@ -60,7 +60,7 @@ public class DeathmatchSelectionHandler : MonoBehaviour
         //default values
         for (int i = 0; i < 2; i++)
         {
-            this.teams.Add(new Team("Team One", colors[i]));
+            this.teams.Add(new Team("Team One", TeamIndex.ONE, colors[i]));
             this.teams[i].Ships.Add(new Ship(this.teams[i], ShipTypes.A23F, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
             this.teams[i].Ships.Add(new Ship(this.teams[i], ShipTypes.A23F, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
             this.teams[i].Ships.Add(new Ship(this.teams[i], ShipTypes.A23F, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));

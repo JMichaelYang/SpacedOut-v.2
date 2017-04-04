@@ -31,7 +31,7 @@ public class DeathmatchGameHandler : MonoBehaviour
 
         //TODO: Replace this test code with code that loads from a "level select" screen
 
-        this.teams.Add(new Team("Team One", Color.blue));
+        this.teams.Add(new Team("Team One", TeamIndex.ONE, Color.blue));
         for (int i = 0; i < 1; i++)
         {
             this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.C20H, EngineTypes.F1100, ShieldTypes.KS22, ArmorTypes.PA56, GunTypes.HLM10, GunTypes.HLM10));
@@ -45,18 +45,18 @@ public class DeathmatchGameHandler : MonoBehaviour
             this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.A23F, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
         }
 
-        this.teams.Add(new Team("Team Two", Color.red));
+        this.teams.Add(new Team("Team Two", TeamIndex.TWO, Color.red));
         for (int i = 0; i < 1; i++)
         {
-            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.C20H, EngineTypes.F1100, ShieldTypes.KS22, ArmorTypes.PA56, GunTypes.HLM10, GunTypes.HLM10));
+            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.C20H, EngineTypes.F1100, ShieldTypes.KS22, ArmorTypes.PA56, GunTypes.HLM10, GunTypes.HLM10));
         }
         for (int i = 0; i < 2; i++)
         {
-            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.B12M, EngineTypes.F1110, ShieldTypes.KS2, ArmorTypes.PA52, GunTypes.LM20, GunTypes.LM30));
+            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.B12M, EngineTypes.F1110, ShieldTypes.KS2, ArmorTypes.PA52, GunTypes.LM20, GunTypes.LM30));
         }
         for (int i = 0; i < 2; i++)
         {
-            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.A23F, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
+            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.A23F, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
         }
 
         //spawn ships
