@@ -197,14 +197,20 @@ public class Ship
     public ShieldType Shield { get; protected set; }
     public ArmorType Armor { get; protected set; }
     public GunType[] Guns { get; protected set; }
+    
+    protected readonly float totalWeight;
 
-    public Ship(Team team, ShipType type, EngineType engine, ArmorType armor, params GunType[] guns)
+    public Ship(Team team, ShipType type, EngineType engine, ShieldType shield, ArmorType armor, params GunType[] guns)
     {
         this.ShipTeam = team;
         this.Type = type;
         this.Engine = engine;
+        this.Shield = shield;
         this.Armor = armor;
         this.Guns = guns;
+
+        this.totalWeight += type.Weight + engine.Weight + shield.Weight + armor.Weight;
+        foreach(GunType gun in guns) { this.totalWeight += gun.Weight; }
     }
 
     /// <summary>
@@ -220,6 +226,9 @@ public class Ship
 
         SpriteRenderer spriteRenderer = shipObject.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = Resources.Load<Sprite>(GameSettings.ShipTexPath + this.Type.SpritePath);
+
+        Rigidbody2D rigidBody = shipObject.GetComponent<Rigidbody2D>();
+        rigidBody.mass = this.totalWeight;
 
         return shipObject;
     }

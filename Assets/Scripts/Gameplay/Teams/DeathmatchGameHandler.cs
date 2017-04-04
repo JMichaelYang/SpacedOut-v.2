@@ -34,29 +34,29 @@ public class DeathmatchGameHandler : MonoBehaviour
         this.teams.Add(new Team("Team One", Color.blue));
         for (int i = 0; i < 1; i++)
         {
-            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.C20H, EngineTypes.F1140, ArmorTypes.PA56, GunTypes.HLM10, GunTypes.HLM10));
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.C20H, EngineTypes.F1100, ShieldTypes.KS22, ArmorTypes.PA56, GunTypes.HLM10, GunTypes.HLM10));
         }
         for (int i = 0; i < 2; i++)
         {
-            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.B12M, EngineTypes.F1150, ArmorTypes.PA52, GunTypes.LM20, GunTypes.LM30));
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.B12M, EngineTypes.F1110, ShieldTypes.KS2, ArmorTypes.PA52, GunTypes.LM20, GunTypes.LM30));
         }
         for (int i = 0; i < 2; i++)
         {
-            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.A23F, EngineTypes.F1160, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.A23F, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
         }
 
         this.teams.Add(new Team("Team Two", Color.red));
         for (int i = 0; i < 1; i++)
         {
-            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.C20H, EngineTypes.F1140, ArmorTypes.PA56, GunTypes.HLM10, GunTypes.HLM10));
+            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.C20H, EngineTypes.F1100, ShieldTypes.KS22, ArmorTypes.PA56, GunTypes.HLM10, GunTypes.HLM10));
         }
         for (int i = 0; i < 2; i++)
         {
-            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.B12M, EngineTypes.F1150, ArmorTypes.PA52, GunTypes.LM20, GunTypes.LM30));
+            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.B12M, EngineTypes.F1110, ShieldTypes.KS2, ArmorTypes.PA52, GunTypes.LM20, GunTypes.LM30));
         }
         for (int i = 0; i < 2; i++)
         {
-            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.A23F, EngineTypes.F1160, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
+            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.A23F, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
         }
 
         //spawn ships
@@ -66,7 +66,7 @@ public class DeathmatchGameHandler : MonoBehaviour
             {
                 //find spawn point
                 Vector3 nextSpawn = this.getSpawnPoint(j, i);
-                GameObject shipSpawn = spawnAi(this.teams[j].Ships[i], this.teams[j].TeamColor);
+                GameObject shipSpawn = this.spawnAi(this.teams[j].Ships[i], this.teams[j].TeamColor);
 
                 //TODO: replace this code, which changes the first player on the first team into the player
                 if (i == 0 && j == 0) { this.convertPlayer(shipSpawn); }

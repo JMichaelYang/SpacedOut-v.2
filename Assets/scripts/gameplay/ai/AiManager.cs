@@ -253,7 +253,7 @@ public class AiManager : MonoBehaviour
     public void BehaviorSeek()
     {
         Vector2 targetHeading = this.enemyComponents[this.enemyTarget].transform.position - this.aiComponents.transform.position;
-        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.Thrust);
+        this.steering += targetHeading * this.aiComponents.movement.Thrust / targetHeading.magnitude;
     }
     /// <summary>
     /// Guide the ship away from the current enemy target
