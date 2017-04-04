@@ -41,4 +41,9 @@ public struct EngineType : IShipComponent
         this.Tier = tier;
         this.Thrust = thrust;
     }
+
+    /// <summary>
+    /// An engine with no values
+    /// </summary>
+    public static EngineType None = new EngineType("None", 0f, 0, 0f);
 }

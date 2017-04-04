@@ -14,8 +14,8 @@ public class GameSettings : MonoBehaviour
 
     #region arena
 
-    public static int ArenaWidth = 500;
-    public static int ArenaHeight = 500;
+    public static int ArenaWidth = 7500;
+    public static int ArenaHeight = 7500;
 
     public static float StarDensity = .05f;
     public static int StarMinDepth = 0;
@@ -27,9 +27,10 @@ public class GameSettings : MonoBehaviour
 
     public static float CameraFOV = 60f;
     public static float CameraAspectRatio = 9f / 16f;
-    public static float MinZoom = -100;
-    public static float MaxZoom = -10;
-    public static float ZoomSpeed = 10f;
+    public static float DefaultZoom = -800;
+    public static float MinZoom = -1600;
+    public static float MaxZoom = -400;
+    public static float ZoomSpeed = 100f;
 
     public static bool ShouldShake = false;
     public static float ShotShake = 0.2f;

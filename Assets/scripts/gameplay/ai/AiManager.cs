@@ -182,7 +182,7 @@ public class AiManager : MonoBehaviour
             for (int i = 0; i < this.currentBehavior.Count; i++) { this.currentBehavior[i](); }
 
             //cap our steering force
-            steering = Utils.CapVector2(steering, this.aiComponents.movement.MaxAcceleration);
+            steering = Utils.CapVector2(steering, this.aiComponents.movement.Thrust);
             //get magnitude of movement in steering direction
             Vector2 heading = this.aiComponents.transform.up;
             float magnitude = heading.x * steering.x + heading.y * steering.y;
@@ -253,7 +253,7 @@ public class AiManager : MonoBehaviour
     public void BehaviorSeek()
     {
         Vector2 targetHeading = this.enemyComponents[this.enemyTarget].transform.position - this.aiComponents.transform.position;
-        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.MaxAcceleration);
+        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.Thrust);
     }
     /// <summary>
     /// Guide the ship away from the current enemy target
@@ -261,7 +261,7 @@ public class AiManager : MonoBehaviour
     public void BehaviorFlee()
     {
         Vector2 targetHeading = this.aiComponents.transform.position - this.enemyComponents[this.enemyTarget].transform.position;
-        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.MaxAcceleration);
+        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.Thrust);
     }
     /// <summary>
     /// Guide the ship towards the current enemy target accounting for its velocity
@@ -269,9 +269,9 @@ public class AiManager : MonoBehaviour
     public void BehaviorPursue()
     {
         Transform enemyTransform = this.enemyComponents[this.enemyTarget].transform;
-        float t = (enemyTransform.position - this.aiComponents.transform.position).magnitude / this.aiComponents.movement.MaxVelocity;
+        float t = (enemyTransform.position - this.aiComponents.transform.position).magnitude / this.aiComponents.movement.MaxVel;
         this.steering += Utils.CapVector2((Vector2)enemyTransform.position + this.enemyComponents[this.enemyTarget].rigidBody.velocity * t - (Vector2)this.aiComponents.transform.position,
-            this.aiComponents.movement.MaxAcceleration);
+            this.aiComponents.movement.Thrust);
     }
     /// <summary>
     /// Determine whether the ship should attempt to shoot the target
@@ -298,7 +298,7 @@ public class AiManager : MonoBehaviour
     public void BehaviorReturnCenter()
     {
         Vector2 targetHeading = (Vector2)this.aiComponents.transform.position - Vector2.zero;
-        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.MaxAcceleration);
+        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.Thrust);
     }
 
     #endregion Behaviors

@@ -58,7 +58,7 @@ public class Weapons : MonoBehaviour
             this.weapons[i] = new OffsetGunPair();
             this.weapons[i].ValueOffset = offsets[i];
 
-            if (guns[i] != null)
+            if (guns[i].Name != "None")
             {
                 this.weapons[i].ValueGun = Gun.LoadFromGunType(guns[i]);
                 if (guns[i].Range * guns[i].Velocity > this.MaxRange) { this.MaxRange = guns[i].Range * guns[i].Velocity; }

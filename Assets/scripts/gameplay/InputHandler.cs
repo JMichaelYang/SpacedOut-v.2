@@ -103,19 +103,19 @@ public class InputHandler : MonoBehaviour
 
             if (Input.GetKey(GameSettings.MoveForward))
             {
-                this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.MaxAcceleration));
+                this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.Thrust));
             }
             if (Input.GetKey(GameSettings.MoveBack))
             {
-                this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), -this.movement.MaxAcceleration));
+                this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), -this.movement.Thrust));
             }
             if (Input.GetKey(GameSettings.MoveLeft))
             {
-                this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), this.movement.MaxRotationalVelocity));
+                this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), this.movement.RotVel));
             }
             if (Input.GetKey(GameSettings.MoveRight))
             {
-                this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), -this.movement.MaxRotationalVelocity));
+                this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), -this.movement.RotVel));
             }
 
             #endregion Player Movement
@@ -160,13 +160,13 @@ public class InputHandler : MonoBehaviour
             float x = -CnInputManager.GetAxis("Horizontal");
             if (x != 0f)
             {
-                this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), this.movement.MaxRotationalVelocity * x));
+                this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), this.movement.RotVel * x));
             }
 
             float y = CnInputManager.GetAxis("Vertical");
             if (y != 0f)
             {
-                this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.MaxAcceleration * y));
+                this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.Thrust * y));
             }
 
             #endregion Player Movement

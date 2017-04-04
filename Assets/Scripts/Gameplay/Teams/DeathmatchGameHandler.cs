@@ -34,29 +34,29 @@ public class DeathmatchGameHandler : MonoBehaviour
         this.teams.Add(new Team("Team One", Color.blue));
         for (int i = 0; i < 1; i++)
         {
-            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.C20H, EngineTypes.F1140, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.C20H, EngineTypes.F1140, ArmorTypes.PA56, GunTypes.HLM10, GunTypes.HLM10));
         }
         for (int i = 0; i < 2; i++)
         {
-            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.B12M, EngineTypes.F1150, WeaponTypes.DebugGun1, WeaponTypes.DebugGun2));
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.B12M, EngineTypes.F1150, ArmorTypes.PA52, GunTypes.LM20, GunTypes.LM30));
         }
         for (int i = 0; i < 2; i++)
         {
-            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.A23F, EngineTypes.F1160, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.A23F, EngineTypes.F1160, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
         }
 
         this.teams.Add(new Team("Team Two", Color.red));
-        for (int i = 0; i < 2; i++)
-        {
-            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.C20H, EngineTypes.F1140, WeaponTypes.DebugGun1, WeaponTypes.DebugGun1));
-        }
         for (int i = 0; i < 1; i++)
         {
-            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.B12M, EngineTypes.F1150, WeaponTypes.DebugGun2, WeaponTypes.DebugGun2));
+            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.C20H, EngineTypes.F1140, ArmorTypes.PA56, GunTypes.HLM10, GunTypes.HLM10));
         }
         for (int i = 0; i < 2; i++)
         {
-            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.A23F, EngineTypes.F1160, WeaponTypes.DebugGun1, WeaponTypes.DebugGun2));
+            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.B12M, EngineTypes.F1150, ArmorTypes.PA52, GunTypes.LM20, GunTypes.LM30));
+        }
+        for (int i = 0; i < 2; i++)
+        {
+            this.teams[1].Ships.Add(new Ship(this.teams[0], ShipTypes.A23F, EngineTypes.F1160, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
         }
 
         //spawn ships
@@ -171,7 +171,7 @@ public class DeathmatchGameHandler : MonoBehaviour
         GameObject shakeMedium = Instantiate<GameObject>(new GameObject(), playerObject.transform);
         shakeMedium.name = "Intermediate";
         shakeMedium.tag = "Intermediate";
-        shakeMedium.transform.localPosition = new Vector3(0, 16, -40);
+        shakeMedium.transform.localPosition = new Vector3(0, GameSettings.DefaultZoom * -0.4f, GameSettings.DefaultZoom);
         shakeMedium.AddComponent<CameraZoom>();
         GameObject camera = Instantiate<GameObject>(Resources.Load<GameObject>("prefabs/PlayerCamera"), shakeMedium.transform);
         camera.name = "Player Camera";

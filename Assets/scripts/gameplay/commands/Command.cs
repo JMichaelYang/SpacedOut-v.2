@@ -30,8 +30,12 @@ public class Command
         {
             Debug.Log("Could not find method " + this.name + " in class " + this.receiver);
         }
-        catch
+        catch (ArgumentException e)
         {
+            Debug.Log("Inconsistent arguments for method " + this.name + " in class " + this.receiver);
+        }
+        catch
+        { 
             Debug.Log(this.receiver);
             Debug.Log(this.name);
             Debug.Log(this.args[0]);
@@ -43,16 +47,16 @@ public class Command
 public class AccelerateCommand : Command
 {
     public AccelerateCommand(object target, float magnitude)
-        : base(target, "Accelerate", magnitude) { }
+        : base(target, "ApplyDirectionalThrust", magnitude, true) { }
 
     public AccelerateCommand(object target, float xAccel, float yAccel)
-        : base(target, "LinearAccelerate", xAccel, yAccel) { }
+        : base(target, "ApplyThrust", xAccel, yAccel, true) { }
 }
 
 public class RotateCommand : Command
 {
     public RotateCommand(object target, float magnitude)
-        : base(target, "Rotate", magnitude) { }
+        : base(target, "Rotate", magnitude, true) { }
 }
 
 public class ZoomCommand : Command

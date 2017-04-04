@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Controller attached to every ship
+/// </summary>
 [RequireComponent(typeof(AiManager))]
 public class ShipHandler : MonoBehaviour
 {
@@ -185,19 +186,24 @@ public class ShipHandler : MonoBehaviour
     #endregion Event Registration
 }
 
+/// <summary>
+/// A ship with all of its components
+/// </summary>
 public class Ship
 {
     public Team ShipTeam { get; protected set; }
     public ShipType Type { get; protected set; }
     public EngineType Engine { get; protected set; }
     public ShieldType Shield { get; protected set; }
+    public ArmorType Armor { get; protected set; }
     public GunType[] Guns { get; protected set; }
 
-    public Ship(Team team, ShipType type, EngineType engine, params GunType[] guns)
+    public Ship(Team team, ShipType type, EngineType engine, ArmorType armor, params GunType[] guns)
     {
         this.ShipTeam = team;
         this.Type = type;
         this.Engine = engine;
+        this.Armor = armor;
         this.Guns = guns;
     }
 
@@ -209,7 +215,7 @@ public class Ship
     public GameObject GetShipObject(GameObject shipObject)
     {
         shipObject.GetComponent<Weapons>().ReadWeapons(this.Guns, this.Type.Offsets);
-        shipObject.GetComponent<Movement>().SetStatistics(this.Type, this.Engine);
+        shipObject.GetComponent<Movement>().SetStatistics(this.Type.MaxVel, this.Engine.Thrust, this.Type.RotVel, GameSettings.DampeningMultiplier, GameSettings.DampenInteria);
         shipObject.GetComponent<ShipHandler>().SetStatistics(this.Type);
 
         SpriteRenderer spriteRenderer = shipObject.GetComponent<SpriteRenderer>();
