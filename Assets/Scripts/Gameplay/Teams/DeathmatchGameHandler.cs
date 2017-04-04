@@ -32,6 +32,10 @@ public class DeathmatchGameHandler : MonoBehaviour
         //TODO: Replace this test code with code that loads from a "level select" screen
 
         this.teams.Add(new Team("Team One", TeamIndex.ONE, Color.blue));
+        for (int i = 0; i < 2; i++)
+        {
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.A23F, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
+        }
         for (int i = 0; i < 1; i++)
         {
             this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.C20H, EngineTypes.F1100, ShieldTypes.KS22, ArmorTypes.PA56, GunTypes.HLM10, GunTypes.HLM10));
@@ -39,10 +43,6 @@ public class DeathmatchGameHandler : MonoBehaviour
         for (int i = 0; i < 2; i++)
         {
             this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.B12M, EngineTypes.F1110, ShieldTypes.KS2, ArmorTypes.PA52, GunTypes.LM20, GunTypes.LM30));
-        }
-        for (int i = 0; i < 2; i++)
-        {
-            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.A23F, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
         }
 
         this.teams.Add(new Team("Team Two", TeamIndex.TWO, Color.red));
@@ -113,33 +113,33 @@ public class DeathmatchGameHandler : MonoBehaviour
             //left spawn
             case 0:
                 spawn.z = -90f;
-                spawn.x = -(GameSettings.ArenaWidth / 2) + 20 - (1 * spawnIndex);
-                if (spawnIndex % 2 == 0) { spawn.y = spawnIndex / 2 * -4; }
-                else { spawn.y = (spawnIndex + 1) / 2 * 4; }
+                spawn.x = -(GameSettings.ArenaWidth / 2) + 100 - (10 * spawnIndex);
+                if (spawnIndex % 2 == 0) { spawn.y = spawnIndex / 2 * -60; }
+                else { spawn.y = (spawnIndex + 1) / 2 * 60; }
                 break;
 
             //right spawn
             case 1:
                 spawn.z = 90f;
-                spawn.x = (GameSettings.ArenaWidth / 2) - 20 + (1 * spawnIndex);
-                if (spawnIndex % 2 == 0) { spawn.y = spawnIndex / 2 * 4; }
-                else { spawn.y = (spawnIndex + 1) / 2 * -4; }
+                spawn.x = (GameSettings.ArenaWidth / 2) - 100 + (10 * spawnIndex);
+                if (spawnIndex % 2 == 0) { spawn.y = spawnIndex / 2 * 60; }
+                else { spawn.y = (spawnIndex + 1) / 2 * -60; }
                 break;
 
             //top spawn
             case 2:
                 spawn.z = 180f;
-                spawn.y = (GameSettings.ArenaHeight / 2) - 20 + (1 * spawnIndex);
-                if (spawnIndex % 2 == 0) { spawn.x = spawnIndex / 2 * -4; }
-                else { spawn.x = (spawnIndex + 1) / 2 * 4; }
+                spawn.y = (GameSettings.ArenaHeight / 2) - 100 + (10 * spawnIndex);
+                if (spawnIndex % 2 == 0) { spawn.x = spawnIndex / 2 * -60; }
+                else { spawn.x = (spawnIndex + 1) / 2 * 60; }
                 break;
 
             //bottom spawn
             case 3:
                 spawn.z = 0f;
-                spawn.y = -(GameSettings.ArenaHeight / 2) + 20 - (1 * spawnIndex);
-                if (spawnIndex % 2 == 0) { spawn.x = spawnIndex / 2 * 4; }
-                else { spawn.x = (spawnIndex + 1) / 2 * -4; }
+                spawn.y = -(GameSettings.ArenaHeight / 2) + 100 - (10 * spawnIndex);
+                if (spawnIndex % 2 == 0) { spawn.x = spawnIndex / 2 * 60; }
+                else { spawn.x = (spawnIndex + 1) / 2 * -60; }
                 break;
         }
 

@@ -22,9 +22,6 @@ public class Weapons : MonoBehaviour
     private WeaponShootEventArgs e = new WeaponShootEventArgs(0f);
 
     private Team shooterTeam;
-    private Collider2D[] teamColliders;
-    private Collider2D[] teamShields;
-    private Collider2D shield;
 
     //maximum range and spread of weapons for use by AI
     public float MaxRange { get; protected set; }
@@ -33,18 +30,6 @@ public class Weapons : MonoBehaviour
     public void SetTeam(Team team)
     {
         this.shooterTeam = team;
-        this.teamColliders = new Collider2D[this.shooterTeam.FriendlyShips.Count];
-        this.teamShields = new Collider2D[this.shooterTeam.FriendlyShips.Count];
-
-        List<Collider2D> shieldColliders = new List<Collider2D>();
-        Collider2D shield;
-        for (int i = 0; i < this.shooterTeam.FriendlyShips.Count; i++)
-        {
-            this.teamColliders[i] = this.shooterTeam.FriendlyShips[i].GetComponent<CircleCollider2D>();
-            shield = this.shooterTeam.FriendlyShips[i].GetComponentInChildren<CapsuleCollider2D>();
-            if (shield != null) { shieldColliders.Add(shield); }
-        }
-        this.teamShields = shieldColliders.ToArray();
     }
 
     public void ReadWeapons(GunType[] guns, Vector2[] offsets)
@@ -78,7 +63,6 @@ public class Weapons : MonoBehaviour
     {
         this.commandHandler = GameObject.FindObjectOfType<CommandHandler>();
         this.shake = GameObject.FindObjectOfType<CameraShake>();
-        this.shield = this.gameObject.transform.Find("Shield").GetComponent<Collider2D>();
     }
 
     public bool ShootWeapons(params int[] slots)

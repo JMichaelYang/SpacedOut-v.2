@@ -77,10 +77,10 @@ public class GameSettings : MonoBehaviour
 
     public static readonly Color ColorToReplace = Color.white;
 
-    public static readonly string ShipPrefab = "prefabs/ships/Ship";
-    public static readonly string ShipExplosion = "prefabs/ships/ExplosionSystem";
+    public static readonly string ShipPrefab = "Prefabs/Ships/Ship";
+    public static readonly string ShipExplosion = "Prefabs/Ships/ExplosionSystem";
 
-    public static readonly string ShipTexPath = "sprites/ships/";
+    public static readonly string ShipTexPath = "Sprites/Ships/";
 
     #endregion resources
 
