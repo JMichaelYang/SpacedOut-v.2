@@ -6,10 +6,10 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     //components
-    private Transform bulletTransform;
-    private Rigidbody2D bulletBody;
-    private SpriteRenderer bulletRenderer;
-    private CircleCollider2D bulletCollider;
+    private new Transform transform;
+    private Rigidbody2D rigidBody;
+    private new SpriteRenderer renderer;
+    private new CircleCollider2D collider;
 
     //stats
     public float Damage { get; protected set; }
@@ -23,14 +23,10 @@ public class Bullet : MonoBehaviour
         this.Damage = 0f;
         this.duration = 0f;
 
-        try { this.bulletTransform = this.transform; }
-        catch { Debug.Log("Could not find Transform component of " + this.gameObject.ToString()); }
-        try { this.bulletBody = this.gameObject.GetComponent<Rigidbody2D>(); }
-        catch { Debug.Log("Could not find RigidBody component of " + this.gameObject.ToString()); }
-        try { this.bulletRenderer = this.gameObject.GetComponent<SpriteRenderer>(); }
-        catch { Debug.Log("Could not find Renderer component of " + this.gameObject.ToString()); }
-        try { this.bulletCollider = this.gameObject.GetComponent<CircleCollider2D>(); }
-        catch { Debug.Log("Could not find Collider component of " + this.gameObject.ToString()); }
+        this.transform = this.GetComponent<Transform>();
+        this.rigidBody = this.GetComponent<Rigidbody2D>();
+        this.renderer = this.GetComponent<SpriteRenderer>();
+        this.collider = this.GetComponent<CircleCollider2D>();
     }
 
     public void Activate(float damage, float duration, float velocity, TeamIndex team, Sprite image)
@@ -40,7 +36,6 @@ public class Bullet : MonoBehaviour
         //set bullet stats
         this.Damage = damage;
         this.duration = duration;
-
         //set bullet layer
         #region Layer
 
@@ -64,13 +59,11 @@ public class Bullet : MonoBehaviour
         }
 
         #endregion Layer
-
         //set bullet image and collider
-        this.bulletRenderer.sprite = image;
-        this.bulletCollider.radius = this.bulletRenderer.bounds.extents.x < this.bulletRenderer.bounds.extents.y ? this.bulletRenderer.bounds.extents.x : this.bulletRenderer.bounds.extents.y;
-
+        this.renderer.sprite = image;
+        this.collider.radius = this.renderer.bounds.extents.x < this.renderer.bounds.extents.y ? this.renderer.bounds.extents.x : this.renderer.bounds.extents.y;
         //accelerate bullet
-        this.bulletBody.velocity = this.bulletTransform.up * velocity;
+        this.rigidBody.velocity = this.transform.up * velocity;
 
         //set this bullet up to be destroyed after its duration elapses
         Invoke("Kill", this.duration);

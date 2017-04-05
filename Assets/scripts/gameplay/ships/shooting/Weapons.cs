@@ -17,7 +17,6 @@ public class Weapons : MonoBehaviour
     private float oldTime = 0;
 
     private CommandHandler commandHandler;
-    private CameraShake shake;
 
     private WeaponShootEventArgs e = new WeaponShootEventArgs(0f);
 
@@ -62,7 +61,6 @@ public class Weapons : MonoBehaviour
     void Start()
     {
         this.commandHandler = GameObject.FindObjectOfType<CommandHandler>();
-        this.shake = GameObject.FindObjectOfType<CameraShake>();
     }
 
     public bool ShootWeapons(params int[] slots)
@@ -203,6 +201,14 @@ public class Gun
         return gun;
     }
 
+    /// <summary>
+    /// Shoot the gun
+    /// </summary>
+    /// <param name="pos">the position to shoot from</param>
+    /// <param name="rot">the rotation to shoot with</param>
+    /// <param name="shooter">who shot the bullet</param>
+    /// <param name="team">the team of who shot the bullet</param>
+    /// <returns>The new bullet object</returns>
     public GameObject ShootGun(Vector3 pos, Quaternion rot, GameObject shooter, TeamIndex team)
     {
         GameObject bullet = ObjectPool.Spawn(this.bulletPrefab, pos, rot);

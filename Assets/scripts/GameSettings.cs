@@ -12,18 +12,18 @@ public class GameSettings : MonoBehaviour
         Application.targetFrameRate = 30;
     }
 
-    #region arena
+    #region Arena
 
-    public static int ArenaWidth = 7500;
-    public static int ArenaHeight = 7500;
+    public static int ArenaWidth = 8000;
+    public static int ArenaHeight = 8000;
 
     public static float StarDensity = .05f;
     public static int StarMinDepth = 0;
     public static int StarMaxDepth = 100;
 
-    #endregion arena
+    #endregion Arena
 
-    #region camera
+    #region Camera
 
     public static float CameraFOV = 60f;
     public static float CameraAspectRatio = 9f / 16f;
@@ -36,15 +36,15 @@ public class GameSettings : MonoBehaviour
     public static float ShotShake = 0.2f;
     public static float ShakeDecrease = 4f;
 
-    #endregion camera
+    #endregion Camera
 
-    #region controls
+    #region Controls
 
     //inertial dampening settings
     public static bool DampenInteria = true;
     public static float DampeningMultiplier = 0.03f;
 
-    #region keyboard
+    #region Keyboard
 
     public static KeyCode MoveForward = KeyCode.W;
     public static KeyCode MoveBack = KeyCode.S;
@@ -53,9 +53,9 @@ public class GameSettings : MonoBehaviour
 
     public static KeyCode Shoot = KeyCode.Space;
 
-    #endregion keyboard
+    #endregion Keyboard
 
-    #region touch
+    #region Touch
 
     //joystick
     public static float JoystickRadius = .2f;
@@ -69,11 +69,11 @@ public class GameSettings : MonoBehaviour
     public static float JoystickBaseOpacity = 0.6f;
     public static float JoystickKnobOpacity = 0.6f;
 
-    #endregion touch
+    #endregion Touch
 
-    #endregion controls
+    #endregion Controls
 
-    #region resources
+    #region Resources
 
     public static readonly Color ColorToReplace = Color.white;
 
@@ -82,12 +82,13 @@ public class GameSettings : MonoBehaviour
 
     public static readonly string ShipTexPath = "Sprites/Ships/";
 
-    #endregion resources
+    #endregion Resources
 
-    #region Teams
+    #region Ships
 
+    public static readonly float ShieldRegenDelay = 0.05f;
 
-    #endregion Teams
+    #endregion Ships
 
     #region Layers
 

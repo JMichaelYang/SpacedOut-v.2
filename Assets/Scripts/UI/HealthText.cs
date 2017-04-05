@@ -5,19 +5,22 @@ using UnityEngine.UI;
 
 public class HealthText : MonoBehaviour
 {
-    private ShipHandler playerShipHandler;
+    private Health health;
+    private Shield shield;
     private Text text;
 
 	// Use this for initialization
 	void Start ()
     {
         this.text = this.GetComponent<Text>();
-        this.playerShipHandler = DeathmatchGameHandler.Instance.PlayerShip.GetComponent<ShipHandler>();
-	}
+        this.health = DeathmatchGameHandler.Instance.PlayerShip.GetComponent<Health>();
+        this.shield = DeathmatchGameHandler.Instance.PlayerShip.GetComponentInChildren<Shield>(true);
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        this.text.text = this.playerShipHandler.Health + "/" + this.playerShipHandler.MaxHealth;
+        this.text.text = this.health.IntHealth + "/" + this.health.IntMaxHealth;
+        this.text.text += "    " + this.shield.ShieldHealth + "/" + this.shield.ShieldMaxHealth;
 	}
 }

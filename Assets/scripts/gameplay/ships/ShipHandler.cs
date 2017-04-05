@@ -7,60 +7,67 @@ using UnityEngine;
 [RequireComponent(typeof(AiManager))]
 public class ShipHandler : MonoBehaviour
 {
-    //current health of the ship
-    public float MaxHealth { get; protected set; }
-    public float Health { get; protected set; }
+    #region Components
 
     //explosion particle system
-    private GameObject explosion;
+    public GameObject explosion;
     private ParticleSystem explosionSystem;
-    //rigid body
+
+    private new Transform transform;
     private new Rigidbody2D rigidbody;
-    //movement
     private Movement movement;
-    //collider
     private new Collider2D collider;
-    //renderer
     private new SpriteRenderer renderer;
-
-    //components for the shield
+    private Health health;
+    private AiManager shipAi;
+    /// <summary>
+    /// Whether this ship has a shield
+    /// </summary>
     private bool hasShield;
-    private Collider2D shieldCollider;
-    private SpriteRenderer shieldRenderer;
+    private Shield shield;
 
-    //whether the ship is on the screen
+    #endregion Components
+
+    #region Type Statistics
+
+
+
+    #endregion Type Statistics
+
+    /// <summary>
+    /// Whether the ship is on the screen
+    /// </summary>
     private bool isOffScreen = false;
-    private new Transform transform = null;
-    private AiManager shipAi = null;
 
-    public bool IsAlive { get; protected set; }
+    public bool IsAlive { get { return this.health.IsAlive; } }
 
     void Awake()
     {
+        #region Get Component References
+
         this.transform = this.gameObject.GetComponent<Transform>();
-        this.shipAi = this.gameObject.GetComponent<AiManager>();
-        this.movement = this.gameObject.GetComponent<Movement>();
         this.rigidbody = this.GetComponent<Rigidbody2D>();
+        this.movement = this.gameObject.GetComponent<Movement>();
         this.collider = this.GetComponent<Collider2D>();
         this.renderer = this.GetComponent<SpriteRenderer>();
+        this.health = this.GetComponent<Health>();
+        this.shipAi = this.gameObject.GetComponent<AiManager>();
+        this.shield = this.gameObject.GetComponentInChildren<Shield>();
+        if (this.shield != null) { this.hasShield = true; }
+        else { this.hasShield = false; }
 
-        if (this.transform.FindChild("Shield") != null)
-        {
-            this.hasShield = true;
-            this.shieldCollider = this.transform.FindChild("Shield").GetComponent<Collider2D>();
-            this.shieldRenderer = this.transform.FindChild("Shield").GetComponent<SpriteRenderer>();
-        }
-        else
-        {
-            this.hasShield = false;
-        }
-
-        this.IsAlive = true;
+        #endregion Get Component References
     }
 
-    public void SetStatistics(ShipType shipType)
+    /// <summary>
+    /// Set the component statistics of this ship
+    /// </summary>
+    /// <param name="shipType">the ShipType of this ship</param>
+    /// <param name="armorType">the ArmorType of this ship</param>
+    /// <param name="shieldType">the ShieldType of this ship</param>
+    public void SetStatistics(ShipType shipType, ArmorType armorType, ShieldType shieldType)
     {
-        this.MaxHealth = shipType.Health;
+        if(this.hasShield) { this.shield.Activate(shieldType); }
     }
 
     // Use this for initialization
@@ -69,7 +76,7 @@ public class ShipHandler : MonoBehaviour
         this.explosion = Resources.Load<GameObject>(GameSettings.ShipExplosion);
         this.explosionSystem = this.explosion.GetComponent<ParticleSystem>();
 
-        this.Health = this.MaxHealth;
+        this.health.SetHealth(this.health.IntMaxHealth);
     }
 
     //used for when the ship exits the arena
@@ -118,15 +125,7 @@ public class ShipHandler : MonoBehaviour
     {
         if (e.HitCollider == this.collider)
         {
-            this.Health -= e.ShotDamage;
-
-            //ship death
-            if (this.Health < 0)
-            {
-                this.Health = 0;
-
-                this.DestroyShip();
-            }
+            if(this.health.ApplyDamage(e.ShotDamage) <= 0f) { this.DestroyShip(); }
         }
     }
 
@@ -135,7 +134,7 @@ public class ShipHandler : MonoBehaviour
     /// </summary>
     private void DestroyShip()
     {
-        //broadcast event that the player has died
+        //If this is the player, broadcast an event that the player has died
         if (this.CompareTag("Player")) { GameEventHandler.OnPlayerDead(this, new EventArgs()); }
 
         //disable components
@@ -144,11 +143,8 @@ public class ShipHandler : MonoBehaviour
         this.renderer.enabled = false;
         this.collider.enabled = false;
 
-        if (this.hasShield)
-        {
-            this.shieldRenderer.enabled = false;
-            this.shieldCollider.enabled = false;
-        }
+        //Disable the shield if it exists
+        if (this.hasShield) { this.shield.Disable(); }
 
         //add drag to rigid body to stop it
         this.rigidbody.drag = 1f;
@@ -158,16 +154,15 @@ public class ShipHandler : MonoBehaviour
         //TODO: preload explosion
         ObjectPool.Spawn(this.explosion, this.transform.position, this.transform.rotation);
         Invoke("AfterExplosion", this.explosionSystem.main.duration + this.explosionSystem.main.startLifetime.constantMax);
-
-        //set this ship to dead
-        this.IsAlive = false;
     }
 
+    /// <summary>
+    /// Invoked after the explosion finishes playing out
+    /// </summary>
     private void AfterExplosion()
     {
         ObjectPool.Despawn(this.explosion);
         this.rigidbody.Sleep();
-        //Debug.Log("Deactivated explosion");
     }
 
     #region Event Registration
@@ -222,7 +217,8 @@ public class Ship
     {
         shipObject.GetComponent<Weapons>().ReadWeapons(this.Guns, this.Type.Offsets);
         shipObject.GetComponent<Movement>().SetStatistics(this.Type.MaxVel, this.Engine.Thrust, this.Type.RotVel, GameSettings.DampeningMultiplier, GameSettings.DampenInteria);
-        shipObject.GetComponent<ShipHandler>().SetStatistics(this.Type);
+        shipObject.GetComponent<Health>().SetStatistics(this.Type.Health + this.Armor.Health);
+        shipObject.GetComponent<ShipHandler>().SetStatistics(this.Type, this.Armor, this.Shield);
 
         SpriteRenderer spriteRenderer = shipObject.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = Resources.Load<Sprite>(GameSettings.ShipTexPath + this.Type.SpritePath);

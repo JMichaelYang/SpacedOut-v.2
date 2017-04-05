@@ -27,6 +27,11 @@ Target Thrust: ~150 kN
 Target Accel: ~2 m/s^2
 Target Max Speed: ~150-250 m/s
 
+UPDATED: SLOWER SPEEDS: 1/2 SPEEDS
+Target Thrust: ~80 kN
+Target Accel: ~1 m/s
+Target Max Speed: ~80-120 m/s
+
 Target Engine Weight: ~6,000 kg
 Target Shield Weight: ~9,000 kg
 Target Weapon Weight: ~7500 kg * ?
