@@ -90,7 +90,7 @@ public class CameraShake : MonoBehaviour
     /// Function to start a camera shake
     /// </summary>
     /// <param name="strength">The magnitude with which to shake the camera</param>
-    private void StartShake(float strength, float decrease)
+    public void StartShake(float strength, float decrease)
     {
         this.strength = strength;
         this.decrease = decrease;

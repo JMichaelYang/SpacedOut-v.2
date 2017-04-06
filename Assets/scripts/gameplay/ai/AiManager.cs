@@ -190,14 +190,14 @@ public class AiManager : MonoBehaviour
             float desiredRotation = Mathf.Atan2(steering.y, steering.x) * Mathf.Rad2Deg + 90f;
             desiredRotation = Utils.FindAngleDifference(desiredRotation, currentRot);
             //add command with aggregated steering forces
-            CommandHandler.Instance.AddCommands(new AccelerateCommand(this.aiComponents.movement, magnitude),
-                new RotateCommand(this.aiComponents.movement, desiredRotation));
+            CommandHandler.Instance.AddCommands(new CommandAccelerateDirectional(this.aiComponents.movement, magnitude),
+                new CommandRotate(this.aiComponents.movement, desiredRotation));
 
             #endregion Steering
 
             if (this.shouldShoot)
             {
-                CommandHandler.Instance.AddCommands(new ShootCommand(this.aiWeapons, 0, 1));
+                CommandHandler.Instance.AddCommands(new CommandShoot(this.aiWeapons, 0, 1));
             }
         }
     }

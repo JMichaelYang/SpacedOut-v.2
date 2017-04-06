@@ -103,19 +103,19 @@ public class InputHandler : MonoBehaviour
 
             if (Input.GetKey(GameSettings.MoveForward))
             {
-                this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.Thrust));
+                this.commandHandler.AddCommands(new CommandAccelerateDirectional(this.movement, this.movement.Thrust));
             }
             if (Input.GetKey(GameSettings.MoveBack))
             {
-                this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), -this.movement.Thrust));
+                this.commandHandler.AddCommands(new CommandAccelerateDirectional(this.movement, -this.movement.Thrust));
             }
             if (Input.GetKey(GameSettings.MoveLeft))
             {
-                this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), this.movement.RotVel));
+                this.commandHandler.AddCommands(new CommandRotate(this.movement, this.movement.RotVel));
             }
             if (Input.GetKey(GameSettings.MoveRight))
             {
-                this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), -this.movement.RotVel));
+                this.commandHandler.AddCommands(new CommandRotate(this.movement, -this.movement.RotVel));
             }
 
             #endregion Player Movement
@@ -123,7 +123,7 @@ public class InputHandler : MonoBehaviour
 
             if (Input.GetKey(GameSettings.Shoot))
             {
-                this.commandHandler.AddCommands(new ShootCommand(this.weapons, 0, 1));
+                this.commandHandler.AddCommands(new CommandShoot(this.weapons, 0, 1));
             }
 
             #endregion Player Shooting
@@ -160,13 +160,13 @@ public class InputHandler : MonoBehaviour
             float x = -CnInputManager.GetAxis("Horizontal");
             if (x != 0f)
             {
-                this.commandHandler.AddCommands(new RotateCommand(this.player.GetComponent<Movement>(), this.movement.RotVel * x));
+                this.commandHandler.AddCommands(new CommandRotate(this.movement, this.movement.RotVel * x));
             }
 
             float y = CnInputManager.GetAxis("Vertical");
             if (y != 0f)
             {
-                this.commandHandler.AddCommands(new AccelerateCommand(this.player.GetComponent<Movement>(), this.movement.Thrust * y));
+                this.commandHandler.AddCommands(new CommandAccelerateDirectional(this.movement, this.movement.Thrust * y));
             }
 
             #endregion Player Movement
@@ -174,7 +174,7 @@ public class InputHandler : MonoBehaviour
 
             if (CnInputManager.GetButton("Shoot"))
             {
-                this.commandHandler.AddCommands(new ShootCommand(this.weapons, 0, 1));
+                this.commandHandler.AddCommands(new CommandShoot(this.weapons, 0, 1));
             }
 
             #endregion Player Shooting
