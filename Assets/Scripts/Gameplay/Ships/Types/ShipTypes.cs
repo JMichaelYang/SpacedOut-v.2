@@ -2,9 +2,11 @@
 
 public class ShipTypes
 {
-    public static readonly ShipType A23F = new ShipType("A23F", 40000f, 1, 200f, 1.5f, 120f, "One/Debug", new Vector2(-5.5f, 0f), new Vector2(5.5f, 0f));
-    public static readonly ShipType C20H = new ShipType("C20H", 60000f, 1, 400f, 1f, 80f, "One/DebugSlow", new Vector2(-6f, 0f), new Vector2(6f, 0f));
-    public static readonly ShipType B12M = new ShipType("B12M", 50000f, 1, 300f, 1.2f, 90f, "One/DebugMedium", new Vector2(-6f, 0f), new Vector2(6f, 0f));
+    public static readonly ShipType A23F = new ShipType("A23F", 40000f, 1, 200f, 1f, 120f, "One/Debug", new Vector2(-5.5f, 0f), new Vector2(5.5f, 0f));
+    public static readonly ShipType C20H = new ShipType("C20H", 60000f, 1, 400f, 0.8f, 80f, "One/DebugSlow", new Vector2(-6f, 0f), new Vector2(6f, 0f));
+    public static readonly ShipType B12M = new ShipType("B12M", 50000f, 1, 300f, 0.9f, 90f, "One/DebugMedium", new Vector2(-6f, 0f), new Vector2(6f, 0f));
+    
+    public static readonly ShipType HAX = new ShipType("HAX", 4000f, 1, 500f, 2f, 200f, "One/Debug", new Vector2(-5.5f, 0f), new Vector2(5.5f, 0f));
 }
 
 /// <summary>

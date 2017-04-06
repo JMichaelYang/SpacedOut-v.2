@@ -40,10 +40,6 @@ public class GameSettings : MonoBehaviour
 
     #region Controls
 
-    //inertial dampening settings
-    public static bool DampenInteria = true;
-    public static float DampeningMultiplier = 0.03f;
-
     #region Keyboard
 
     public static KeyCode MoveForward = KeyCode.W;
@@ -87,6 +83,10 @@ public class GameSettings : MonoBehaviour
     #region Ships
 
     public static readonly float ShieldRegenDelay = 0.05f;
+
+    //inertial dampening settings
+    public static bool DampenInteria = true;
+    public static float DampeningMultiplier = 0.005f;
 
     #endregion Ships
 

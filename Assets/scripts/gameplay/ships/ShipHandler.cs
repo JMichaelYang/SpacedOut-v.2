@@ -19,9 +19,10 @@ public class ShipHandler : MonoBehaviour
     public Transform cTransform { get; protected set; }
     public Rigidbody2D cRigidbody { get; protected set; }
     public Movement cMovement { get; protected set; }
+    public Weapons cWeapons { get; protected set; }
     public Collider2D cCollider { get; protected set; }
     public SpriteRenderer cRenderer { get; protected set; }
-    public Health cHealth;
+    public Health cHealth { get; protected set; }
     private AiManager shipAi;
     /// <summary>
     /// Whether this ship has a shield
@@ -200,7 +201,7 @@ public class Ship
     public ArmorType Armor { get; protected set; }
     public GunType[] Guns { get; protected set; }
     
-    protected readonly float totalWeight;
+    protected readonly float totalWeight = 0f;
 
     public Ship(Team team, ShipType type, EngineType engine, ShieldType shield, ArmorType armor, params GunType[] guns)
     {
@@ -229,6 +230,7 @@ public class Ship
 
         SpriteRenderer spriteRenderer = shipObject.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = Resources.Load<Sprite>(GameSettings.ShipTexPath + this.Type.SpritePath);
+        Utils.UpdateSpriteColor(spriteRenderer, GameSettings.ColorToReplace, this.ShipTeam.TeamColor);
 
         CircleCollider2D collider = shipObject.GetComponent<CircleCollider2D>();
         collider.radius = (spriteRenderer.bounds.extents.x + spriteRenderer.bounds.extents.y) / 2;

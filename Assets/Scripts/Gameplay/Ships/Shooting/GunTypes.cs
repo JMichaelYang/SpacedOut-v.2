@@ -1,9 +1,11 @@
 ﻿public class GunTypes
 {
-    public static readonly GunType LM20 = new GunType("LM20", 1500f, 1, 15f, 420f, 6f, 6f, 0.1f, 0.5f, 2f, 5, 100, "bullet");
-    public static readonly GunType HLM10 = new GunType("HLM10", 2000f, 1, 25f, 400f, 8f, 2f, 0.2f, 1f, 3f, 5, 20, "rocket");
+    public static readonly GunType LM20 = new GunType("LM20", 1500f, 1, 15f, 420f, 6f, 4f, 0.3f, 2f, 8f, 10, 100, "bullet");
+    public static readonly GunType HLM10 = new GunType("HLM10", 2000f, 1, 30f, 400f, 8f, 2f, .6f, 3f, 10f, 8, 20, "rocket");
 
-    public static readonly GunType LM30 = new GunType("LM30", 1700f, 2, 17f, 420f, 6f, 6f, 0.1f, 0.5f, 2f, 5, 100, "bullet");
+    public static readonly GunType LM30 = new GunType("LM30", 1700f, 2, 17f, 420f, 6f, 3.5f, 0.3f, 2f, 8f, 10, 100, "bullet");
+
+    public static readonly GunType HAX = new GunType("HAX", 0f, 10, 50f, 600f, 6f, 1f, 0.05f, 0.2f, 0.4f, 20, 1000, "bullet");
 }
 
 /// <summary>

@@ -32,6 +32,11 @@ public class DeathmatchGameHandler : MonoBehaviour
         //TODO: Replace this test code with code that loads from a "level select" screen
 
         this.teams.Add(new Team("Team One", TeamIndex.ONE, Color.blue));
+        for (int i = 0; i < 1; i++)
+        {
+            this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.HAX, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.HAX, GunTypes.HAX));
+        }
+        /*
         for (int i = 0; i < 2; i++)
         {
             this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.A23F, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
@@ -44,8 +49,13 @@ public class DeathmatchGameHandler : MonoBehaviour
         {
             this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.B12M, EngineTypes.F1110, ShieldTypes.KS2, ArmorTypes.PA52, GunTypes.LM20, GunTypes.LM30));
         }
+        */
 
         this.teams.Add(new Team("Team Two", TeamIndex.TWO, Color.red));
+        for (int i = 0; i < 2; i++)
+        {
+            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.A23F, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
+        }
         for (int i = 0; i < 1; i++)
         {
             this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.C20H, EngineTypes.F1100, ShieldTypes.KS22, ArmorTypes.PA56, GunTypes.HLM10, GunTypes.HLM10));
@@ -53,10 +63,6 @@ public class DeathmatchGameHandler : MonoBehaviour
         for (int i = 0; i < 2; i++)
         {
             this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.B12M, EngineTypes.F1110, ShieldTypes.KS2, ArmorTypes.PA52, GunTypes.LM20, GunTypes.LM30));
-        }
-        for (int i = 0; i < 2; i++)
-        {
-            this.teams[1].Ships.Add(new Ship(this.teams[1], ShipTypes.A23F, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
         }
 
         //spawn ships
@@ -149,13 +155,7 @@ public class DeathmatchGameHandler : MonoBehaviour
     private GameObject spawnAi(Ship ship, Color team)
     {
         GameObject aiObject = ship.GetShipObject(Instantiate<GameObject>(Resources.Load<GameObject>(GameSettings.ShipPrefab)));
-
         aiObject.tag = "AI";
-
-        SpriteRenderer spriteRenderer = aiObject.GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = Resources.Load<Sprite>(GameSettings.ShipTexPath + ship.Type.SpritePath);
-        Utils.UpdateSpriteColor(spriteRenderer, GameSettings.ColorToReplace, team);
-
         return aiObject;
     }
 
@@ -172,8 +172,6 @@ public class DeathmatchGameHandler : MonoBehaviour
         shakeMedium.transform.localPosition = new Vector3(0, GameSettings.DefaultZoom * -0.4f, GameSettings.DefaultZoom);
         shakeMedium.AddComponent<CameraZoom>();
         GameObject camera = Instantiate<GameObject>(Resources.Load<GameObject>("prefabs/PlayerCamera"), shakeMedium.transform);
-        camera.name = "Player Camera";
-        camera.tag = "MainCamera";
 
         #endregion Camera Stuff
 

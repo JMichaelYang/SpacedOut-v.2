@@ -38,7 +38,7 @@ public class Shield : MonoBehaviour
         else
         {
             this.shieldHealthFloat = this.type.Health;
-            this.regenAmount = this.type.Regen * GameSettings.ShieldRegenDelay;
+            this.regenAmount = this.type.Regen;
             this.state = ShieldState.ACTIVE;
         }
     }
@@ -48,14 +48,14 @@ public class Shield : MonoBehaviour
         switch (this.state)
         {
             case ShieldState.ACTIVE:
-                this.shieldHealthFloat += this.regenAmount;
+                this.shieldHealthFloat += this.regenAmount * Time.deltaTime;
                 if (this.shieldHealthFloat > this.type.Health) { this.shieldHealthFloat = this.type.Health; }
                 this.color.a = this.shieldHealthFloat / this.type.Health;
                 this.renderer.color = this.color;
                 break;
 
             case ShieldState.REGENERATING:
-                this.shieldHealthFloat += this.regenAmount;
+                this.shieldHealthFloat += this.regenAmount * Time.deltaTime;
                 if (this.shieldHealthFloat > this.type.Health)
                 {
                     this.shieldHealthFloat = this.type.Health;

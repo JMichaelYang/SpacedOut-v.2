@@ -4,9 +4,9 @@ public class ShieldTypes
 {
     public static readonly ShieldType None = new ShieldType("None", 0f, 0, 0f, 0f);
 
-    public static readonly ShieldType KS1 = new ShieldType("KS1", 7500f, 1, 50f, 10f);
-    public static readonly ShieldType KS2 = new ShieldType("KS2", 7800f, 1, 70f, 10f);
-    public static readonly ShieldType KS22 = new ShieldType("KS22", 8000f, 2, 85f, 12f);
+    public static readonly ShieldType KS1 = new ShieldType("KS1", 7500f, 1, 40f, 10f);
+    public static readonly ShieldType KS2 = new ShieldType("KS2", 7800f, 1, 45f, 10f);
+    public static readonly ShieldType KS22 = new ShieldType("KS22", 8000f, 2, 50f, 12f);
 }
 
 /// <summary>
