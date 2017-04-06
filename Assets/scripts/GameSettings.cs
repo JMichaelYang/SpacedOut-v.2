@@ -1,44 +1,46 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-/*
- * class to store game settings
- * note scale: 1 game unit to 8m (all assets should be 32 ppm)
- */
+/// <summary>
+/// Class for all game settings
+/// Note that default scale is 1 unit : 1 meter
+/// </summary>
 public class GameSettings : MonoBehaviour
 {
-    #region arena
+    void Awake()
+    {
+        Application.targetFrameRate = 30;
+    }
 
-    public static int ArenaWidth = 500;
-    public static int ArenaHeight = 500;
+    #region Arena
+
+    public static int ArenaWidth = 8000;
+    public static int ArenaHeight = 8000;
 
     public static float StarDensity = .05f;
     public static int StarMinDepth = 0;
     public static int StarMaxDepth = 100;
 
-    #endregion arena
+    #endregion Arena
 
-    #region camera
+    #region Camera
 
     public static float CameraFOV = 60f;
     public static float CameraAspectRatio = 9f / 16f;
-    public static float MinZoom = -100;
-    public static float MaxZoom = -10;
-    public static float ZoomSpeed = 10f;
+    public static float DefaultZoom = -800;
+    public static float MinZoom = -1600;
+    public static float MaxZoom = -400;
+    public static float ZoomSpeed = 100f;
 
     public static bool ShouldShake = false;
     public static float ShotShake = 0.2f;
     public static float ShakeDecrease = 4f;
 
-    #endregion camera
+    #endregion Camera
 
-    #region controls
+    #region Controls
 
-    //inertial dampening settings
-    public static bool DampenInteria = true;
-    public static float DampeningMultiplier = 0.01f;
-
-    #region keyboard
+    #region Keyboard
 
     public static KeyCode MoveForward = KeyCode.W;
     public static KeyCode MoveBack = KeyCode.S;
@@ -47,9 +49,9 @@ public class GameSettings : MonoBehaviour
 
     public static KeyCode Shoot = KeyCode.Space;
 
-    #endregion keyboard
+    #endregion Keyboard
 
-    #region touch
+    #region Touch
 
     //joystick
     public static float JoystickRadius = .2f;
@@ -63,18 +65,50 @@ public class GameSettings : MonoBehaviour
     public static float JoystickBaseOpacity = 0.6f;
     public static float JoystickKnobOpacity = 0.6f;
 
-    #endregion touch
+    #endregion Touch
 
-    #endregion controls
+    #endregion Controls
 
-    #region resources
+    #region Resources
 
     public static readonly Color ColorToReplace = Color.white;
 
-    public static readonly string ShipPrefab = "prefabs/ships/Ship";
-    public static readonly string ShipExplosion = "prefabs/ships/ExplosionSystem";
+    public static readonly string ShipPrefab = "Prefabs/Ships/Ship";
+    public static readonly string ShipExplosion = "Prefabs/Ships/ExplosionSystem";
 
-    public static readonly string ShipTexPath = "sprites/ships/";
+    public static readonly string ShipTexPath = "Sprites/Ships/";
 
-    #endregion resources
+    #endregion Resources
+
+    #region Ships
+
+    public static readonly float ShieldRegenDelay = 0.05f;
+
+    //inertial dampening settings
+    public static bool DampenInteria = true;
+    public static float DampeningMultiplier = 0.005f;
+
+    #endregion Ships
+
+    #region Layers
+
+    public static readonly int TeamOneBulletLayer = 8;
+    public static readonly int TeamTwoBulletLayer = 9;
+    public static readonly int TeamThreeBulletLayer = 10;
+    public static readonly int TeamFourBulletLayer = 11;
+
+    public static readonly int TeamOneShipLayer = 12;
+    public static readonly int TeamTwoShipLayer = 13;
+    public static readonly int TeamThreeShipLayer = 14;
+    public static readonly int TeamFourShipLayer = 15;
+
+    #endregion Layers
 }
+
+public enum TeamIndex
+{
+    ONE,
+    TWO,
+    THREE,
+    FOUR
+};

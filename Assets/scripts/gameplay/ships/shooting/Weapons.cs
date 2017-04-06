@@ -17,15 +17,10 @@ public class Weapons : MonoBehaviour
     private float oldTime = 0;
 
     private CommandHandler commandHandler;
-    private CameraShake shake;
 
     private WeaponShootEventArgs e = new WeaponShootEventArgs(0f);
 
-    //collider of this ship
-    //private Collider2D shipCollider = null;
-
     private Team shooterTeam;
-    private Collider2D[] teamColliders;
 
     //maximum range and spread of weapons for use by AI
     public float MaxRange { get; protected set; }
@@ -34,11 +29,6 @@ public class Weapons : MonoBehaviour
     public void SetTeam(Team team)
     {
         this.shooterTeam = team;
-        this.teamColliders = new Collider2D[this.shooterTeam.FriendlyShips.Count];
-        for (int i = 0; i < this.shooterTeam.FriendlyShips.Count; i++)
-        {
-            this.teamColliders[i] = this.shooterTeam.FriendlyShips[i].GetComponent<Collider2D>();
-        }
     }
 
     public void ReadWeapons(GunType[] guns, Vector2[] offsets)
@@ -52,7 +42,7 @@ public class Weapons : MonoBehaviour
             this.weapons[i] = new OffsetGunPair();
             this.weapons[i].ValueOffset = offsets[i];
 
-            if (guns[i] != null)
+            if (guns[i].Name != "None")
             {
                 this.weapons[i].ValueGun = Gun.LoadFromGunType(guns[i]);
                 if (guns[i].Range * guns[i].Velocity > this.MaxRange) { this.MaxRange = guns[i].Range * guns[i].Velocity; }
@@ -71,8 +61,6 @@ public class Weapons : MonoBehaviour
     void Start()
     {
         this.commandHandler = GameObject.FindObjectOfType<CommandHandler>();
-        this.shake = GameObject.FindObjectOfType<CameraShake>();
-        //this.shipCollider = this.gameObject.GetComponent<Collider2D>();
     }
 
     public bool ShootWeapons(params int[] slots)
@@ -110,19 +98,12 @@ public class Weapons : MonoBehaviour
                     //shoot the gun and add to the shot counters
                     GameObject shotBullet = this.gun.ShootGun(this.transform.position +
                         (Vector3)Utils.RotateVector2(this.offset, this.transform.rotation.eulerAngles.z),
-                        this.transform.rotation, this.gameObject);
+                        this.transform.rotation, this.gameObject, this.shooterTeam.Index);
                     //increment shot counters
                     this.gun.shotCounter++;
                     this.gun.burstCounter++;
                     //reset shot timer every shot
                     this.gun.shotTimer = 0f;
-
-                    Collider2D shotCollider = shotBullet.GetComponent<Collider2D>();
-                    //ignore collisions between whoever fired this and the bullet itself
-                    for (int c = 0; c < this.teamColliders.Length; c++)
-                    {
-                        Physics2D.IgnoreCollision(shotCollider, this.teamColliders[c], true);
-                    }
 
                     //if the burst is done, reset the burst counter and timer
                     if (this.gun.burstCounter >= this.gun.BurstAmount)
@@ -220,11 +201,19 @@ public class Gun
         return gun;
     }
 
-    public GameObject ShootGun(Vector3 pos, Quaternion rot, GameObject shooter)
+    /// <summary>
+    /// Shoot the gun
+    /// </summary>
+    /// <param name="pos">the position to shoot from</param>
+    /// <param name="rot">the rotation to shoot with</param>
+    /// <param name="shooter">who shot the bullet</param>
+    /// <param name="team">the team of who shot the bullet</param>
+    /// <returns>The new bullet object</returns>
+    public GameObject ShootGun(Vector3 pos, Quaternion rot, GameObject shooter, TeamIndex team)
     {
         GameObject bullet = ObjectPool.Spawn(this.bulletPrefab, pos, rot);
         bullet.transform.Rotate(0, 0, Random.Range(-this.Accuracy, this.Accuracy));
-        bullet.GetComponent<Bullet>().Activate(this.Damage, this.Range, this.Velocity, shooter, this.bulletSprite);
+        bullet.GetComponent<Bullet>().Activate(this.Damage, this.Range, this.Velocity, team, this.bulletSprite);
         return bullet;
     }
 }

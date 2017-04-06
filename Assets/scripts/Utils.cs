@@ -95,6 +95,23 @@ public class Utils : MonoBehaviour
 
         return new Vector2(cos * tx - sin * ty, sin * tx + cos * ty);
     }
+
+    /// <summary>
+    /// Limits a vector's magnitude
+    /// </summary>
+    /// <param name="vector">the original vector</param>
+    /// <param name="origMax">the original magnitude of the vector</param>
+    /// <param name="maxMag">the maximum magnitude of the vector</param>
+    /// <returns>The capped vector</returns>
+    public static Vector2 CapVector2(Vector2 vector, float origMax, float maxMag)
+    {
+        if (vector.sqrMagnitude > maxMag * maxMag)
+        {
+            vector *= maxMag / origMax;
+        }
+
+        return vector;
+    }
     /// <summary>
     /// Limits a vector's magnitude
     /// </summary>
@@ -103,38 +120,8 @@ public class Utils : MonoBehaviour
     /// <returns>The limited vector</returns>
     public static Vector2 CapVector2(Vector2 vector, float maxMag)
     {
-        if (vector.sqrMagnitude > maxMag * maxMag)
-        {
-            vector *= maxMag / vector.magnitude;
-        }
-
-        return vector;
+        return Utils.CapVector2(vector, vector.magnitude, maxMag);
     }
-    /// <summary>
-    /// Limits a vector's magnitude
-    /// </summary>
-    /// <param name="x">the x component of the input vector</param>
-    /// <param name="y">the y component of the input vector</param>
-    /// <param name="maxMag">the magnitude that the vector should be limited to</param>
-    /// <returns>The limited vector</returns>
-    public static Vector2 CapVector2(float x, float y, float maxMag)
-    {
-        return Utils.CapVector2(new Vector2(x, y), maxMag);
-    }
-
-    /*
-     * UNDER CONSTRUCTION
-     * 
-    /// <summary>
-    /// Get the corresponding unit vector for an angle
-    /// </summary>
-    /// <param name="angle">the angle from which to derive the vector in degrees</param>
-    /// <returns>The resulting vector</returns>
-    public static Vector2 GetUnitVectorFromAngle(float angle)
-    {
-        return new Vector2(Mathf.Cos(angle * Mathf.Rad2Deg), Mathf.Sin(angle * Mathf.Rad2Deg));
-    }
-    */
 
     /// <summary>
     /// Finds the smallest angle between two angles

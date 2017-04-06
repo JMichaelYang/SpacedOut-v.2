@@ -134,68 +134,71 @@ public class AiManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        #region Targeting
+        if (!this.CompareTag("Dead"))
+        {
+            #region Targeting
 
-        //if we have a target, check if it still alive, otherwise, try to acquire a target (if we can't, just leave at null)
-        if (this.enemyTarget != null)
-        {
-            //if its dead, set our target index to null (if this fails then we probably tried to check an enemy that wasn't on the team list)
-            try
-            {
-                if (!this.enemyComponents[this.enemyTarget].handler.IsAlive)
-                {
-                    this.enemyTarget = null;
-                    this.ClearBehavior();
-                }
-            }
-            catch
-            {
-                Debug.Log("Ai target alive check failed, probably trying to check an object not on a team somehow");
-            }
-        }
-        else if(this.aiTeam != null && this.aiTeam.EnemyShips != null && this.aiTeam.EnemyShips.Count > 0)
-        {
-            this.enemyTarget = this.acquireTargetObject();
+            //if we have a target, check if it still alive, otherwise, try to acquire a target (if we can't, just leave at null)
             if (this.enemyTarget != null)
             {
-                this.AddBehavior(AvailableBehaviors.SEEK);
-                this.AddBehavior(AvailableBehaviors.SHOOT);
+                //if its dead, set our target index to null (if this fails then we probably tried to check an enemy that wasn't on the team list)
+                try
+                {
+                    if (!this.enemyComponents[this.enemyTarget].handler.IsAlive)
+                    {
+                        this.enemyTarget = null;
+                        this.ClearBehavior();
+                    }
+                }
+                catch
+                {
+                    Debug.Log("Ai target alive check failed, probably trying to check an object not on a team somehow");
+                }
             }
-        }
+            else if (this.aiTeam != null && this.aiTeam.EnemyShips != null && this.aiTeam.EnemyShips.Count > 0)
+            {
+                this.enemyTarget = this.acquireTargetObject();
+                if (this.enemyTarget != null)
+                {
+                    this.AddBehavior(AvailableBehaviors.SEEK);
+                    this.AddBehavior(AvailableBehaviors.SHOOT);
+                }
+            }
 
-        //TODO: Make it so that all Ai's on one team do not target the same target
+            //TODO: Make it so that all Ai's on one team do not target the same target
 
-        #endregion Targeting
+            #endregion Targeting
 
-        #region Steering
+            #region Steering
 
-        //reset delegate behvaior variables
-        this.shouldShoot = false;
-        this.steering = Vector2.zero;
+            //reset delegate behvaior variables
+            this.shouldShoot = false;
+            this.steering = Vector2.zero;
 
-        //find current rotation
-        float currentRot = this.aiComponents.transform.rotation.eulerAngles.z;
+            //find current rotation
+            float currentRot = this.aiComponents.transform.rotation.eulerAngles.z;
 
-        //execute all behaviors
-        for (int i = 0; i < this.currentBehavior.Count; i++) { this.currentBehavior[i](); }
+            //execute all behaviors
+            for (int i = 0; i < this.currentBehavior.Count; i++) { this.currentBehavior[i](); }
 
-        //cap our steering force
-        steering = Utils.CapVector2(steering, this.aiComponents.movement.MaxAcceleration);
-        //get magnitude of movement in steering direction
-        Vector2 heading = this.aiComponents.transform.up;
-        float magnitude = heading.x * steering.x + heading.y * steering.y;
-        //get a desired rotation from the steering force
-        float desiredRotation = Mathf.Atan2(steering.y, steering.x) * Mathf.Rad2Deg + 90f;
-        desiredRotation = Utils.FindAngleDifference(desiredRotation, currentRot);
-        //add command with aggregated steering forces
-        CommandHandler.Instance.AddCommands(new AccelerateCommand(this.aiComponents.movement, magnitude),
-            new RotateCommand(this.aiComponents.movement, desiredRotation));
+            //cap our steering force
+            steering = Utils.CapVector2(steering, this.aiComponents.movement.Thrust);
+            //get magnitude of movement in steering direction
+            Vector2 heading = this.aiComponents.transform.up;
+            float magnitude = heading.x * steering.x + heading.y * steering.y;
+            //get a desired rotation from the steering force
+            float desiredRotation = Mathf.Atan2(steering.y, steering.x) * Mathf.Rad2Deg + 90f;
+            desiredRotation = Utils.FindAngleDifference(desiredRotation, currentRot);
+            //add command with aggregated steering forces
+            CommandHandler.Instance.AddCommands(new CommandAccelerateDirectional(this.aiComponents.movement, magnitude),
+                new CommandRotate(this.aiComponents.movement, desiredRotation));
 
-        #endregion Steering
+            #endregion Steering
 
-        if (this.shouldShoot)
-        {
-            CommandHandler.Instance.AddCommands(new ShootCommand(this.aiWeapons, 0, 1));
+            if (this.shouldShoot)
+            {
+                CommandHandler.Instance.AddCommands(new CommandShoot(this.aiWeapons, 0, 1));
+            }
         }
     }
 
@@ -250,7 +253,7 @@ public class AiManager : MonoBehaviour
     public void BehaviorSeek()
     {
         Vector2 targetHeading = this.enemyComponents[this.enemyTarget].transform.position - this.aiComponents.transform.position;
-        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.MaxAcceleration);
+        this.steering += targetHeading * this.aiComponents.movement.Thrust / targetHeading.magnitude;
     }
     /// <summary>
     /// Guide the ship away from the current enemy target
@@ -258,7 +261,7 @@ public class AiManager : MonoBehaviour
     public void BehaviorFlee()
     {
         Vector2 targetHeading = this.aiComponents.transform.position - this.enemyComponents[this.enemyTarget].transform.position;
-        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.MaxAcceleration);
+        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.Thrust);
     }
     /// <summary>
     /// Guide the ship towards the current enemy target accounting for its velocity
@@ -266,9 +269,9 @@ public class AiManager : MonoBehaviour
     public void BehaviorPursue()
     {
         Transform enemyTransform = this.enemyComponents[this.enemyTarget].transform;
-        float t = (enemyTransform.position - this.aiComponents.transform.position).magnitude / this.aiComponents.movement.MaxVelocity;
+        float t = (enemyTransform.position - this.aiComponents.transform.position).magnitude / this.aiComponents.movement.MaxVel;
         this.steering += Utils.CapVector2((Vector2)enemyTransform.position + this.enemyComponents[this.enemyTarget].rigidBody.velocity * t - (Vector2)this.aiComponents.transform.position,
-            this.aiComponents.movement.MaxAcceleration);
+            this.aiComponents.movement.Thrust);
     }
     /// <summary>
     /// Determine whether the ship should attempt to shoot the target
@@ -295,7 +298,7 @@ public class AiManager : MonoBehaviour
     public void BehaviorReturnCenter()
     {
         Vector2 targetHeading = (Vector2)this.aiComponents.transform.position - Vector2.zero;
-        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.MaxAcceleration);
+        this.steering += Utils.CapVector2(targetHeading, this.aiComponents.movement.Thrust);
     }
 
     #endregion Behaviors

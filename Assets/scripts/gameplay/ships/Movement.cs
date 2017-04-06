@@ -1,72 +1,101 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+/// <summary>
+/// The class for anything that uses input to mvoe
+/// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
 public class Movement : MonoBehaviour
 {
-    //rigid body to use
+    /// <summary>
+    /// Rigidbody of the object
+    /// </summary>
     private Rigidbody2D rigidBody;
-    //transform to use
-    private Transform bodyTransform;
+    /// <summary>
+    /// Transform of the object
+    /// </summary>
+    private new Transform transform;
 
-    //force to add every FixedUpdate
-    private Vector2 acceleration;
-    //rotation to add every FixedUpdate
-    private float rotation;
+    /// <summary>
+    /// Current force to be added during the FixedUpdate
+    /// </summary>
+    private Vector2 deltaForce;
+    /// <summary>
+    /// Rotation to be applied during the FixedUpdate
+    /// </summary>
+    private float deltaRot;
 
-    //should we force object to move in the direction that it is facing
-    private bool DampenInertia = true;
-    private float DampeningMultiplier = 1f;
+    /// <summary>
+    /// The maximum velocity of this object
+    /// </summary>
+    public float MaxVel { get; protected set; }
+    /// <summary>
+    /// The maximum thrust of this object
+    /// </summary>
+    public float Thrust { get; protected set; }
+    /// <summary>
+    /// The rotational velocity of this object
+    /// </summary>
+    public float RotVel { get; protected set; }
 
-    //movement speed cap
-    public float MaxVelocity = 1f;
-    public float MaxRotationalVelocity = 1f;
-    //acceleration cap
-    public float MaxAcceleration = 1f;
+    /// <summary>
+    /// Should we force the object to move in the direction that it is facing in, and by how much
+    /// </summary>
+    private bool DampenInertia;
+    private float DampeningMultiplier;
 
-    // Use this for initialization
+    /// <summary>
+    /// Find the components for this movement object
+    /// </summary>
     void Awake()
     {
+        //get the Rigidbody and Transform for his object
         try { this.rigidBody = this.gameObject.GetComponent<Rigidbody2D>(); }
         catch { Debug.Log("Could not find RigidBody2D component of " + this.gameObject.ToString()); }
-        try { this.bodyTransform = this.transform; }
+        try { this.transform = this.gameObject.GetComponent<Transform>(); }
         catch { Debug.Log("Could not find Transform component of " + this.gameObject.ToString()); }
 
-        this.acceleration = Vector2.zero;
-        this.rotation = 0;
-
-        this.DampenInertia = GameSettings.DampenInteria;
-        this.DampeningMultiplier = GameSettings.DampeningMultiplier;
+        //set the current acceleration and rotation delta of this object to 0
+        this.deltaForce = Vector2.zero;
+        this.deltaRot = 0;
     }
 
-    public void SetStatistics(ShipType shipType, EngineType engine)
+    /// <summary>
+    /// Set the statistics to be used for this movement component
+    /// </summary>
+    /// <param name="maxVel">The maximum velocity that this object should experience</param>
+    /// <param name="thrust">The thrust that this object should experience</param>
+    /// <param name="rotVel">The maximum rotatonal velocity that this object should experience</param>
+    /// <param name="dampeningMultiplier">The amount to which we should dampen this object's inertia</param>
+    /// <param name="dampenInteria">Whether or not we should dampen this object's inertia</param>
+    public void SetStatistics(float maxVel, float thrust, float rotVel, float dampeningMultiplier, bool dampenInteria = true)
     {
-        this.MaxRotationalVelocity = shipType.RotAccel;
+        this.MaxVel = maxVel;
+        this.Thrust = thrust;
+        this.RotVel = rotVel;
 
-        this.MaxAcceleration = engine.MaxAccel;
-        this.MaxVelocity = engine.MaxVelocity;
+        this.DampenInertia = dampenInteria;
+        this.DampeningMultiplier = dampeningMultiplier;
     }
 
     void FixedUpdate()
     {
-        if (this.acceleration.x != 0f || this.acceleration.y != 0f)
-        {
-            //add accumulated forces
-            this.acceleration = Utils.CapVector2(this.acceleration, this.MaxAcceleration);
+        #region Update Forces
 
-            this.rigidBody.AddForce(this.acceleration, ForceMode2D.Impulse);
+        if (this.deltaForce.x != 0f || this.deltaForce.y != 0f)
+        {
+            //add accumulated forces and add them to this rigid body
+            this.deltaForce = Utils.CapVector2(this.deltaForce, this.Thrust);
+            this.rigidBody.AddForce(this.deltaForce, ForceMode2D.Impulse);
 
             //reset forces
-            this.acceleration = Vector2.zero;
-
-            float originalMagnitude = this.rigidBody.velocity.magnitude;
+            this.deltaForce = Vector2.zero;
 
             //limit velocity
-            if (originalMagnitude > this.MaxVelocity)
+            float originalMagnitude = this.rigidBody.velocity.magnitude;
+            if (originalMagnitude > this.MaxVel)
             {
-                this.rigidBody.velocity *= this.MaxVelocity / originalMagnitude;
-                originalMagnitude = this.MaxVelocity;
+                this.rigidBody.velocity *= this.MaxVel / originalMagnitude;
+                originalMagnitude = this.MaxVel;
             }
 
             //dampen interia
@@ -79,10 +108,10 @@ public class Movement : MonoBehaviour
                     // convert Rigidbody2D velocity to local space in terms of the transform
                     // take negative of the x component
                     // convert this back to world space
-                    inertialForce = this.bodyTransform.InverseTransformDirection(this.rigidBody.velocity);
+                    inertialForce = this.transform.InverseTransformDirection(this.rigidBody.velocity);
                     inertialForce.x *= -1f;
                     inertialForce.y = 0f;
-                    inertialForce = this.bodyTransform.TransformDirection(inertialForce);
+                    inertialForce = this.transform.TransformDirection(inertialForce);
 
                     this.rigidBody.velocity += inertialForce * this.DampeningMultiplier;
                     this.rigidBody.velocity *= originalMagnitude / this.rigidBody.velocity.magnitude;
@@ -90,12 +119,18 @@ public class Movement : MonoBehaviour
             }
         }
 
-        if (this.rotation != 0f)
+        #endregion Update Forces
+
+        #region Update Rotation
+
+        if (this.deltaRot != 0f)
         {
-            this.rotation = Mathf.Clamp(this.rotation, -this.MaxRotationalVelocity, this.MaxRotationalVelocity);
-            this.rigidBody.MoveRotation(this.rigidBody.rotation + this.rotation);
-            this.rotation = 0f;
+            this.deltaRot = Mathf.Clamp(this.deltaRot, -this.RotVel, this.RotVel);
+            this.rigidBody.MoveRotation(this.rigidBody.rotation + this.deltaRot);
+            this.deltaRot = 0f;
         }
+
+        #endregion Update Rotation
     }
 
     /// <summary>
@@ -103,33 +138,32 @@ public class Movement : MonoBehaviour
     /// </summary>
     /// <param name="xAxis">the x component of the acceleration</param>
     /// <param name="yAxis">the y component of the acceleration</param>
-    public void LinearAccelerate(float xAxis, float yAxis, bool limit = true)
+    /// <param name="limit">whether to cap the thrust applied</param>
+    public void ApplyThrust(float xAxis, float yAxis, bool limit = true)
     {
         Vector2 accel = new Vector2(xAxis, yAxis);
-        if (limit) { accel = Utils.CapVector2(xAxis, yAxis, this.MaxAcceleration); }
-        this.acceleration.x += accel.x;
-        this.acceleration.y += accel.y;
+        if (limit) { accel = Utils.CapVector2(new Vector2(xAxis, yAxis), this.Thrust); }
+        this.deltaForce += accel;
     }
     /// <summary>
     /// Accelerate the object in the direction of its rotation
     /// </summary>
     /// <param name="magnitude">the magnitude to accelerate the object by</param>
-    public void Accelerate(float magnitude)
+    /// <param name="limit">whether to cap the acceleration</param>
+    public void ApplyDirectionalThrust(float magnitude, bool limit = true)
     {
-        float mag = magnitude;
-
-        Vector2 accel = this.bodyTransform.up * mag;
-
-        this.acceleration.x += accel.x;
-        this.acceleration.y += accel.y;
+        Vector2 accel = this.transform.up * magnitude;
+        if(limit) { accel = Utils.CapVector2(accel, this.Thrust); }
+        this.deltaForce += accel;
     }
 
     /// <summary>
     /// Rotate the object
     /// </summary>
     /// <param name="magnitude">the amount to rotate the object by</param>
-    public void Rotate(float magnitude)
+    /// <param name="limit">whether to limit the rotation</param>
+    public void Rotate(float magnitude, bool limit = true)
     {
-        this.rotation += Mathf.Clamp(magnitude, -this.MaxRotationalVelocity, this.MaxRotationalVelocity);
+        this.deltaRot += limit ? Mathf.Clamp(magnitude, -this.RotVel, this.RotVel) : magnitude;
     }
 }

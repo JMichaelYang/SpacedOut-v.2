@@ -6,11 +6,11 @@ public class CommandHandler : MonoBehaviour
 {
     //singleton instance
     public static CommandHandler Instance = null;
-
+    
     //command stream
-    private Queue<Command> commands;
-
-    public void AddCommands(params Command[] commands)
+    private Queue<ICommand> commands;
+    
+    public void AddCommands(params ICommand[] commands)
     {
         int len = commands.Length;
         for (int i = 0; i < len; i++)
@@ -32,7 +32,7 @@ public class CommandHandler : MonoBehaviour
             Destroy(this.gameObject);
         }
 
-        this.commands = new Queue<Command>();
+        this.commands = new Queue<ICommand>();
     }
 
     // Update is called once per frame

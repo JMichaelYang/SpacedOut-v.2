@@ -1,0 +1,42 @@
+Thrust and Weight Scales
+
+F-16 Fighting Falcon
+Length: ~15 m
+Weight: ~20,000 kg
+Thrust: ~130 kN
+Accel: ~6.5 m/s^2
+Max Speed: ~600 m/s
+
+F/A-18 Super Hornet
+Length: ~18 m
+Weight: ~30,000 kg
+Thrust: ~150 kN
+Accel: ~5 m/s^2
+Max Speed: ~500 m/s
+
+A-10 Thunderbolt II
+Length: ~16 m
+Weight: ~22,000 kg
+Thrust: ~80 kN
+Accel: ~3.6 m/s^2
+Max Speed: ~200 m/s
+
+Target Length: ~16 m
+Target Weight: ~75,000 kg
+Target Thrust: ~150 kN
+Target Accel: ~2 m/s^2
+Target Max Speed: ~150-250 m/s
+
+UPDATED: SLOWER SPEEDS: 1/2 SPEEDS
+Target Thrust: ~80 kN
+Target Accel: ~1 m/s
+Target Max Speed: ~80-120 m/s
+
+Target Engine Weight: ~6,000 kg
+Target Shield Weight: ~9,000 kg
+Target Weapon Weight: ~7500 kg * ?
+Target Ship Weight: ~45,000 kg
+Target Armor Weight: ~15,000 kg
+
+Target Crossmap Time: ~30s
+Target Map Size: ~7,500

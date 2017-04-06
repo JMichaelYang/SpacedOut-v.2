@@ -6,17 +6,16 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     //components
-    private Movement bulletMovement;
-    private SpriteRenderer bulletRenderer;
-    private BoxCollider2D bulletCollider;
-    //shooter
-    private GameObject shooter;
+    private new Transform transform;
+    private Rigidbody2D rigidBody;
+    private new SpriteRenderer renderer;
+    private new CircleCollider2D collider;
 
     //stats
     public float Damage { get; protected set; }
     private float duration = 0f;
 
-    private BulletHitEventArgs e = new BulletHitEventArgs(null, null);
+    private BulletHitEventArgs e = new BulletHitEventArgs(0f, null);
 
     // Use this for initialization
     void Awake()
@@ -24,31 +23,47 @@ public class Bullet : MonoBehaviour
         this.Damage = 0f;
         this.duration = 0f;
 
-        try { this.bulletMovement = this.gameObject.GetComponent<Movement>(); }
-        catch { Debug.Log("Could not find Movement component of " + this.gameObject.ToString()); }
-        try { this.bulletRenderer = this.gameObject.GetComponent<SpriteRenderer>(); }
-        catch { Debug.Log("Could not find Renderer component of " + this.gameObject.ToString()); }
-        try { this.bulletCollider = this.gameObject.GetComponent<BoxCollider2D>(); }
-        catch { Debug.Log("Could not find Collider component of " + this.gameObject.ToString()); }
+        this.transform = this.GetComponent<Transform>();
+        this.rigidBody = this.GetComponent<Rigidbody2D>();
+        this.renderer = this.GetComponent<SpriteRenderer>();
+        this.collider = this.GetComponent<CircleCollider2D>();
     }
 
-    public void Activate(float damage, float duration, float velocity, GameObject shooter, Sprite image)
+    public void Activate(float damage, float duration, float velocity, TeamIndex team, Sprite image)
     {
         this.reset();
 
         //set bullet stats
         this.Damage = damage;
         this.duration = duration;
-        //set shooter for this bullet
-        this.shooter = shooter;
-        
-        this.bulletRenderer.sprite = image;
-        this.bulletCollider.size = this.bulletRenderer.bounds.size;
+        //set bullet layer
+        #region Layer
 
-        //set bullet velocity
-        this.bulletMovement.MaxAcceleration = velocity;
-        this.bulletMovement.MaxVelocity = velocity;
-        this.bulletMovement.Accelerate(velocity);
+        switch (team)
+        {
+            case TeamIndex.ONE:
+                this.gameObject.layer = GameSettings.TeamOneBulletLayer;
+                break;
+
+            case TeamIndex.TWO:
+                this.gameObject.layer = GameSettings.TeamTwoBulletLayer;
+                break;
+
+            case TeamIndex.THREE:
+                this.gameObject.layer = GameSettings.TeamThreeBulletLayer;
+                break;
+
+            case TeamIndex.FOUR:
+                this.gameObject.layer = GameSettings.TeamFourBulletLayer;
+                break;
+        }
+
+        #endregion Layer
+        //set bullet image and collider
+        this.renderer.sprite = image;
+        this.collider.radius = this.renderer.bounds.extents.x < this.renderer.bounds.extents.y ? this.renderer.bounds.extents.x : this.renderer.bounds.extents.y;
+        //accelerate bullet
+        this.rigidBody.velocity = this.transform.up * velocity;
 
         //set this bullet up to be destroyed after its duration elapses
         Invoke("Kill", this.duration);
@@ -59,7 +74,6 @@ public class Bullet : MonoBehaviour
     {
         this.duration = 0f;
         this.Damage = 0f;
-        this.shooter = null;
     }
 
     void Kill()
@@ -70,16 +84,13 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject != this.shooter)
-        {
-            CancelInvoke();
+        CancelInvoke();
 
-            //apply bullet damage
-            this.e.Shot = this;
-            this.e.HitCollider = other;
-            GameEventHandler.OnBulletHit(this, this.e);
+        //apply bullet damage
+        this.e.ShotDamage = this.Damage;
+        this.e.HitCollider = other;
+        GameEventHandler.OnBulletHit(this, this.e);
 
-            this.Kill();
-        }
+        this.Kill();
     }
 }
