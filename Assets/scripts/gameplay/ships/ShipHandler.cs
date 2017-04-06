@@ -7,30 +7,34 @@ using UnityEngine;
 [RequireComponent(typeof(AiManager))]
 public class ShipHandler : MonoBehaviour
 {
+    /// <summary>
+    /// References to all of the ship's components
+    /// </summary>
     #region Components
 
     //explosion particle system
     public GameObject explosion;
     private ParticleSystem explosionSystem;
 
-    private new Transform transform;
-    private new Rigidbody2D rigidbody;
-    private Movement movement;
-    private new Collider2D collider;
-    private new SpriteRenderer renderer;
-    private Health health;
+    public Transform cTransform { get; protected set; }
+    public Rigidbody2D cRigidbody { get; protected set; }
+    public Movement cMovement { get; protected set; }
+    public Collider2D cCollider { get; protected set; }
+    public SpriteRenderer cRenderer { get; protected set; }
+    public Health cHealth;
     private AiManager shipAi;
     /// <summary>
     /// Whether this ship has a shield
     /// </summary>
-    private bool hasShield;
-    private Shield shield;
+    public bool HasShield;
+    public Shield cShield;
 
     #endregion Components
 
+    /// <summary>
+    /// Area for storing modifiers to this ship's statistics
+    /// </summary>
     #region Type Statistics
-
-
 
     #endregion Type Statistics
 
@@ -39,22 +43,25 @@ public class ShipHandler : MonoBehaviour
     /// </summary>
     private bool isOffScreen = false;
 
-    public bool IsAlive { get { return this.health.IsAlive; } }
+    public bool IsAlive { get { return this.cHealth.IsAlive; } }
 
+    /// <summary>
+    /// Get references to all of this ship's components
+    /// </summary>
     void Awake()
     {
         #region Get Component References
 
-        this.transform = this.gameObject.GetComponent<Transform>();
-        this.rigidbody = this.GetComponent<Rigidbody2D>();
-        this.movement = this.gameObject.GetComponent<Movement>();
-        this.collider = this.GetComponent<Collider2D>();
-        this.renderer = this.GetComponent<SpriteRenderer>();
-        this.health = this.GetComponent<Health>();
+        this.cTransform = this.gameObject.GetComponent<Transform>();
+        this.cRigidbody = this.GetComponent<Rigidbody2D>();
+        this.cMovement = this.gameObject.GetComponent<Movement>();
+        this.cCollider = this.GetComponent<Collider2D>();
+        this.cRenderer = this.GetComponent<SpriteRenderer>();
+        this.cHealth = this.GetComponent<Health>();
         this.shipAi = this.gameObject.GetComponent<AiManager>();
-        this.shield = this.gameObject.GetComponentInChildren<Shield>();
-        if (this.shield != null) { this.hasShield = true; }
-        else { this.hasShield = false; }
+        this.cShield = this.gameObject.GetComponentInChildren<Shield>();
+        if (this.cShield != null) { this.HasShield = true; }
+        else { this.HasShield = false; }
 
         #endregion Get Component References
     }
@@ -67,7 +74,7 @@ public class ShipHandler : MonoBehaviour
     /// <param name="shieldType">the ShieldType of this ship</param>
     public void SetStatistics(ShipType shipType, ArmorType armorType, ShieldType shieldType)
     {
-        if(this.hasShield) { this.shield.Activate(shieldType); }
+        if(this.HasShield) { this.cShield.Activate(shieldType); }
     }
 
     // Use this for initialization
@@ -76,17 +83,17 @@ public class ShipHandler : MonoBehaviour
         this.explosion = Resources.Load<GameObject>(GameSettings.ShipExplosion);
         this.explosionSystem = this.explosion.GetComponent<ParticleSystem>();
 
-        this.health.SetHealth(this.health.IntMaxHealth);
+        this.cHealth.SetHealth(this.cHealth.IntMaxHealth);
     }
 
     //used for when the ship exits the arena
     void Update()
     {
         if (!this.isOffScreen &&
-            (this.transform.position.x > GameSettings.ArenaWidth / 2 ||
-            this.transform.position.x < -GameSettings.ArenaWidth / 2 ||
-            this.transform.position.y > GameSettings.ArenaHeight / 2 ||
-            this.transform.position.y < -GameSettings.ArenaHeight / 2))
+            (this.cTransform.position.x > GameSettings.ArenaWidth / 2 ||
+            this.cTransform.position.x < -GameSettings.ArenaWidth / 2 ||
+            this.cTransform.position.y > GameSettings.ArenaHeight / 2 ||
+            this.cTransform.position.y < -GameSettings.ArenaHeight / 2))
         {
             if (this.gameObject.CompareTag("Player"))
             {
@@ -100,10 +107,10 @@ public class ShipHandler : MonoBehaviour
             this.isOffScreen = true;
         }
         else if (this.isOffScreen &&
-            (this.transform.position.x > -GameSettings.ArenaWidth / 2 &&
-            this.transform.position.x < GameSettings.ArenaWidth / 2 &&
-            this.transform.position.y > -GameSettings.ArenaHeight / 2 &&
-            this.transform.position.y < GameSettings.ArenaHeight / 2))
+            (this.cTransform.position.x > -GameSettings.ArenaWidth / 2 &&
+            this.cTransform.position.x < GameSettings.ArenaWidth / 2 &&
+            this.cTransform.position.y > -GameSettings.ArenaHeight / 2 &&
+            this.cTransform.position.y < GameSettings.ArenaHeight / 2))
         {
             this.shipAi.ClearBehavior();
 
@@ -123,9 +130,9 @@ public class ShipHandler : MonoBehaviour
     /// <param name="damage">Amount to damage the ship by</param>
     void DamageShip(object sender, BulletHitEventArgs e)
     {
-        if (e.HitCollider == this.collider)
+        if (e.HitCollider == this.cCollider)
         {
-            if(this.health.ApplyDamage(e.ShotDamage) <= 0f) { this.DestroyShip(); }
+            if(this.cHealth.ApplyDamage(e.ShotDamage) <= 0f) { this.DestroyShip(); }
         }
     }
 
@@ -140,19 +147,19 @@ public class ShipHandler : MonoBehaviour
         //disable components
         MonoBehaviour[] components = this.gameObject.GetComponents<MonoBehaviour>();
         for (int i = 0; i < components.Length; i++) { if (!(components[i] is ShipHandler)) { components[i].enabled = false; } }
-        this.renderer.enabled = false;
-        this.collider.enabled = false;
+        this.cRenderer.enabled = false;
+        this.cCollider.enabled = false;
 
         //Disable the shield if it exists
-        if (this.hasShield) { this.shield.Disable(); }
+        if (this.HasShield) { this.cShield.Disable(); }
 
         //add drag to rigid body to stop it
-        this.rigidbody.drag = 1f;
+        this.cRigidbody.drag = 1f;
         //tag object as dead
         this.gameObject.tag = "Dead";
         //start explosion on ship location
         //TODO: preload explosion
-        ObjectPool.Spawn(this.explosion, this.transform.position, this.transform.rotation);
+        ObjectPool.Spawn(this.explosion, this.cTransform.position, this.cTransform.rotation);
         Invoke("AfterExplosion", this.explosionSystem.main.duration + this.explosionSystem.main.startLifetime.constantMax);
     }
 
@@ -162,7 +169,7 @@ public class ShipHandler : MonoBehaviour
     private void AfterExplosion()
     {
         ObjectPool.Despawn(this.explosion);
-        this.rigidbody.Sleep();
+        this.cRigidbody.Sleep();
     }
 
     #region Event Registration
