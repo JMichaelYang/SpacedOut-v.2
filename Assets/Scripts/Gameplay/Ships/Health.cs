@@ -26,7 +26,7 @@ public class Health : MonoBehaviour
     /// <summary>
     /// Whether the object is alive
     /// </summary>
-    public bool IsAlive { get { return this.IntHealth <= 0; } }
+    public bool IsAlive { get { return this.IntHealth > 0; } }
 
     /// <summary>
     /// When the component is initialized, set its values to 0
