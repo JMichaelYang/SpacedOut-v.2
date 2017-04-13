@@ -51,8 +51,18 @@ public class TargetMarker : MonoBehaviour
         this.texture = texture;
     }
 
+    void OnEnable()
+    {
+        GuiHandler.Instance.RegisterOnGUI(drawMarker);
+    }
+
+    void OnDisable()
+    {
+        GuiHandler.Instance.DeregisterOnGUI(drawMarker);
+    }
+
     // Drawing GUI elements
-    void OnGUI()
+    private void drawMarker()
     {
         // Find the position of the origin and the position of the target based on the camera's coordinate system
         Vector2 origPos = camera.WorldToScreenPoint(origin.position);
