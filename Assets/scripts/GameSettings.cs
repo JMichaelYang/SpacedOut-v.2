@@ -23,7 +23,7 @@ public class GameSettings : MonoBehaviour
 
     #endregion Arena
 
-    #region Camera
+    #region UI
 
     public static float CameraFOV = 60f;
     public static float CameraAspectRatio = 9f / 16f;
@@ -36,7 +36,10 @@ public class GameSettings : MonoBehaviour
     public static float ShotShake = 0.2f;
     public static float ShakeDecrease = 4f;
 
-    #endregion Camera
+    public static float MarkerOffset = 1f / 20f;
+    public static float MarkerSize = 1f / 80f;
+
+    #endregion UI
 
     #region Controls
 

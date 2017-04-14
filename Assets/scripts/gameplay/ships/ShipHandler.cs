@@ -43,6 +43,7 @@ public class ShipHandler : MonoBehaviour
     /// Whether the ship is on the screen
     /// </summary>
     private bool isOffScreen = false;
+    private Rect screenDim;
 
     public bool IsAlive { get { return this.cHealth.IsAlive; } }
 
@@ -85,16 +86,14 @@ public class ShipHandler : MonoBehaviour
         this.explosionSystem = this.explosion.GetComponent<ParticleSystem>();
 
         this.cHealth.SetHealth(this.cHealth.IntMaxHealth);
+
+        this.screenDim = new Rect(-GameSettings.ArenaWidth / 2, -GameSettings.ArenaHeight / 2, GameSettings.ArenaWidth, GameSettings.ArenaHeight);
     }
 
     //used for when the ship exits the arena
     void Update()
     {
-        if (!this.isOffScreen &&
-            (this.cTransform.position.x > GameSettings.ArenaWidth / 2 ||
-            this.cTransform.position.x < -GameSettings.ArenaWidth / 2 ||
-            this.cTransform.position.y > GameSettings.ArenaHeight / 2 ||
-            this.cTransform.position.y < -GameSettings.ArenaHeight / 2))
+        if (!this.isOffScreen && !this.screenDim.Contains(this.cTransform.position))
         {
             if (this.gameObject.CompareTag("Player"))
             {
@@ -107,11 +106,7 @@ public class ShipHandler : MonoBehaviour
 
             this.isOffScreen = true;
         }
-        else if (this.isOffScreen &&
-            (this.cTransform.position.x > -GameSettings.ArenaWidth / 2 &&
-            this.cTransform.position.x < GameSettings.ArenaWidth / 2 &&
-            this.cTransform.position.y > -GameSettings.ArenaHeight / 2 &&
-            this.cTransform.position.y < GameSettings.ArenaHeight / 2))
+        else if (this.isOffScreen && this.screenDim.Contains(this.cTransform.position))
         {
             this.shipAi.ClearBehavior();
 
