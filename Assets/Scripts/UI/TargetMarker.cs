@@ -81,6 +81,8 @@ public class TargetMarker : MonoBehaviour
             float yOffBot = origPos.y - this.screenBox.y;
             float yOffTop = this.screenBox.height - origPos.y;
 
+            Vector2 origDiff = diff;
+
             // First test the marker on the left/right
             if (diff.x < 0)
             {
@@ -92,18 +94,19 @@ public class TargetMarker : MonoBehaviour
             }
 
             // If it is off of the screen to the left/right, use top/bottom
-            if (diff.y > yOffTop || diff.y < yOffBot)
+            if (diff.y > yOffTop || diff.y < -yOffBot)
             {
-                if (diff.y < 0)
+                if (origDiff.y < 0)
                 {
-                    diff *= yOffBot / -diff.y;
+                    diff = origDiff * yOffBot / -origDiff.y;
                 }
                 else
                 {
-                    diff *= yOffTop / diff.y;
+                    diff = origDiff * yOffTop / origDiff.y;
                 }
             }
 
+            // Set the position of the target marker
             this.position = origPos + diff;
             this.position.y = this.screenHeight - this.position.y;
             GUI.DrawTexture(this.drawTarget, this.texture);
