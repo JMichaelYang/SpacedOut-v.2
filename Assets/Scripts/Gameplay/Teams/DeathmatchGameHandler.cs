@@ -32,11 +32,13 @@ public class DeathmatchGameHandler : MonoBehaviour
         //TODO: Replace this test code with code that loads from a "level select" screen
 
         this.teams.Add(new Team("Team One", TeamIndex.ONE, Color.blue));
+        /*
         for (int i = 0; i < 1; i++)
         {
             this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.HAX, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.HAX, GunTypes.HAX));
         }
-        /*
+        */
+        
         for (int i = 0; i < 2; i++)
         {
             this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.A23F, EngineTypes.F1120, ShieldTypes.KS1, ArmorTypes.PA50, GunTypes.LM20, GunTypes.LM20));
@@ -49,7 +51,7 @@ public class DeathmatchGameHandler : MonoBehaviour
         {
             this.teams[0].Ships.Add(new Ship(this.teams[0], ShipTypes.B12M, EngineTypes.F1110, ShieldTypes.KS2, ArmorTypes.PA52, GunTypes.LM20, GunTypes.LM30));
         }
-        */
+        
 
         this.teams.Add(new Team("Team Two", TeamIndex.TWO, Color.red));
         for (int i = 0; i < 2; i++)
@@ -98,8 +100,14 @@ public class DeathmatchGameHandler : MonoBehaviour
         {
             for (int j = 0; j < this.teams[i].FriendlyShips.Count; j++)
             {
-                this.teams[i].FriendlyShips[j].GetComponent<Weapons>().SetTeam(this.teams[i]);
-                this.teams[i].FriendlyShips[j].GetComponent<AiManager>().SetTeam(this.teams[i]);
+                GameObject ship = this.teams[i].FriendlyShips[j];
+
+                ship.GetComponent<Weapons>().SetTeam(this.teams[i]);
+                ship.GetComponent<AiManager>().SetTeam(this.teams[i]);
+                // TEST CODE: Need to dynamically load the texture based on class
+                Texture2D tex = Resources.Load<Texture2D>("Sprites/Gui/LightMarker");
+                tex = Utils.ColorTexture2D(tex, Color.white, teams[i].TeamColor);
+                ship.GetComponent<TargetMarker>().SetTarget(ship.transform, this.PlayerShip.GetComponent<Transform>(), tex);
             }
         }
     }

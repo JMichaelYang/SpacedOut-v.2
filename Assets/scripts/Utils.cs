@@ -152,7 +152,7 @@ public class Utils : MonoBehaviour
 
         for (int y = 0; y < newTex.height; y++)
         {
-            for(int x = 0; x < newTex.width; x++)
+            for (int x = 0; x < newTex.width; x++)
             {
                 //replace pixels that need to be replaced
                 if (original.GetPixel(x, y) == colorFrom)
@@ -168,7 +168,7 @@ public class Utils : MonoBehaviour
 
         //apply changes
         newTex.Apply();
-        
+
         return newTex;
     }
     /// <summary>
@@ -182,7 +182,7 @@ public class Utils : MonoBehaviour
         //recolor new sprite
         Texture2D tex = Utils.ColorTexture2D(sr.sprite.texture, colorFrom, colorTo);
         string tempName = sr.sprite.name;
-        
+
         //replace the SpriteRenderer sprite with a new one using the new texture
         sr.sprite = Sprite.Create(tex, sr.sprite.rect, new Vector2(sr.sprite.pivot.x / sr.sprite.rect.width, sr.sprite.pivot.y / sr.sprite.rect.height), sr.sprite.pixelsPerUnit);
         sr.sprite.name = tempName;

@@ -13,14 +13,13 @@ public class Weapons : MonoBehaviour
     private OffsetGunPair[] weapons;
     private Vector3 offset;
     private Gun gun;
+    private Team shooterTeam;
 
     private float oldTime = 0;
 
     private CommandHandler commandHandler;
-
     private WeaponShootEventArgs e = new WeaponShootEventArgs(0f);
 
-    private Team shooterTeam;
 
     //maximum range and spread of weapons for use by AI
     public float MaxRange { get; protected set; }
