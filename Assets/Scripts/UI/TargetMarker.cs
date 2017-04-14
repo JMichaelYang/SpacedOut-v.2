@@ -51,6 +51,8 @@ public class TargetMarker : MonoBehaviour
         this.texture = texture;
     }
 
+    #region Register Draw Function
+
     void OnEnable()
     {
         GuiHandler.Instance.RegisterOnGUI(drawMarker);
@@ -60,6 +62,8 @@ public class TargetMarker : MonoBehaviour
     {
         GuiHandler.Instance.DeregisterOnGUI(drawMarker);
     }
+
+    #endregion Register Draw Function
 
     // Drawing GUI elements
     private void drawMarker()
